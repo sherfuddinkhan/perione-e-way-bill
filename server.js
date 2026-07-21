@@ -531,7 +531,19 @@ app.post("/api/update-multi", async (req, res) => {
   }
 });
 
-
+// GET - E-Way Bills for Transporter by GSTIN
+app.get('/api/ewaybill/getewaybillsfortransporterbygstin', async (req, res) => {
+  try {
+    const { Gen_gstin, date } = req.query;
+    const response = await api.get(
+      `/getewaybillsfortransporterbygstin?email=${process.env.EMAIL}&Gen_gstin=${encodeURIComponent(Gen_gstin)}&date=${encodeURIComponent(date)}`,
+      config
+    );
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 
