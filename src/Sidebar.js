@@ -12,6 +12,25 @@ const Sidebar = () => {
 
   const displayUser = userGstin || "Perione E-Way Bill";
 
+  // Check if current active page is Ewaybillclients
+  const isEwayBillClientsPage =
+    location.pathname.toLowerCase() === "/ewaybillclients";
+
+  // Navigation Guard Helper
+  const handleProtectedNavigate = (targetPath, callback) => {
+    // Prevent switching pages if user is currently on Ewaybillclients page
+    if (isEwayBillClientsPage && targetPath !== "/Ewaybillclients" && targetPath !== "/ewaybill/generate-eway-bill") {
+      alert("Navigation disabled: You cannot switch components from the E-Way Bill Clients page.");
+      return;
+    }
+
+    if (callback) {
+      callback();
+    } else if (targetPath) {
+      navigate(targetPath);
+    }
+  };
+
   const toggle = (title) => {
     setOpenSections((prev) => ({
       ...prev,
@@ -25,6 +44,11 @@ const Sidebar = () => {
       (path !== "/" && location.pathname.startsWith(path + "/")));
 
   const handleLogout = () => {
+    if (isEwayBillClientsPage) {
+      alert("Navigation disabled: Please finish your actions before logging out.");
+      return;
+    }
+
     const confirmLogout = window.confirm("Are you willing to logout?");
     if (!confirmLogout) return;
 
@@ -123,17 +147,18 @@ const Sidebar = () => {
               <div
                 onClick={() => {
                   if (section.onClick) {
-                    section.onClick();
+                    handleProtectedNavigate(null, section.onClick);
                   } else if (section.path) {
-                    navigate(section.path);
+                    handleProtectedNavigate(section.path);
                   } else if (section.items) {
-                    toggle(section.title);
+                    toggle(section.title); // Expanding accordions is always allowed
                   }
                 }}
                 style={{
                   ...styles.sectionHeader,
                   background: isSectionActive ? "#ffffff" : "transparent",
                   color: isSectionActive ? "#1A73E8" : "#ffffff",
+                  cursor: isEwayBillClientsPage && section.path && !isSectionActive ? "not-allowed" : "pointer",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -157,12 +182,14 @@ const Sidebar = () => {
                   return (
                     <div
                       key={item.path}
-                      onClick={() => navigate(item.path)}
+                      onClick={() => handleProtectedNavigate(item.path)}
                       style={{
                         ...styles.subMenuItem,
                         background: isItemActive ? "#ffffff" : "rgba(255, 255, 255, 0.1)",
                         color: isItemActive ? "#1A73E8" : "#ffffff",
                         fontWeight: isItemActive ? "bold" : "normal",
+                        cursor: isEwayBillClientsPage && !isItemActive ? "not-allowed" : "pointer",
+                        opacity: isEwayBillClientsPage && !isItemActive ? 0.5 : 1,
                       }}
                     >
                       {item.label}

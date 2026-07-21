@@ -1,42 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext";
 
 const Ewaybillclients = () => {
   const navigate = useNavigate();
 
-  // Get token and companyId from AuthContext
-  const { token, companyId } = useAuth();
-
-  // Read environment settings from localStorage
-  const [selectedEnv, setSelectedEnv] = useState(
-    localStorage.getItem("connectionType") || "DEFAULT"
-  );
-  const [selectedYear, setSelectedYear] = useState(
-    localStorage.getItem("yearName") || ""
-  );
-
   const [loading, setLoading] = useState(false);
+  const [rowLoading, setRowLoading] = useState(null);
   const [invoiceData, setInvoiceData] = useState([]);
   const [error, setError] = useState("");
-  const hasFetched = useRef(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch Order List Function
   const getInvoiceData = async () => {
     setLoading(true);
     setError("");
 
     try {
       const companyValue = localStorage.getItem("userLoginRef") || "6";
-      const currentConnectionType =
-        localStorage.getItem("connectionType") || "DEFAULT";
-      const currentYear = localStorage.getItem("yearName") || selectedYear;
+      const currentConnectionType = localStorage.getItem("connectionType") || "DEFAULT";
+      const currentYear = localStorage.getItem("yearName") || "26-27";
 
       const payload = {
         orderType: "invoicecumchallan",
         yearName: currentYear,
-        companyValue,
+        companyValue: companyValue,
         customerName: "",
       };
 
@@ -46,10 +33,6 @@ const Ewaybillclients = () => {
         ConnectionType: currentConnectionType,
       };
 
-      console.log("Environment:", currentConnectionType);
-      console.log("Year:", currentYear);
-      console.log("Payload:", payload);
-
       const response = await axios.post(
         "https://einvoice.fcssoftwares.com/api/OrderList/GetOrderList",
         payload,
@@ -58,11 +41,12 @@ const Ewaybillclients = () => {
 
       setInvoiceData(response.data || []);
     } catch (err) {
-      console.error("Error fetching invoices:", err);
+      console.error("Full API Error:", err.response || err);
       setError(
         err.response?.data?.message ||
-          err.message ||
-          "Failed to fetch invoices"
+        JSON.stringify(err.response?.data) ||
+        err.message ||
+        "Failed to fetch invoices. Please check connection."
       );
     } finally {
       setLoading(false);
@@ -70,32 +54,25 @@ const Ewaybillclients = () => {
   };
 
   useEffect(() => {
-    if (!token || !companyId) return;
-    if (hasFetched.current) return;
-
-    hasFetched.current = true;
     getInvoiceData();
-  }, [token, companyId]);
+  }, []);
 
-  // Handle environment change from top dropdown
-  const handleConnectionChange = (e) => {
-    const newValue = e.target.value;
-    setSelectedEnv(newValue);
-    localStorage.setItem("connectionType", newValue);
-    hasFetched.current = false;
-    getInvoiceData();
-  };
-
-  // Generate E-Way Bill Redirect
   const handleGenerateEinvoice = async (invoice) => {
-    try {
-      setLoading(true);
-      const pid = invoice?.pid;
+    // 1. BLOCK OPENING / NAVIGATION IF EWB NUMBER ALREADY EXISTS
+    if (invoice?.eWayBillNumber) {
+      alert(`E-Way Bill already generated for this invoice: ${invoice.eWayBillNumber}`);
+      return; // Stop execution, don't open the next component
+    }
 
-      if (!pid) {
-        alert("PID not found");
-        return;
-      }
+    const pid = invoice?.pid;
+
+    if (!pid) {
+      alert("PID not found");
+      return;
+    }
+
+    try {
+      setRowLoading(pid);
 
       const currentConnectionType =
         localStorage.getItem("connectionType") || "DEFAULT";
@@ -113,7 +90,8 @@ const Ewaybillclients = () => {
       localStorage.setItem("selectedInvoice", JSON.stringify(data));
       localStorage.setItem("Selected PID", JSON.stringify(data.pid));
 
-      navigate("/ewaybill/ewb-generate-print", {
+      // 2. NAVIGATE TO SPECIFIED ROUTE ONLY IF EWB IS MISSING
+      navigate("/ewaybill/generate-eway-bill", {
         state: {
           invoiceData: data,
           pid,
@@ -123,258 +101,143 @@ const Ewaybillclients = () => {
       console.error("Invoice Details API Error:", err);
       alert("Failed to fetch invoice details.");
     } finally {
-      setLoading(false);
+      setRowLoading(null);
     }
   };
 
-  // Delete IRN Action
-  const handleDeleteIRN = async (invoice) => {
-    if (!invoice.irnnumber) {
-      alert("IRN is not generated for this invoice.");
-      return;
-    }
-
-    const confirmDelete = window.confirm(
-      `Are you sure you want to cancel IRN for Invoice ${invoice.pid}?`
+  const filteredInvoices = useMemo(() => {
+    if (!searchQuery.trim()) return invoiceData;
+    const query = searchQuery.toLowerCase();
+    return invoiceData.filter((inv) =>
+      inv.clientCompanyName?.toLowerCase().includes(query) ||
+      inv.invoiceNumber?.toLowerCase().includes(query) ||
+      inv.pid?.toString().includes(query) ||
+      inv.mobileNo?.includes(query) ||
+      inv.eWayBillNumber?.toString().includes(query)
     );
-
-    if (!confirmDelete) return;
-
-    try {
-      setLoading(true);
-      const userGstin = invoiceData[0]?.gstin || invoice.gstin;
-
-      const payload = {
-        irn: invoice.irnnumber,
-        cnlRsn: "1", // Reason: Wrong Entry
-        cnlRem: "Wrong entry",
-        userGstin: userGstin,
-      };
-
-      const currentConnectionType =
-        localStorage.getItem("connectionType") || "DEFAULT";
-
-      console.log("Cancel IRN Payload:", payload);
-
-      const response = await axios.put(
-        "https://einvoice.fcssoftwares.com/api/gst/einvoice/cancel-irn",
-        payload,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            companyId: companyId,
-            ConnectionType: currentConnectionType,
-            "X-Auth-Token": token,
-            product: "ONYX",
-          },
-        }
-      );
-
-      if (response.data?.status === "SUCCESS") {
-        alert("IRN Cancelled Successfully");
-        hasFetched.current = false;
-        getInvoiceData();
-      } else {
-        alert(response.data?.message || "Failed to cancel IRN");
-      }
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || err.message || "Failed to cancel IRN");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Delete E-Way Bill Action
-  const handleDeleteEwayBill = async (invoice) => {
-    if (!invoice.eWayBillNumber) {
-      alert("E-Way Bill is not generated for this invoice.");
-      return;
-    }
-
-    const confirmDelete = window.confirm(
-      `Are you sure you want to cancel E-Way Bill ${invoice.eWayBillNumber}?`
-    );
-
-    if (!confirmDelete) return;
-
-    try {
-      setLoading(true);
-
-      const payload = {
-        ewbNo: invoice.eWayBillNumber,
-        cnlRsn: "3", // Reason: Order Cancelled
-        cnlRem: "Order cancelled by buyer",
-        userGstin: invoice.gstin,
-      };
-
-      const currentConnectionType =
-        localStorage.getItem("connectionType") || "DEFAULT";
-
-      console.log("Cancel EWB Payload:", payload);
-
-      const response = await axios.put(
-        "https://einvoice.fcssoftwares.com/api/gst/einvoice/cancel-ewb",
-        payload,
-        {
-          headers: {
-            accept: "application/json",
-            "content-type": "application/json",
-            companyid: companyId,
-            "x-auth-token": token,
-            product: "ONYX",
-            ConnectionType: currentConnectionType,
-          },
-        }
-      );
-
-      if (response.data?.status === "SUCCESS") {
-        alert("E-Way Bill Cancelled Successfully");
-        hasFetched.current = false;
-        getInvoiceData();
-      } else {
-        alert(response.data?.message || "Failed to cancel E-Way Bill");
-      }
-    } catch (err) {
-      console.error(err);
-      alert(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to cancel E-Way Bill"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [invoiceData, searchQuery]);
 
   return (
     <div style={styles.container}>
-      {/* Top Controls Header */}
-      <div style={styles.headerRow}>
-        <h2 style={styles.heading}>E-Way Bill Client Management</h2>
-        <div style={styles.dropdownContainer}>
-          <label style={styles.label}>Connection Type:</label>
-          <select
-            value={selectedEnv}
-            onChange={handleConnectionChange}
-            style={styles.select}
-          >
-            <option value="DEFAULT">DEFAULT</option>
-            <option value="SANDBOX">SANDBOX</option>
-            <option value="PRODUCTION">PRODUCTION</option>
-          </select>
+      <div style={styles.header}>
+        <div>
+          <h2 style={styles.title}>E-Way Bill Clients</h2>
+          <p style={styles.subtitle}>Manage, view, and generate E-Way bills</p>
         </div>
+        <button
+          onClick={getInvoiceData}
+          disabled={loading}
+          style={{
+            ...styles.btnSecondary,
+            opacity: loading ? 0.6 : 1,
+          }}
+        >
+          {loading ? "Refreshing..." : "🔄 Refresh"}
+        </button>
       </div>
 
-      {loading && <div style={styles.loading}>Loading Invoice Data...</div>}
-      {error && <div style={styles.error}>{error}</div>}
+      <div style={styles.controlsBar}>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="🔍 Search customer, invoice #, PID..."
+          style={styles.searchInput}
+        />
+        <span style={styles.countBadge}>
+          Showing <b>{filteredInvoices.length}</b> of <b>{invoiceData.length}</b>
+        </span>
+      </div>
 
-      {/* Main Invoices Table */}
-      <div style={styles.tableWrapper}>
+      {error && (
+        <div style={styles.errorAlert}>
+          ⚠️ <strong>Error:</strong> {error}
+        </div>
+      )}
+
+      <div style={styles.tableCard}>
         <table style={styles.table}>
           <thead>
             <tr>
-              <th style={styles.th}>#</th>
+              <th style={{ ...styles.th, width: "50px" }}>#</th>
               <th style={styles.th}>Customer</th>
-              <th style={styles.th}>Mobile</th>
-              <th style={styles.th}>PO Number</th>
-              <th style={styles.th}>PO Date</th>
               <th style={styles.th}>Invoice No</th>
-              <th style={styles.th}>Primary Key (Update)</th>
-              <th style={styles.th}>Created On</th>
               <th style={styles.th}>PID</th>
-              <th style={styles.th}>Vehicle No</th>
-              <th style={styles.th}>EWB No</th>
-              <th style={styles.th}>Status</th>
-              <th style={styles.th}>Action</th>
+              <th style={styles.th}>EWB Status</th>
+              <th style={{ ...styles.th, textAlign: "right" }}>Action</th>
             </tr>
           </thead>
 
           <tbody>
-            {invoiceData.length > 0 ? (
-              invoiceData.map((invoice, index) => (
-                <tr key={invoice.refID || invoice.pid || index}>
-                  <td style={styles.td}>{index + 1}</td>
-                  <td style={styles.td}>
-                    {invoice.clientCompanyName || "-"}
-                  </td>
-                  <td style={styles.td}>{invoice.mobileNo || "-"}</td>
-                  <td style={styles.td}>
-                    {invoice.purchaseOrder || "-"}
-                  </td>
-                  <td style={styles.td}>
-                    {invoice.purchaseOrderDate || "-"}
-                  </td>
-                  <td style={styles.td}>{invoice.invoiceNumber || "-"}</td>
-                  <td style={styles.td}>{invoice.pid || "-"}</td>
-                  <td style={styles.td}>{invoice.createdOn || "-"}</td>
-                  <td style={styles.td}>{invoice.pid || "-"}</td>
-                  <td style={styles.td}>{invoice.vehicleNo || "-"}</td>
-                  <td style={styles.td}>
-                    {invoice.eWayBillNumber || "-"}
-                  </td>
+            {loading && invoiceData.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={styles.centerMessage}>
+                  Loading invoice data, please wait...
+                </td>
+              </tr>
+            ) : filteredInvoices.length > 0 ? (
+              filteredInvoices.map((invoice, index) => {
+                const hasEwb = Boolean(invoice.eWayBillNumber);
+                const isProcessing = rowLoading === invoice.pid;
 
-                  <td style={styles.td}>
-                    {invoice.eWayBillNumber ? (
-                      <span style={{ color: "green", fontWeight: "bold" }}>
-                        Generated
+                return (
+                  <tr key={invoice.refID || index} style={styles.tr}>
+                    <td style={styles.tdMuted}>{index + 1}</td>
+
+                    <td style={styles.td}>
+                      <div style={styles.clientName}>
+                        {invoice.clientCompanyName || "—"}
+                      </div>
+                      <div style={styles.clientMobile}>
+                        {invoice.mobileNo ? `📱 ${invoice.mobileNo}` : "No Mobile"}
+                      </div>
+                    </td>
+
+                    <td style={styles.td}>
+                      <span style={styles.invoiceBadge}>
+                        {invoice.invoiceNumber || "—"}
                       </span>
-                    ) : (
-                      <span style={{ color: "red", fontWeight: "bold" }}>
-                        Pending
-                      </span>
-                    )}
-                  </td>
+                    </td>
 
-                  <td style={styles.actionTd}>
-                    <button
-                      style={styles.einvoiceBtn}
-                      onClick={() => handleGenerateEinvoice(invoice)}
-                    >
-                      Generate E-Way Bill
-                    </button>
+                    <td style={{ ...styles.td, fontFamily: "monospace" }}>
+                      {invoice.pid || "—"}
+                    </td>
 
-                    <button
-                      style={{
-                        ...styles.deleteIrnBtn,
-                        opacity: invoice.irnnumber ? 1 : 0.5,
-                        cursor: invoice.irnnumber ? "pointer" : "not-allowed",
-                      }}
-                      disabled={!invoice.irnnumber}
-                      onClick={() => handleDeleteIRN(invoice)}
-                      title={
-                        invoice.irnnumber
-                          ? "Cancel IRN"
-                          : "IRN not generated"
-                      }
-                    >
-                      Delete IRN
-                    </button>
+                    <td style={styles.td}>
+                      {hasEwb ? (
+                        <span style={styles.statusSuccess}>
+                          ✓ {invoice.eWayBillNumber}
+                        </span>
+                      ) : (
+                        <span style={styles.statusPending}>
+                          ⏳ Pending
+                        </span>
+                      )}
+                    </td>
 
-                    <button
-                      style={{
-                        ...styles.deleteEwbBtn,
-                        opacity: invoice.eWayBillNumber ? 1 : 0.5,
-                        cursor: invoice.eWayBillNumber ? "pointer" : "not-allowed",
-                      }}
-                      disabled={!invoice.eWayBillNumber}
-                      onClick={() => handleDeleteEwayBill(invoice)}
-                      title={
-                        invoice.eWayBillNumber
-                          ? "Cancel E-Way Bill"
-                          : "E-Way Bill not generated"
-                      }
-                    >
-                      Delete E-Way Bill
-                    </button>
-                  </td>
-                </tr>
-              ))
+                    <td style={{ ...styles.td, textAlign: "right" }}>
+                      <button
+                        onClick={() => handleGenerateEinvoice(invoice)}
+                        disabled={isProcessing || hasEwb}
+                        style={{
+                          ...(hasEwb ? styles.btnDisabled : styles.btnPrimary),
+                          opacity: isProcessing ? 0.6 : 1,
+                        }}
+                      >
+                        {isProcessing
+                          ? "Processing..."
+                          : hasEwb
+                          ? "EWB Generated"
+                          : "Generate EWB →"}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
-                <td colSpan="13" style={styles.noData}>
-                  No invoices found
+                <td colSpan="6" style={styles.centerMessage}>
+                  No invoices found.
                 </td>
               </tr>
             )}
@@ -385,123 +248,169 @@ const Ewaybillclients = () => {
   );
 };
 
-// Styling Object
 const styles = {
   container: {
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
-    background: "#f4f6f9",
+    padding: "24px",
+    backgroundColor: "#f8fafc",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     minHeight: "100vh",
+    boxSizing: "border-box",
+    color: "#1e293b",
   },
-  headerRow: {
+  header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor: "#ffffff",
+    padding: "20px 24px",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
     marginBottom: "20px",
   },
-  heading: {
-    fontSize: "24px",
-    color: "#1976d2",
-    fontWeight: "bold",
+  title: {
     margin: 0,
+    fontSize: "20px",
+    fontWeight: "600",
+    color: "#0f172a",
   },
-  dropdownContainer: {
+  subtitle: {
+    margin: "4px 0 0 0",
+    fontSize: "13px",
+    color: "#64748b",
+  },
+  controlsBar: {
     display: "flex",
+    justifyContent: "space-between",
     alignItems: "center",
-    background: "#fff",
-    padding: "8px 16px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+    marginBottom: "16px",
+    gap: "12px",
+    flexWrap: "wrap",
   },
-  label: {
-    fontWeight: "bold",
-    color: "#333",
-    marginRight: "10px",
+  searchInput: {
+    width: "320px",
+    padding: "10px 14px",
+    borderRadius: "6px",
+    border: "1px solid #cbd5e1",
     fontSize: "14px",
-  },
-  select: {
-    padding: "8px 12px",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
     outline: "none",
-    cursor: "pointer",
+    backgroundColor: "#ffffff",
+  },
+  countBadge: {
+    fontSize: "13px",
+    color: "#64748b",
+  },
+  errorAlert: {
+    backgroundColor: "#fef2f2",
+    color: "#991b1b",
+    border: "1px solid #fecaca",
+    padding: "12px 16px",
+    borderRadius: "6px",
+    marginBottom: "20px",
     fontSize: "14px",
   },
-  loading: {
-    padding: "10px",
-    marginBottom: "15px",
-    background: "#fff3cd",
-    color: "#856404",
-    borderRadius: "5px",
-  },
-  error: {
-    padding: "10px",
-    marginBottom: "15px",
-    background: "#f8d7da",
-    color: "#721c24",
-    borderRadius: "5px",
-  },
-  tableWrapper: {
-    overflowX: "auto",
-    background: "#fff",
+  tableCard: {
+    backgroundColor: "#ffffff",
     borderRadius: "8px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    border: "1px solid #e2e8f0",
+    overflowX: "auto",
   },
   table: {
     width: "100%",
     borderCollapse: "collapse",
-    minWidth: "1400px",
+    textAlign: "left",
+    fontSize: "14px",
   },
   th: {
-    background: "#1976d2",
-    color: "#fff",
-    padding: "12px",
-    textAlign: "center",
+    backgroundColor: "#f1f5f9",
+    color: "#475569",
+    fontWeight: "600",
+    padding: "12px 16px",
+    borderBottom: "1px solid #e2e8f0",
+    fontSize: "12px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  },
+  tr: {
+    borderBottom: "1px solid #f1f5f9",
   },
   td: {
-    padding: "10px",
-    borderBottom: "1px solid #ddd",
-    textAlign: "center",
+    padding: "14px 16px",
+    verticalAlign: "middle",
+  },
+  tdMuted: {
+    padding: "14px 16px",
+    color: "#94a3b8",
+    fontSize: "12px",
+  },
+  clientName: {
+    fontWeight: "600",
+    color: "#1e293b",
+  },
+  clientMobile: {
+    fontSize: "12px",
+    color: "#64748b",
+    marginTop: "2px",
+  },
+  invoiceBadge: {
+    backgroundColor: "#f1f5f9",
+    padding: "4px 8px",
+    borderRadius: "4px",
     fontSize: "13px",
+    fontWeight: "500",
+    color: "#334155",
   },
-  actionTd: {
-    padding: "10px",
-    borderBottom: "1px solid #ddd",
-    display: "flex",
-    flexDirection: "column",
-    gap: "5px",
-    alignItems: "center",
+  statusSuccess: {
+    backgroundColor: "#dcfce7",
+    color: "#166534",
+    padding: "4px 10px",
+    borderRadius: "12px",
+    fontSize: "12px",
+    fontWeight: "500",
+    display: "inline-block",
   },
-  einvoiceBtn: {
-    background: "#1976d2",
-    color: "#fff",
+  statusPending: {
+    backgroundColor: "#fef3c7",
+    color: "#92400e",
+    padding: "4px 10px",
+    borderRadius: "12px",
+    fontSize: "12px",
+    fontWeight: "500",
+    display: "inline-block",
+  },
+  btnPrimary: {
+    backgroundColor: "#2563eb",
+    color: "#ffffff",
     border: "none",
     padding: "8px 14px",
-    borderRadius: "5px",
+    borderRadius: "6px",
+    fontSize: "13px",
+    fontWeight: "500",
     cursor: "pointer",
-    fontWeight: "bold",
-    fontSize: "12px",
   },
-  deleteIrnBtn: {
-    backgroundColor: "#ff9800",
-    color: "#fff",
+  btnDisabled: {
+    backgroundColor: "#e2e8f0",
+    color: "#94a3b8",
     border: "none",
-    padding: "6px 10px",
-    borderRadius: "4px",
-    fontSize: "12px",
+    padding: "8px 14px",
+    borderRadius: "6px",
+    fontSize: "13px",
+    fontWeight: "500",
+    cursor: "not-allowed",
   },
-  deleteEwbBtn: {
-    backgroundColor: "#f44336",
-    color: "#fff",
-    border: "none",
-    padding: "6px 10px",
-    borderRadius: "4px",
-    fontSize: "12px",
+  btnSecondary: {
+    backgroundColor: "#f1f5f9",
+    color: "#334155",
+    border: "1px solid #cbd5e1",
+    padding: "8px 14px",
+    borderRadius: "6px",
+    fontSize: "13px",
+    fontWeight: "500",
+    cursor: "pointer",
   },
-  noData: {
-    padding: "20px",
+  centerMessage: {
     textAlign: "center",
-    fontWeight: "bold",
+    padding: "40px",
+    color: "#64748b",
   },
 };
 
