@@ -51,9 +51,17 @@ const AuthenticationApi = () => {
 
       setApiResponse(res.data);
 
+      // Check for success status from API
       if (res.data.status_cd === "1") {
         setStatusType("success");
+        
+        // 1. Update Auth Context state
         if (login) login(formData.gstin);
+
+        // 2. Redirect to Dashboard (with a short 1-second delay so the user sees success)
+        setTimeout(() => {
+          navigate("/Ewaybillclients", { replace: true });
+        }, 1000);
       } else {
         setStatusType("error");
       }
@@ -194,7 +202,7 @@ const AuthenticationApi = () => {
           </button>
         </form>
 
-        {/* Live Response Panel in UI */}
+        {/* Live Response Panel */}
         {apiResponse && (
           <div
             style={{
@@ -210,10 +218,12 @@ const AuthenticationApi = () => {
                   backgroundColor: statusType === "success" ? "#16a34a" : "#dc2626",
                 }}
               >
-                {statusType === "success" ? "✓ 200 SUCCESS" : "✕ FAILED"}
+                {statusType === "success" ? "✓ SUCCESS" : "✕ FAILED"}
               </span>
               <span style={styles.responseDesc}>
-                {apiResponse.status_desc || "Response details below:"}
+                {statusType === "success" 
+                  ? "Authenticated! Redirecting to dashboard..." 
+                  : apiResponse.status_desc || "Response details below:"}
               </span>
             </div>
 
@@ -228,7 +238,7 @@ const AuthenticationApi = () => {
   );
 };
 
-// --- Modern Pure CSS Inline Styles ---
+// --- Styles ---
 const styles = {
   outerContainer: {
     display: "flex",
@@ -242,7 +252,7 @@ const styles = {
   card: {
     backgroundColor: "#ffffff",
     borderRadius: "16px",
-    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01)",
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
     border: "1px solid #e2e8f0",
     width: "100%",
     maxWidth: "480px",
@@ -307,7 +317,6 @@ const styles = {
     outline: "none",
     boxSizing: "border-box",
     backgroundColor: "#f8fafc",
-    transition: "border 0.2s ease",
   },
   accordionToggle: {
     background: "none",
@@ -357,7 +366,6 @@ const styles = {
     fontSize: "15px",
     fontWeight: "600",
     marginTop: "8px",
-    transition: "background-color 0.2s ease",
   },
   responseCard: {
     marginTop: "20px",
