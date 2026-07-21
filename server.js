@@ -361,19 +361,8 @@ app.get('/api/ewaybill/by-consigner', async (req, res) => {
   }
 });
 
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
 
-const app = express();
-const PORT = 5000;
 
-app.use(cors());
-app.use(express.json());
-
-const BASE_URL =
-  "https://staging.perione.in/ewaybillapi/v1.03/ewayapi";
-const EMAIL = "sherfuddin.phd@gmail.com";
 
 const headers = {
   accept: "*/*",
