@@ -361,6 +361,177 @@ app.get('/api/ewaybill/by-consigner', async (req, res) => {
   }
 });
 
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+const PORT = 5000;
+
+app.use(cors());
+app.use(express.json());
+
+const BASE_URL =
+  "https://staging.perione.in/ewaybillapi/v1.03/ewayapi";
+const EMAIL = "sherfuddin.phd@gmail.com";
+
+const headers = {
+  accept: "*/*",
+  ip_address: "103.88.236.42",
+  client_id: "PEWAYS3ad9cc820da802c1265893161c36b3cd",
+  client_secret: "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
+  gstin: "36AARFB4347G037",
+  "Content-Type": "application/json",
+  env: "sandbox",
+};
+
+// Reject E-Way Bill
+app.post("/api/reject-ewaybill", async (req, res) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/rejewb?email=${EMAIL}`,
+      req.body,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+// Cancel E-Way Bill
+app.post("/api/cancel-ewaybill", async (req, res) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/canewb?email=${EMAIL}`,
+      req.body,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+// Get E-Way Bill by Number
+app.get("/api/get-ewaybill", async (req, res) => {
+  try {
+    const { ewbNo } = req.query;
+    const response = await axios.get(
+      `${BASE_URL}/getewaybill?email=${EMAIL}&ewbNo=${ewbNo}`,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+// Get E-Way Bills for Transporter
+app.get("/api/get-ewaybills-transporter", async (req, res) => {
+  try {
+    const { date } = req.query;
+    const response = await axios.get(
+      `${BASE_URL}/getewaybillsfortransporter?email=${EMAIL}&date=${date}`,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+// Get E-Way Bills for Transporter by GSTIN
+app.get(
+  "/api/get-ewaybills-transporter-gstin",
+  async (req, res) => {
+    try {
+      const { Gen_gstin, date } = req.query;
+      const response = await axios.get(
+        `${BASE_URL}/getewaybillsfortransporterbygstin?email=${EMAIL}&Gen_gstin=${Gen_gstin}&date=${date}`,
+        { headers }
+      );
+      res.json(response.data);
+    } catch (error) {
+      res.status(500).json(error.response?.data || error.message);
+    }
+  }
+);
+
+// Get E-Way Bill Report by Transporter Assigned Date
+app.get(
+  "/api/get-ewaybill-report-transporter",
+  async (req, res) => {
+    try {
+      const { date, stateCode } = req.query;
+      const response = await axios.get(
+        `${BASE_URL}/getewaybillreportbytransporterassigneddate?email=${EMAIL}&date=${date}&stateCode=${stateCode}`,
+        { headers }
+      );
+      res.json(response.data);
+    } catch (error) {
+      res.status(500).json(error.response?.data || error.message);
+    }
+  }
+);
+
+// Get E-Way Bills by Date
+app.get("/api/get-ewaybills-by-date", async (req, res) => {
+  try {
+    const { date, stateCode } = req.query;
+    const response = await axios.get(
+      `${BASE_URL}/getewaybillsbydate?email=${EMAIL}&date=${date}&stateCode=${stateCode}`,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+// Initiate Multi Vehicle
+app.post("/api/init-multi", async (req, res) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/initmulti?email=${EMAIL}`,
+      req.body,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+// Add Multi Vehicle
+app.post("/api/add-multi", async (req, res) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/addmulti?email=${EMAIL}`,
+      req.body,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+// Update Multi Vehicle
+app.post("/api/update-multi", async (req, res) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/updtmulti?email=${EMAIL}`,
+      req.body,
+      { headers }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json(error.response?.data || error.message);
+  }
+});
+
+
 
 
 
