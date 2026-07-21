@@ -361,6 +361,44 @@ app.get('/api/ewaybill/by-consigner', async (req, res) => {
   }
 });
 
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.post('/api/extend-validity', async (req, res) => {
+  try {
+    const payload = req.body;
+
+    const response = await axios.post(
+      `https://staging.perione.in/ewaybillapi/v1.03/ewayapi/extendvalidity?email=${process.env.EWAY_EMAIL}`,
+      payload,
+      {
+        headers: {
+          accept: '*/*',
+          ip_address: process.env.EWAY_IP,
+          client_id: process.env.EWAY_CLIENT_ID,
+          client_secret: process.env.EWAY_CLIENT_SECRET,
+          gstin: process.env.EWAY_GSTIN,
+          'Content-Type': 'application/json',
+          env: process.env.EWAY_ENV
+        }
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({
+      error: error.response?.data || error.message
+    });
+  }
+});
+
 
 
 
