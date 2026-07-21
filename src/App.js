@@ -14,7 +14,6 @@ import ClosureEwayBill from "./Ewaybill/ClosureEwayBill";
 import RejectEwayBill from "./Ewaybill/RejectEwayBill";
 import UpdateTransporter from "./Ewaybill/UpdateTransporter";
 import ExtendValidityEwayBill from "./Ewaybill/ExtendValidityEwayBill";
-import RegenerateConsolidatedEwayBill from "./Ewaybill/GenenerateConsolidatedEwayBill";
 import GetEwayBillDetails from "./Ewaybill/GetEwayBillDetails";
 import GetEwayBillTransporterByDate from "./Ewaybill/GetEwayBillTransporterByDate";
 import GetEwayBillsTransporterByGstin from "./Ewaybill/GetEwayBillsTransporterByGstin";
@@ -92,7 +91,6 @@ return ( <Router> <Routes>
 
       <Route path="update-transporter" element={<UpdateTransporter />} />
       <Route path="extend-validity" element={<ExtendValidityEwayBill />} />
-      <Route path="regenerate-consolidated" element={<RegenerateConsolidatedEwayBill />} />
 
       <Route path="get-ewaybill-details" element={<GetEwayBillDetails />} />
       <Route path="get-transporter-by-date" element={<GetEwayBillTransporterByDate />} />
