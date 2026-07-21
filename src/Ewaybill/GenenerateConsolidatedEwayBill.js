@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const RenerateConsolidatedEwayBill = () => {
+const GenerateConsolidatedEwayBill = () => {
   const [formData, setFormData] = useState({
     fromPlace: "FRAZER TOWN",
     fromState: "36",
@@ -181,4 +181,4 @@ const RenerateConsolidatedEwayBill = () => {
 const labelStyle = { display: "block", fontWeight: "bold", marginBottom: "6px", fontSize: "14px" };
 const inputStyle = { width: "100%", padding: "10px", border: "1px solid #CCC", borderRadius: "6px", boxSizing: "border-box" };
 
-export default RenerateConsolidatedEwayBill;
+export default GenerateConsolidatedEwayBill;

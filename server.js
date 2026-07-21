@@ -197,6 +197,172 @@ app.post('/api/ewaybill/generate-consolidated', async (req, res) => {
 });
 
 
+app.post('/api/ewaybill/update-transporter', async (req, res) => {
+  try {
+    const { ewbNo, transporterId } = req.body;
+
+    const targetUrl =
+      'https://staging.perione.in/ewaybillapi/v1.03/ewayapi/updatetransporter?email=sherfuddin.phd%40gmail.com';
+
+    const response = await axios.post(
+      targetUrl,
+      {
+        ewbNo: Number(ewbNo),
+        transporterId,
+      },
+      {
+        headers: {
+          'accept': '*/*',
+          'ip_address': '103.88.236.42',
+          'client_id': 'PEWAYS3ad9cc820da802c1265893161c36b3cd',
+          'client_secret': 'PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e',
+          'gstin': '36AARFB4347G037',
+          'Content-Type': 'application/json',
+          'env': 'sandbox',
+        },
+      }
+    );
+
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Update Transporter API Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to update transporter',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+
+// Shared headers for PeriOne Sandbox API
+const COMMON_HEADERS = {
+  'accept': '*/*',
+  'ip_address': '103.88.236.42',
+  'client_id': 'PEWAYS3ad9cc820da802c1265893161c36b3cd',
+  'client_secret': 'PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e',
+  'gstin': '36AARFB4347G037',
+  'env': 'sandbox',
+};
+
+const BASE_URL = 'https://staging.perione.in/ewaybillapi/v1.03/ewayapi';
+const DEFAULT_EMAIL = 'sherfuddin.phd@gmail.com';
+
+// -------------------------------------------------------------
+// 1. Cancel E-Way Bill
+// -------------------------------------------------------------
+app.post('/api/ewaybill/cancel', async (req, res) => {
+  try {
+    const { ewbNo, cancelRsnCode, cancelRmrk } = req.body;
+    const url = `${BASE_URL}/canewb?email=${encodeURIComponent(DEFAULT_EMAIL)}`;
+
+    const response = await axios.post(
+      url,
+      {
+        ewbNo: Number(ewbNo),
+        cancelRsnCode: Number(cancelRsnCode),
+        cancelRmrk,
+      },
+      { headers: { ...COMMON_HEADERS, 'Content-Type': 'application/json' } }
+    );
+
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Cancel EWB Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to cancel E-Way Bill',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// -------------------------------------------------------------
+// 2. Get HSN Details
+// -------------------------------------------------------------
+app.get('/api/ewaybill/hsn-details', async (req, res) => {
+  try {
+    const { hsncode } = req.query;
+    const url = `${BASE_URL}/gethsndetailsbyhsncode?email=${encodeURIComponent(
+      DEFAULT_EMAIL
+    )}&hsncode=${hsncode}`;
+
+    const response = await axios.get(url, { headers: COMMON_HEADERS });
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('HSN Details Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to fetch HSN details',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// -------------------------------------------------------------
+// 3. Get GSTIN Details
+// -------------------------------------------------------------
+app.get('/api/ewaybill/gstin-details', async (req, res) => {
+  try {
+    const { gstin } = req.query;
+    const url = `${BASE_URL}/getgstindetails?email=${encodeURIComponent(
+      DEFAULT_EMAIL
+    )}&GSTIN=${gstin}`;
+
+    const response = await axios.get(url, { headers: COMMON_HEADERS });
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('GSTIN Details Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to fetch GSTIN details',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// -------------------------------------------------------------
+// 4. Get Error List
+// -------------------------------------------------------------
+app.get('/api/ewaybill/error-list', async (req, res) => {
+  try {
+    const url = `${BASE_URL}/geterrorlist?email=${encodeURIComponent(DEFAULT_EMAIL)}`;
+    const response = await axios.get(url, { headers: COMMON_HEADERS });
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Error List Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to fetch error list',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// -------------------------------------------------------------
+// 5. Get E-Way Bill Generated by Consigner
+// -------------------------------------------------------------
+app.get('/api/ewaybill/by-consigner', async (req, res) => {
+  try {
+    const { docType, docNo } = req.query;
+    const url = `${BASE_URL}/getewaybillgeneratedbyconsigner?email=${encodeURIComponent(
+      DEFAULT_EMAIL
+    )}&docType=${docType}&docNo=${encodeURIComponent(docNo)}`;
+
+    const response = await axios.get(url, { headers: COMMON_HEADERS });
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Get By Consigner Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to fetch EWB by consigner',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+
+
 
 
 app.listen(PORT, () => {

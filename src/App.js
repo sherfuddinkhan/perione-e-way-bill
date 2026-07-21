@@ -14,7 +14,7 @@ import ClosureEwayBill from "./Ewaybill/ClosureEwayBill";
 import RejectEwayBill from "./Ewaybill/RejectEwayBill";
 import UpdateTransporter from "./Ewaybill/UpdateTransporter";
 import ExtendValidityEwayBill from "./Ewaybill/ExtendValidityEwayBill";
-import RegenerateConsolidatedEwayBill from "./Ewaybill/RegenerateConsolidatedEwayBill";
+import RegenerateConsolidatedEwayBill from "./Ewaybill/GenenerateConsolidatedEwayBill";
 import GetEwayBillDetails from "./Ewaybill/GetEwayBillDetails";
 import GetEwayBillTransporterByDate from "./Ewaybill/GetEwayBillTransporterByDate";
 import GetEwayBillsTransporterByGstin from "./Ewaybill/GetEwayBillsTransporterByGstin";
@@ -85,7 +85,7 @@ return ( <Router> <Routes>
 
       <Route path="generate-eway-bill" element={<GenerateEwayBill />} />
       <Route path="update-partb" element={<UpdatePartBVehicleNumber />} />
-      <Route path="generate-consolidated" element={<GenerateConsolidatedEwayBill />} />
+      <Route path="generate-consolidated" element={<GenerateConsolidatedEwayBill/>} />
       <Route path="cancel-eway-bill" element={<CancelEwayBill />} />
       <Route path="closure-eway-bill" element={<ClosureEwayBill />} />
       <Route path="reject-ewaybill" element={<RejectEwayBill />} />
