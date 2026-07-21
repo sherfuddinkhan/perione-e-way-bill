@@ -90,6 +90,115 @@ app.post("/api/generate-ewaybill", async (req, res) => {
   }
 });
 
+app.post('/api/ewaybill/update-vehicle', async (req, res) => {
+  try {
+    const {
+      ewbNo,
+      vehicleNo,
+      fromPlace,
+      fromState,
+      reasonCode,
+      reasonRem,
+      transDocNo,
+      transDocDate,
+      transMode,
+    } = req.body;
+
+    const targetUrl =
+      'https://staging.perione.in/ewaybillapi/v1.03/ewayapi/vehewb?email=sherfuddin.phd%40gmail.com';
+
+    const response = await axios.post(
+      targetUrl,
+      {
+        ewbNo: Number(ewbNo),
+        vehicleNo,
+        fromPlace,
+        fromState: Number(fromState),
+        reasonCode: String(reasonCode),
+        reasonRem,
+        transDocNo,
+        transDocDate,
+        transMode: String(transMode),
+      },
+      {
+        headers: {
+          'accept': '*/*',
+          'ip_address': '103.88.236.42',
+          'client_id': 'PEWAYS3ad9cc820da802c1265893161c36b3cd',
+          'client_secret': 'PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e',
+          'gstin': '36AARFB4347G037',
+          'Content-Type': 'application/json',
+          'env': 'sandbox',
+        },
+      }
+    );
+
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('E-Way Bill API Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to update vehicle details',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+
+app.post('/api/ewaybill/generate-consolidated', async (req, res) => {
+  try {
+    const {
+      fromPlace,
+      fromState,
+      vehicleNo,
+      transMode,
+      transDocNo,
+      transDocDate,
+      tripSheetEwbBills,
+    } = req.body;
+
+    const targetUrl =
+      'https://staging.perione.in/ewaybillapi/v1.03/ewayapi/gencewb?email=sherfuddin.phd%40gmail.com';
+
+    const response = await axios.post(
+      targetUrl,
+      {
+        fromPlace,
+        fromState: Number(fromState),
+        vehicleNo,
+        transMode: String(transMode),
+        transDocNo,
+        transDocDate,
+        // Array of E-Way Bill objects e.g. [{ ewbNo: "171012148940" }]
+        tripSheetEwbBills,
+      },
+      {
+        headers: {
+          'accept': '*/*',
+          'ip_address': '103.88.236.42',
+          'client_id': 'PEWAYS3ad9cc820da802c1265893161c36b3cd',
+          'client_secret': 'PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e',
+          'gstin': '36AARFB4347G037',
+          'Content-Type': 'application/json',
+          'env': 'sandbox',
+        },
+      }
+    );
+
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Generate Consolidated EWB API Error:', error.response?.data || error.message);
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.status_desc || 'Failed to generate consolidated E-Way Bill',
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+
+
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

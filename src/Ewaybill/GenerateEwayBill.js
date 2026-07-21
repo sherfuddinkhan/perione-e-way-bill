@@ -123,7 +123,7 @@ const DEFAULT_PAYLOAD = {
 
 // --- Main Arrow Function Component ---
 
-const GenerateEwayBillApp = () => {
+const GenerateEwayBill = () => {
   const [formData, setFormData] = useState(DEFAULT_PAYLOAD);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
@@ -259,4 +259,4 @@ const GenerateEwayBillApp = () => {
   );
 };
 
-export default GenerateEwayBillApp;
+export default GenerateEwayBill;
