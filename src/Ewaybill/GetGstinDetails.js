@@ -1,7 +1,42 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const GetGstinDetails=()=> {
+// --- ResponseViewer Component ---
+const ResponseViewer = ({ response }) => {
+  if (!response) return null;
+
+  const isSuccess = response.success;
+
+  return (
+    <div
+      style={{
+        ...styles.responseCard,
+        backgroundColor: isSuccess ? "#f0fdf4" : "#fef2f2",
+        borderColor: isSuccess ? "#bbf7d0" : "#fecaca",
+      }}
+    >
+      <div style={styles.responseHeader}>
+        <span
+          style={{
+            ...styles.statusBadge,
+            backgroundColor: isSuccess ? "#16a34a" : "#dc2626",
+          }}
+        >
+          {isSuccess ? "SUCCESS" : "FAILED"}
+        </span>
+        <span style={styles.responseDesc}>
+          {response.data?.status_desc || "Response Details"}
+        </span>
+      </div>
+      <pre style={styles.jsonViewer}>
+        {JSON.stringify(response.data, null, 2)}
+      </pre>
+    </div>
+  );
+};
+
+// --- Main GetGstinDetails Component ---
+const GetGstinDetails = () => {
   const [gstin, setGstin] = useState('36AARFB4347G037');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
@@ -27,28 +62,38 @@ const GetGstinDetails=()=> {
   };
 
   return (
-    <div style={cardStyle}>
-      <h3>3. Get GSTIN Details</h3>
-      <form onSubmit={handleSearch} style={formStyle}>
-        <div>
-          <label>GSTIN:</label>
-          <input
-            type="text"
-            value={gstin}
-            onChange={(e) => setGstin(e.target.value)}
-            placeholder="e.g. 36AARFB4347G037"
-            required
-            style={inputStyle}
-          />
+    <div style={styles.outerContainer}>
+      <div style={styles.card}>
+        <div style={styles.header}>
+          <span style={styles.badge}>Lookup</span>
+          <h2 style={styles.title}>3. Get GSTIN Details</h2>
+          <p style={styles.subtitle}>Verify and fetch taxpayer profile info</p>
         </div>
-        <button type="submit" disabled={loading} style={buttonStyle}>
-          {loading ? 'Fetching...' : 'Get Details'}
-        </button>
-      </form>
-      <ResponseViewer response={response} />
+
+        <form onSubmit={handleSearch} style={styles.form}>
+          <div style={styles.fieldGroup}>
+            <label style={styles.label}>GSTIN</label>
+            <input
+              type="text"
+              value={gstin}
+              onChange={(e) => setGstin(e.target.value)}
+              placeholder="e.g. 36AARFB4347G037"
+              required
+              style={styles.input}
+            />
+          </div>
+
+          <button type="submit" disabled={loading} style={styles.button}>
+            {loading ? 'Fetching...' : 'Get Details'}
+          </button>
+        </form>
+
+        <ResponseViewer response={response} />
+      </div>
     </div>
   );
-}
+};
+
 // --- Styles ---
 const styles = {
   outerContainer: {
@@ -174,4 +219,5 @@ const styles = {
     maxHeight: "180px",
   },
 };
+
 export default GetGstinDetails;

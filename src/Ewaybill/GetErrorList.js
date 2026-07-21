@@ -1,7 +1,42 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const ErrorList=()=> {
+// --- ResponseViewer Component ---
+const ResponseViewer = ({ response }) => {
+  if (!response) return null;
+
+  const isSuccess = response.success;
+
+  return (
+    <div
+      style={{
+        ...styles.responseCard,
+        backgroundColor: isSuccess ? "#f0fdf4" : "#fef2f2",
+        borderColor: isSuccess ? "#bbf7d0" : "#fecaca",
+      }}
+    >
+      <div style={styles.responseHeader}>
+        <span
+          style={{
+            ...styles.statusBadge,
+            backgroundColor: isSuccess ? "#16a34a" : "#dc2626",
+          }}
+        >
+          {isSuccess ? "SUCCESS" : "FAILED"}
+        </span>
+        <span style={styles.responseDesc}>
+          {response.data?.status_desc || "Response Details"}
+        </span>
+      </div>
+      <pre style={styles.jsonViewer}>
+        {JSON.stringify(response.data, null, 2)}
+      </pre>
+    </div>
+  );
+};
+
+// --- Main ErrorList Component ---
+const ErrorList = () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 
@@ -23,15 +58,25 @@ const ErrorList=()=> {
   };
 
   return (
-    <div style={cardStyle}>
-      <h3>4. Get Error List</h3>
-      <button onClick={handleFetch} disabled={loading} style={buttonStyle}>
-        {loading ? 'Loading Error List...' : 'Fetch Error List'}
-      </button>
-      <ResponseViewer response={response} />
+    <div style={styles.outerContainer}>
+      <div style={styles.card}>
+        <div style={styles.header}>
+          <span style={styles.badge}>System</span>
+          <h2 style={styles.title}>4. Get Error List</h2>
+          <p style={styles.subtitle}>Load system error codes and definitions</p>
+        </div>
+
+        <button onClick={handleFetch} disabled={loading} style={styles.button}>
+          {loading ? 'Loading Error List...' : 'Fetch Error List'}
+        </button>
+
+        {/* ResponseViewer renders here */}
+        <ResponseViewer response={response} />
+      </div>
     </div>
   );
-}
+};
+
 // --- Styles ---
 const styles = {
   outerContainer: {
@@ -157,4 +202,5 @@ const styles = {
     maxHeight: "180px",
   },
 };
+
 export default ErrorList;
