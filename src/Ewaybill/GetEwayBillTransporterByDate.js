@@ -1,72 +1,147 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const GetEwayBillTransporterByDate = () => {
-  const [formData, setFormData] = useState({
-    date: "21/07/2026",
-    stateCode: "36",
-  });
+  const [date, setDate] = useState("2026-07-21");
+  const [ewayBills, setEwayBills] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState(null);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const formatDate = (inputDate) => {
+    const [year, month, day] = inputDate.split("-");
+    return `${day}/${month}/${year}`;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setResponse(null);
-    setErrorMsg("");
-
+  const fetchEwayBills = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/ewaybill/getewaybillsbydate?date=${encodeURIComponent(formData.date)}&stateCode=${formData.stateCode}`);
-      const data = await res.json();
-      if (res.ok && data.status_cd === "1") {
-        setResponse(data);
+      setLoading(true);
+      setMessage("");
+
+      const formattedDate = formatDate(date);
+
+      const response = await axios.get(
+        "http://localhost:5000/api/ewaybill/transporter-by-date",
+        {
+          params: { date: formattedDate },
+        }
+      );
+
+      if (response.data.status_cd === "1") {
+        setEwayBills(response.data.data || []);
+        setMessage(response.data.status_desc);
       } else {
-        setErrorMsg(data.status_desc || "Failed to fetch list.");
+        setEwayBills([]);
+        setMessage(response.data.status_desc || "No data found");
       }
-    } catch (err) {
-      setErrorMsg("Network error.");
+    } catch (error) {
+      console.error(error);
+      setMessage(
+        error.response?.data?.message || "Failed to fetch E-Way Bills"
+      );
+      setEwayBills([]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: "700px", margin: "20px auto", padding: "24px", background: "#fff", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-      <h2 style={{ color: "#1A73E8" }}>E-Way Bills by Date</h2>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <label style={labelStyle}>Date (DD/MM/YYYY) *</label>
-          <input type="text" name="date" value={formData.date} onChange={handleChange} style={inputStyle} required />
-        </div>
-        <div>
-          <label style={labelStyle}>State Code</label>
-          <input type="text" name="stateCode" value={formData.stateCode} onChange={handleChange} style={inputStyle} />
-        </div>
-        <button type="submit" disabled={loading} style={buttonStyle}>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Get E-Way Bills for Transporter by Date</h2>
+
+      <div style={styles.formRow}>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          style={styles.input}
+        />
+
+        <button onClick={fetchEwayBills} style={styles.button}>
           {loading ? "Loading..." : "Fetch E-Way Bills"}
         </button>
-      </form>
+      </div>
 
-      {errorMsg && <div style={errorStyle}><strong>Error:</strong> {errorMsg}</div>}
-      {response && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Results ({response.data?.length || 0})</h3>
-          <pre style={{ background: "#f8f9fa", padding: "15px", borderRadius: "6px", overflow: "auto", maxHeight: "500px" }}>
-            {JSON.stringify(response.data, null, 2)}
-          </pre>
+      {message && <p style={styles.message}>{message}</p>}
+
+      {ewayBills.length > 0 && (
+        <div style={styles.tableWrapper}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th>EWB No</th>
+                <th>EWB Date</th>
+                <th>Status</th>
+                <th>Doc No</th>
+                <th>Doc Date</th>
+                <th>Place</th>
+                <th>Valid Upto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ewayBills.map((bill, index) => (
+                <tr key={index}>
+                  <td>{bill.ewbNo}</td>
+                  <td>{bill.ewbDate}</td>
+                  <td>{bill.status}</td>
+                  <td>{bill.docNo}</td>
+                  <td>{bill.docDate}</td>
+                  <td>{bill.delPlace}</td>
+                  <td>{bill.validUpto}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
   );
 };
 
-const labelStyle = { display: "block", fontWeight: "bold", marginBottom: "6px", fontSize: "14px" };
-const inputStyle = { width: "100%", padding: "10px", border: "1px solid #CCC", borderRadius: "6px", boxSizing: "border-box" };
-const buttonStyle = { padding: "12px", background: "#1A73E8", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", fontSize: "16px", cursor: "pointer" };
-const errorStyle = { marginTop: "20px", padding: "12px", background: "#FFEBE9", color: "#D93025", border: "1px solid #FFC1C0", borderRadius: "6px" };
+const styles = {
+  container: {
+    maxWidth: "1100px",
+    margin: "20px auto",
+    padding: "20px",
+    fontFamily: "Arial, sans-serif",
+  },
+  title: {
+    textAlign: "center",
+    color: "#1A73E8",
+    marginBottom: "20px",
+  },
+  formRow: {
+    display: "flex",
+    gap: "10px",
+    marginBottom: "20px",
+    justifyContent: "center",
+  },
+  input: {
+    padding: "10px",
+    fontSize: "16px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+  },
+  button: {
+    padding: "10px 20px",
+    fontSize: "16px",
+    backgroundColor: "#1A73E8",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+  message: {
+    textAlign: "center",
+    marginBottom: "15px",
+    fontWeight: "bold",
+  },
+  tableWrapper: {
+    overflowX: "auto",
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+  },
+};
 
 export default GetEwayBillTransporterByDate;
