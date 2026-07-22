@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Form, Input, Select, DatePicker, Button, Card, Alert, Typography, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Select, DatePicker, Button, Alert, Card, Typography } from "antd";
 import dayjs from "dayjs";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
 
 const UpdatePartBVehicleNumber = () => {
@@ -11,19 +11,48 @@ const UpdatePartBVehicleNumber = () => {
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Auto-populate fields from localStorage safely
+ useEffect(() => {
+    try {
+      const savedRaw = localStorage.getItem("ewayBillData");
+      if (!savedRaw) return;
+
+      const savedEwb = JSON.parse(savedRaw);
+
+      // Check if ewaybill data exists in localStorage
+      if (savedEwb.eWayBillNumber || savedEwb.ewayBillNo) {
+        const formData = {
+          ewbNo: savedEwb.eWayBillNumber || savedEwb.ewayBillNo || "",
+          vehicleNo: savedEwb.vehicleNo || "",
+          fromPlace: savedEwb.fromPlace || "",
+          fromState: Number(savedEwb.fromState || 36),
+          reasonCode: String(savedEwb.reasonCode || "1"),
+          reasonRem: savedEwb.reasonRem || "First Time Update",
+          transDocNo: savedEwb.transDocNo || "",
+          transDocDate: savedEwb.transDocDate ? dayjs(savedEwb.transDocDate, "DD/MM/YYYY") : null,
+          transMode: String(savedEwb.transMode || "1"),
+        };
+
+        // Use setFieldsValue followed by resetFields to ensure AntD updates inputs
+        form.setFieldsValue(formData);
+      }
+    } catch (err) {
+      console.error("Error reading from localStorage:", err);
+    }
+  }, [form]);
   const handleSubmit = async (values) => {
     setLoading(true);
     setResponse(null);
     setErrorMsg("");
 
     const payload = {
-      ewbNo: Number(values.ewbNo),
-      vehicleNo: values.vehicleNo,
-      fromPlace: values.fromPlace,
+      ewbNo: String(values.ewbNo).trim(), // Retain string to avoid precision/leading-zero issues
+      vehicleNo: values.vehicleNo?.trim(),
+      fromPlace: values.fromPlace?.trim(),
       fromState: Number(values.fromState),
       reasonCode: values.reasonCode,
-      reasonRem: values.reasonRem,
-      transDocNo: values.transDocNo,
+      reasonRem: values.reasonRem?.trim(),
+      transDocNo: values.transDocNo?.trim(),
       transDocDate: values.transDocDate ? values.transDocDate.format("DD/MM/YYYY") : "",
       transMode: values.transMode,
     };
@@ -45,16 +74,20 @@ const UpdatePartBVehicleNumber = () => {
         setErrorMsg(data.status_desc || "Failed to update vehicle information.");
       }
     } catch (err) {
-      setErrorMsg("Network error. Please check backend connection.");
+      setErrorMsg("Network error. Please check your backend connection.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto" }}>
+    <div style={{ maxWidth: 800, margin: "20px auto" }}>
       <Card
-        title={<Title level={3} style={{ margin: 0, color: "#1A73E8" }}>Update Part-B / Vehicle Number</Title>}
+        title={
+          <Title level={3} style={{ margin: 0, color: "#1A73E8" }}>
+            Update Part-B / Vehicle Number
+          </Title>
+        }
         bordered={false}
         style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.08)", borderRadius: 8 }}
       >
@@ -72,9 +105,12 @@ const UpdatePartBVehicleNumber = () => {
             <Form.Item
               label="E-Way Bill Number"
               name="ewbNo"
-              rules={[{ required: true, message: "Please enter EWB Number" }]}
+              rules={[
+                { required: true, message: "Please enter EWB Number" },
+                { pattern: /^\d{12}$/, message: "EWB Number must be 12 digits" },
+              ]}
             >
-              <Input placeholder="e.g. 171012148940" />
+              <Input placeholder="e.g. 171012148940" maxLength={12} />
             </Form.Item>
 
             <Form.Item

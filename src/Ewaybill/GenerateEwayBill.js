@@ -347,6 +347,59 @@ useEffect(() => {
   });
 }, [invoiceData]);
 
+const handleSaveEwayBillResponse = (generatedResponse) => {
+  if (!generatedResponse) {
+    alert("No E-Way Bill response available to save.");
+    return false;
+  }
+
+  // API response object
+  const apiData = generatedResponse.data || generatedResponse;
+
+  // Get invoice details from localStorage if needed
+  const invoiceData = JSON.parse(
+    localStorage.getItem("selectedInvoice") || "{}"
+  );
+
+  const dynamicId =
+    invoiceData?.keyID ||
+    location.state?.pid;
+
+  // Create clean object to store
+  const ewayBillData = {
+    id: Number(dynamicId || 0),
+
+    eWayBillNumber: String(apiData.ewayBillNo || ""),
+
+    ewayBillDate: apiData.ewayBillDate || "",
+
+    validUpto: apiData.validUpto || "",
+
+    alert: apiData.alert || "",
+
+    docNo: formData.docNo || "",
+
+    docDate: formData.docDate || "",
+
+    vehicleNo: formData.vehicleNo || "",
+
+    fromGstin: formData.fromGstin || "",
+
+    toGstin: formData.toGstin || ""
+  };
+
+  console.log("Saving EWB Data:", ewayBillData);
+
+  // Save to localStorage
+  localStorage.setItem(
+    "ewaybill_response",
+    JSON.stringify(ewayBillData)
+  );
+
+  alert("E-Way Bill response saved successfully!");
+
+  return true;
+};
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
@@ -368,26 +421,65 @@ useEffect(() => {
     setResponse(null);
 
     try {
-    console.log("Received Body:",JSON.stringify(formData) );
-      const res = await fetch('http://localhost:5000/api/generate-ewaybill', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+  console.log("Received Body:", JSON.stringify(formData));
 
-      const result = await res.json();
-      if (res.ok && result.status_cd === "1") {
-        setResponse(result);
-      } else {
-        setError(result.status_desc || result.message || 'E-Way Bill Generation Failed');
-      }
-    } catch (err) {
-      setError('Server unreachable. Make sure the Node backend is active.');
-    } finally {
-      setLoading(false);
-    }
+  const res = await fetch("http://localhost:5000/api/generate-ewaybill", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
+
+  const result = await res.json();
+
+  if (res.ok && result.status_cd === "1") {
+    setResponse(result);
+// Save response to localStorage
+  handleSaveEwayBillResponse(result);
+    // Store complete response
+    const ewayBillResponse = result;
+
+    console.log("ewayBillResponse", ewayBillResponse);
+
+    localStorage.setItem(
+      "ewaybill_response",
+      JSON.stringify(ewayBillResponse)
+    );
+
+   // Combine EWB response + original form data
+  const ewayBillData = {
+    // Response fields
+    eWayBillNumber: result.data.ewayBillNo,
+    ewayBillDate: result.data.ewayBillDate,
+    validUpto: result.data.validUpto,
+    alert: result.data.alert,
+
+    // Original form fields needed for next components
+    vehicleNo: formData.vehicleNo,
+    fromPlace: formData.fromPlace,
+    fromState: formData.fromStateCode,
+    transDocNo: formData.transDocNo,
+    transMode: formData.transMode,
+    reasonCode: "1",
+    reasonRem: "First Time Update"
   };
 
+  localStorage.setItem(
+    "ewayBillData",
+    JSON.stringify(ewayBillData)
+  );
+  } else {
+    setError(
+      result.status_desc ||
+      result.message ||
+      "E-Way Bill Generation Failed"
+    );
+  }
+} catch (err) {
+  setError("Server unreachable. Make sure the Node backend is active.");
+} finally {
+  setLoading(false);
+}
+  }
   return (
     <div className="eway-container">
       <div className="eway-card">
@@ -418,7 +510,7 @@ useEffect(() => {
               <FormField label="Doc No" name="docNo" value={formData.docNo} onChange={handleInputChange} />
               <FormField label="Doc Date" name="docDate" value={formData.docDate} onChange={handleInputChange} placeholder="DD/MM/YYYY" />
               <FormField label="Transaction Type" name="transactionType" value={formData.transactionType} onChange={handleInputChange} type="number" />
-              <FormField label="Main HSN Code" name="mainHsnCode" value={formData.mainHsnCode} onChange={handleInputChange} type="number" />
+              <FormField label="from GSTIN" name="fromGstin" value={formData.fromGstin} onChange={handleInputChange} type="text" />
             </div>
           </section>
 
