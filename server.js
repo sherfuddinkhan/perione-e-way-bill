@@ -269,6 +269,100 @@ app.post('/api/ewaybill/update-transporter', async (req, res) => {
 });
 
 
+app.get("/api/gettripsheet", async (req, res) => {
+  try {
+    const { tripSheetNo, email } = req.query;
+
+    const headers = {
+      accept: "*/*",
+      ip_address: req.headers.ip_address,   // dynamic
+      client_id: req.headers.client_id,     // dynamic
+      client_secret: req.headers.client_secret, // dynamic
+      gstin: req.headers.gstin,             // dynamic
+      env: req.headers.env,                 // dynamic
+    };
+
+    const response = await axios.get(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/gettripsheet",
+      {
+        params: { email, tripSheetNo },
+        headers,
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({
+      error: error.response?.data || "Failed to fetch Trip Sheet",
+    });
+  }
+});
+
+
+// Regenerate Trip Sheet E-Way Bill
+app.post("/api/regentripsheet", async (req, res) => {
+  try {
+    // Get email from query parameter
+    const { email } = req.query;
+
+    // Get request body from frontend
+    const {
+      tripSheetNo,
+      vehicleNo,
+      fromPlace,
+      fromState,
+      reasonCode,
+      reasonRem,
+      transDocNo,
+      transDocDate,
+      transMode,
+    } = req.body;
+
+    // Dynamic headers from frontend
+    const headers = {
+      accept: "*/*",
+      "Content-Type": "application/json",
+      ip_address: req.headers.ip_address,
+      client_id: req.headers.client_id,
+      client_secret: req.headers.client_secret,
+      gstin: req.headers.gstin,
+      env: req.headers.env,
+    };
+
+    // Call Perione API
+    const response = await axios.post(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/regentripsheet",
+      {
+        tripSheetNo: Number(tripSheetNo),
+        vehicleNo,
+        fromPlace,
+        fromState: Number(fromState),
+        reasonCode,
+        reasonRem,
+        transDocNo,
+        transDocDate,
+        transMode,
+      },
+      {
+        params: { email },
+        headers,
+      }
+    );
+
+    // Send response back to frontend
+    res.json(response.data);
+  } catch (error) {
+    console.error("Regenerate Trip Sheet Error:", error.response?.data || error.message);
+
+    res.status(error.response?.status || 500).json({
+      error: error.response?.data || "Failed to regenerate Trip Sheet",
+    });
+  }
+});
+
+
+
+
 // Shared headers for PeriOne Sandbox API
 const COMMON_HEADERS = {
   'accept': '*/*',
@@ -354,6 +448,52 @@ app.get('/api/ewaybill/gstin-details', async (req, res) => {
     });
   }
 });
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Get Transporter Details API
+app.get("/api/gettransporterdetails", async (req, res) => {
+  try {
+    const { email, trn_no } = req.query;
+
+    // Dynamic headers from frontend
+    const headers = {
+      accept: "*/*",
+      ip_address: req.headers.ip_address,
+      client_id: req.headers.client_id,
+      client_secret: req.headers.client_secret,
+      gstin: req.headers.gstin,
+      env: req.headers.env,
+    };
+
+    const response = await axios.get(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/gettransporterdetails",
+      {
+        params: { email, trn_no },
+        headers,
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(
+      "Get Transporter Details Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(error.response?.status || 500).json({
+      error:
+        error.response?.data || "Failed to fetch transporter details",
+    });
+  }
+});
+
 
 // -------------------------------------------------------------
 // 4. Get Error List

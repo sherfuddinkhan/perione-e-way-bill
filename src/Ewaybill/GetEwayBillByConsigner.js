@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-
-
 // --- ResponseViewer Component ---
 const ResponseViewer = ({ response }) => {
   if (!response) return null;

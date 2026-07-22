@@ -25,7 +25,7 @@ import GetConsolidatedEwayBill from "./Ewaybill/GetConsolidatedEwayBill";
 import GetEwayBillByConsigner from "./Ewaybill/GetEwayBillByConsigner";
 import GetErrorList from "./Ewaybill/GetErrorList";
 import GetGstinDetails from "./Ewaybill/GetGstinDetails";
-import GetTransinDetails from "./Ewaybill/GetTransinDetails";
+import GetTransporterDetails from "./Ewaybill/GetTransporterDetails";
 import GetHsnDetails from "./Ewaybill/GetHsnDetails";
 import InitiateMultiVehicleMovement from "./Ewaybill/InitiateMultiVehicleMovement";
 import AddMultiVehicles from "./Ewaybill/AddMultiVehicles";
@@ -104,7 +104,7 @@ return ( <Router> <Routes>
 
       <Route path="get-error-list" element={<GetErrorList />} />
       <Route path="get-gstin-details" element={<GetGstinDetails />} />
-      <Route path="get-transin-details" element={<GetTransinDetails />} />
+      <Route path="get-transin-details" element={<GetTransporterDetails />} />
       <Route path="get-hsn-details" element={<GetHsnDetails />} />
 
       <Route path="initiate-multi-vehicle" element={<InitiateMultiVehicleMovement />} />
