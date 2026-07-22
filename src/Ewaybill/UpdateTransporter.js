@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 const UpdateTransporter = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +9,27 @@ const UpdateTransporter = () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+  useEffect(() => {
+  try {
+    const savedRaw = localStorage.getItem("ewayBillData");
+    if (!savedRaw) return;
+
+    const savedEwb = JSON.parse(savedRaw);
+
+    setFormData((prev) => ({
+      ...prev,
+      ewbNo: String(
+        savedEwb.eWayBillNumber || savedEwb.ewayBillNo || prev.ewbNo
+      ),
+      transporterId:
+        savedEwb.transporterId ||
+        savedEwb.transporterGstin ||
+        prev.transporterId,
+    }));
+  } catch (err) {
+    console.error("Error reading localStorage:", err);
+  }
+}, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

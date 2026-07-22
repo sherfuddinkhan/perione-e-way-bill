@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import './ExtendValidityEwayBill.css';
 
@@ -20,6 +20,35 @@ const ExtendValidityEwayBill = () => {
 
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
+useEffect(() => {
+  try {
+    const savedRaw = localStorage.getItem("ewayBillData");
+    if (!savedRaw) return;
+
+    const savedEwb = JSON.parse(savedRaw);
+
+    setFormData((prev) => ({
+      ...prev,
+      ewbNo: String(
+        savedEwb.eWayBillNumber || savedEwb.ewayBillNo || prev.ewbNo
+      ),
+      vehicleNo: savedEwb.vehicleNo || prev.vehicleNo,
+      fromPlace: savedEwb.fromPlace || prev.fromPlace,
+      fromState: String(savedEwb.fromState || prev.fromState),
+      remainingDistance: String(
+        savedEwb.remainingDistance || prev.remainingDistance
+      ),
+      transDocNo: savedEwb.transDocNo || prev.transDocNo,
+      transDocDate: savedEwb.transDocDate || prev.transDocDate,
+      transMode: String(savedEwb.transMode || prev.transMode),
+      fromPincode: savedEwb.fromPincode || prev.fromPincode,
+      consignmentStatus:
+        savedEwb.consignmentStatus || prev.consignmentStatus,
+    }));
+  } catch (err) {
+    console.error("Error reading localStorage:", err);
+  }
+}, []);
 
   const handleChange = (e) => {
     setFormData({

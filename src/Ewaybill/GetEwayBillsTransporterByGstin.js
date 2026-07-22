@@ -21,7 +21,7 @@ const GetEwayBillsTransporterByGstin= () => {
 
     try {
       const res = await fetch(
-        `/api/ewaybill/getewaybillsfortransporterbygstin?Gen_gstin=${encodeURIComponent(formData.Gen_gstin)}&date=${encodeURIComponent(formData.date)}`
+        `http://localhost:5000/api/ewaybill/getewaybillsfortransporterbygstin?Gen_gstin=${encodeURIComponent(formData.Gen_gstin)}&date=${encodeURIComponent(formData.date)}`
       );
       const data = await res.json();
 

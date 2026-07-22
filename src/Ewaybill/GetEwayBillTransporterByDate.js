@@ -20,7 +20,7 @@ const GetEwayBillTransporterByDate = () => {
     setErrorMsg("");
 
     try {
-      const res = await fetch(`/api/ewaybill/getewaybillsbydate?date=${encodeURIComponent(formData.date)}&stateCode=${formData.stateCode}`);
+      const res = await fetch(`http://localhost:5000/api/ewaybill/getewaybillsbydate?date=${encodeURIComponent(formData.date)}&stateCode=${formData.stateCode}`);
       const data = await res.json();
       if (res.ok && data.status_cd === "1") {
         setResponse(data);
