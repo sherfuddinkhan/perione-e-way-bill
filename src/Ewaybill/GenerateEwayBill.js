@@ -1,57 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import '../GenerateEwayBill.css';
 
-// --- Pure Helper / Presentation Components ---
+// --- Helper Form Components ---
 
-const FormField = ({ label, name, value, onChange, type = "text", placeholder = "", uppercase = false }) => (
-  <div>
-    <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">{label}</label>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      placeholder={placeholder}
-      onChange={onChange}
-      className={`w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none ${uppercase ? 'uppercase font-mono' : ''}`}
-    />
+const FormField = ({ label, name, value, onChange, type = "text", placeholder = "", uppercase = false, selectOptions = null }) => (
+  <div className="form-group">
+    <label className="form-label">{label}</label>
+    {selectOptions ? (
+      <select name={name} value={value} onChange={onChange} className="form-select">
+        {selectOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </select>
+    ) : (
+      <input
+        type={type}
+        name={name}
+        value={value ?? ''}
+        placeholder={placeholder}
+        onChange={onChange}
+        className={`form-input ${uppercase ? 'uppercase-input' : ''}`}
+      />
+    )}
   </div>
 );
 
 const AddressGroup = ({ title, prefix, data, onChange }) => (
-  <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
-    <h3 className="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wide">{title}</h3>
-    <div className="space-y-3">
-      <FormField label="GSTIN" name={`${prefix}Gstin`} value={data[`${prefix}Gstin`]} onChange={onChange} />
+  <div className="address-card">
+    <h3 className="address-title">{title}</h3>
+    <div className="form-grid-4">
+      <FormField label="GSTIN" name={`${prefix}Gstin`} value={data[`${prefix}Gstin`]} onChange={onChange} uppercase />
       <FormField label="Trade Name" name={`${prefix}TrdName`} value={data[`${prefix}TrdName`]} onChange={onChange} />
-      <FormField label="Address Line 1" name={`${prefix}Addr1`} value={data[`${prefix}Addr1`]} onChange={onChange} />
-      <div className="grid grid-cols-2 gap-2">
-        <FormField label="Place" name={`${prefix}Place`} value={data[`${prefix}Place`]} onChange={onChange} />
-        <FormField label="Pincode" name={`${prefix}Pincode`} value={data[`${prefix}Pincode`]} onChange={onChange} type="number" />
-      </div>
+      <FormField label="Address 1" name={`${prefix}Addr1`} value={data[`${prefix}Addr1`]} onChange={onChange} />
+      <FormField label="Address 2" name={`${prefix}Addr2`} value={data[`${prefix}Addr2`]} onChange={onChange} />
+      <FormField label="Place" name={`${prefix}Place`} value={data[`${prefix}Place`]} onChange={onChange} />
+      <FormField label="Pincode" name={`${prefix}Pincode`} value={data[`${prefix}Pincode`]} onChange={onChange} type="number" />
+      <FormField label="State Code" name={`${prefix}StateCode`} value={data[`${prefix}StateCode`]} onChange={onChange} type="number" />
+      <FormField label="Act State Code" name={`act${prefix.charAt(0).toUpperCase() + prefix.slice(1)}StateCode`} value={data[`act${prefix.charAt(0).toUpperCase() + prefix.slice(1)}StateCode`]} onChange={onChange} type="number" />
     </div>
   </div>
 );
 
 const SuccessModal = ({ result }) => {
-  const { ewayBillNo, ewayBillDate, validUpto } = result.data;
+  const { ewayBillNo, ewayBillDate, validUpto } = result?.data || {};
   return (
-    <div className="border-t border-emerald-200 bg-emerald-50/50 p-8">
-      <div className="bg-white border border-emerald-200 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center gap-3 text-emerald-600 mb-4">
-          <span className="text-2xl">🎉</span>
-          <h3 className="text-lg font-bold">E-Way Bill Generated Successfully!</h3>
+    <div className="success-banner">
+      <div className="success-card">
+        <div className="success-header">
+          <span style={{ fontSize: '1.5rem' }}>🎉</span>
+          <h3>E-Way Bill Generated Successfully!</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-4 rounded-lg border">
+        <div className="success-details">
           <div>
-            <span className="text-xs text-slate-500 uppercase font-semibold block">E-Way Bill No</span>
-            <span className="text-lg font-mono font-bold text-slate-800">{ewayBillNo}</span>
+            <span className="detail-label">E-Way Bill No</span>
+            <span className="detail-val" style={{ fontFamily: 'monospace' }}>{ewayBillNo}</span>
           </div>
           <div>
-            <span className="text-xs text-slate-500 uppercase font-semibold block">Generated Date</span>
-            <span className="text-sm font-medium text-slate-700">{ewayBillDate}</span>
+            <span className="detail-label">Generated Date</span>
+            <span className="detail-val">{ewayBillDate}</span>
           </div>
           <div>
-            <span className="text-xs text-slate-500 uppercase font-semibold block">Valid Until</span>
-            <span className="text-sm font-medium text-emerald-700">{validUpto}</span>
+            <span className="detail-label">Valid Until</span>
+            <span className="detail-val" style={{ color: '#15803d' }}>{validUpto}</span>
           </div>
         </div>
       </div>
@@ -59,7 +70,7 @@ const SuccessModal = ({ result }) => {
   );
 };
 
-// --- Initial Form State ---
+// --- Payload Definition ---
 
 const DEFAULT_PAYLOAD = {
   supplyType: "O",
@@ -87,15 +98,15 @@ const DEFAULT_PAYLOAD = {
   transactionType: 4,
   shipToGSTIN: "urp",
   shipToTradeName: "Perione",
-  otherValue: 0,
+  mainHsnCode: 100610,
   totalValue: 100,
   cgstValue: 2.5,
   sgstValue: 2.5,
   igstValue: 0,
   cessValue: 0,
   cessNonAdvolValue: 0,
+  otherValue: 0,
   totInvValue: 105,
-  mainHsnCode: 100610,
   transporterId: "36AARFB4347G037",
   transporterName: "Welton Logistics",
   transDocNo: "LR123456",
@@ -121,7 +132,7 @@ const DEFAULT_PAYLOAD = {
   ]
 };
 
-// --- Main Arrow Function Component ---
+// --- Main Component ---
 
 const GenerateEwayBill = () => {
   const [formData, setFormData] = useState(DEFAULT_PAYLOAD);
@@ -129,22 +140,172 @@ const GenerateEwayBill = () => {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
 
-  // State Change Handlers
+  const location = useLocation();
+  const { invoiceData } = location.state || {};
+  console.log("invoicedata",invoiceData)
+
+useEffect(() => {
+  if (!invoiceData) return;
+
+  setFormData((prev) => {
+    // Prepare item list using actual invoice data
+    const itemList =
+      invoiceData.invoiceProductDetails?.map((item) => {
+        const quantity = Number(item.quantity || 0);
+
+        // Correct HSN code field is 'hsncode'
+        const hsnCode = Number(item.hsncode || 100610);
+
+        // Correct taxable amount field is 'totalAmount'
+        const taxableAmount = Number(item.totalAmount || 0);
+
+        return {
+          productName: item.description || "",
+          productDesc: item.description || "",
+          hsnCode,
+          quantity,
+          qtyUnit: item.uom || "NOS",
+          cgstRate: Number(item.cgstPer || 0),
+          sgstRate: Number(item.sgstPer || 0),
+          igstRate: Number(item.gstPer || 0),
+          cessRate: 0,
+          cessNonadvol: 0,
+          taxableAmount,
+        };
+      }) || prev.itemList;
+
+    // Calculate invoice totals
+    const totalValue = itemList.reduce(
+      (sum, item) => sum + Number(item.taxableAmount || 0),
+      0
+    );
+
+    const cgstValue = Number(
+      invoiceData.invoiceProductDetails?.reduce(
+        (sum, item) => sum + Number(item.cgstAmount || 0),
+        0
+      ) || 0
+    );
+
+    const sgstValue = Number(
+      invoiceData.invoiceProductDetails?.reduce(
+        (sum, item) => sum + Number(item.sgstAmount || 0),
+        0
+      ) || 0
+    );
+
+    const igstValue = Number(
+      invoiceData.invoiceProductDetails?.reduce(
+        (sum, item) => sum + Number(item.igstAmount || 0),
+        0
+      ) || 0
+    );
+
+    const cessValue = 0;
+
+    const totInvValue = Number(
+      invoiceData.invoiceProductDetails?.reduce(
+        (sum, item) => sum + Number(item.afterGSTAmount || 0),
+        0
+      ) || totalValue + cgstValue + sgstValue + igstValue
+    );
+
+    return {
+      ...prev,
+
+      // Document details
+      docType: "INV",
+      docNo: invoiceData.invoiceNumber || prev.docNo,
+      docDate: invoiceData.deliveryNoteDate
+        ? invoiceData.deliveryNoteDate.replace(/-/g, "/")
+        : prev.docDate,
+
+      // Supplier details
+      fromGstin: invoiceData.gstin || prev.fromGstin,
+      fromTrdName: invoiceData.company_Name || prev.fromTrdName,
+      fromAddr1:
+        invoiceData.company_Address ||
+        invoiceData.companyBranches?.officeAddress ||
+        prev.fromAddr1,
+      fromAddr2: prev.fromAddr2,
+      fromPlace: invoiceData.company_City || prev.fromPlace,
+      fromPincode: Number(
+        invoiceData.company_PINCode || prev.fromPincode
+      ),
+      actFromStateCode: Number(
+        invoiceData.stateCode || prev.actFromStateCode
+      ),
+      fromStateCode: Number(
+        invoiceData.stateCode || prev.fromStateCode
+      ),
+
+      // Buyer details
+      toGstin: invoiceData.buyerClients?.gstin || prev.toGstin,
+      toTrdName:
+        invoiceData.buyerClients?.companyName || prev.toTrdName,
+      toAddr1:
+        invoiceData.buyerClients?.officeAddress || prev.toAddr1,
+      toAddr2: prev.toAddr2,
+      toPlace:
+        invoiceData.buyerClients?.stateName || prev.toPlace,
+      toPincode: Number(
+        invoiceData.buyerClients?.poBox || prev.toPincode
+      ),
+      actToStateCode: Number(
+        invoiceData.buyerClients?.masterStateNames?.stateCode ||
+          prev.actToStateCode
+      ),
+      toStateCode: Number(
+        invoiceData.buyerClients?.masterStateNames?.stateCode ||
+          prev.toStateCode
+      ),
+
+      // Transport details
+      transporterId:
+        invoiceData.transporterID || prev.transporterId,
+      transporterName:
+        invoiceData.transporterName ||
+        invoiceData.transport ||
+        prev.transporterName,
+      transDocNo:
+        invoiceData.transporterDocNo || prev.transDocNo,
+      transMode:
+        invoiceData.transportMode === "Road"
+          ? "1"
+          : prev.transMode,
+      transDistance:
+        invoiceData.distance || prev.transDistance,
+      vehicleNo: invoiceData.vehicleNo || prev.vehicleNo,
+
+      // Item details
+      itemList,
+
+      // Calculated totals
+      mainHsnCode: itemList[0]?.hsnCode || prev.mainHsnCode,
+      totalValue,
+      cgstValue,
+      sgstValue,
+      igstValue,
+      cessValue,
+      totInvValue,
+    };
+  });
+}, [invoiceData]);
+
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: isNaN(value) || value === '' ? value : Number(value)
+      [name]: type === 'number' ? (value === '' ? '' : Number(value)) : value
     }));
   };
 
-  const handleItemChange = (index, field, value) => {
+  const handleItemChange = (index, field, value, type) => {
     const updatedItems = [...formData.itemList];
-    updatedItems[index][field] = isNaN(value) || value === '' ? value : Number(value);
+    updatedItems[index][field] = type === 'number' ? (value === '' ? '' : Number(value)) : value;
     setFormData((prev) => ({ ...prev, itemList: updatedItems }));
   };
 
-  // Submission Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -152,6 +313,7 @@ const GenerateEwayBill = () => {
     setResponse(null);
 
     try {
+    console.log("Received Body:",JSON.stringify(formData) );
       const res = await fetch('http://localhost:5000/api/generate-ewaybill', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -172,80 +334,136 @@ const GenerateEwayBill = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100">
+    <div className="eway-container">
+      <div className="eway-card">
         
         {/* Header */}
-        <header className="bg-slate-900 text-white px-8 py-6 flex justify-between items-center">
+        <header className="eway-header">
           <div>
-            <h1 className="text-2xl font-bold tracking-wide">Generate E-Way Bill</h1>
-            <p className="text-slate-400 text-sm mt-1">Perione Portal Integration</p>
+            <h1 className="eway-title">Generate E-Way Bill</h1>
           </div>
-          <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold uppercase">
-            Sandbox Environment
-          </span>
         </header>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="eway-form">
           
           {/* Document Section */}
           <section>
-            <h2 className="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">Document Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <h2 className="section-title">1. Document Details</h2>
+            <div className="form-grid-4">
+              <FormField 
+                label="Supply Type" 
+                name="supplyType" 
+                value={formData.supplyType} 
+                onChange={handleInputChange} 
+                selectOptions={[{ label: 'Outward', value: 'O' }, { label: 'Inward', value: 'I' }]} 
+              />
+              <FormField label="Sub Supply Type" name="subSupplyType" value={formData.subSupplyType} onChange={handleInputChange} />
+              <FormField label="Sub Supply Desc" name="subSupplyDesc" value={formData.subSupplyDesc} onChange={handleInputChange} />
               <FormField label="Doc Type" name="docType" value={formData.docType} onChange={handleInputChange} />
               <FormField label="Doc No" name="docNo" value={formData.docNo} onChange={handleInputChange} />
-              <FormField label="Doc Date" name="docDate" value={formData.docDate} onChange={handleInputChange} />
+              <FormField label="Doc Date" name="docDate" value={formData.docDate} onChange={handleInputChange} placeholder="DD/MM/YYYY" />
               <FormField label="Transaction Type" name="transactionType" value={formData.transactionType} onChange={handleInputChange} type="number" />
+              <FormField label="Main HSN Code" name="mainHsnCode" value={formData.mainHsnCode} onChange={handleInputChange} type="number" />
             </div>
           </section>
 
-          {/* Supplier & Recipient Addresses */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <AddressGroup title="From (Supplier)" prefix="from" data={formData} onChange={handleInputChange} />
-            <AddressGroup title="To (Recipient)" prefix="to" data={formData} onChange={handleInputChange} />
-          </div>
-
-          {/* Items Section */}
+          {/* Parties Section */}
           <section>
-            <h2 className="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">Item Details</h2>
+            <h2 className="section-title">2. Parties & Address Details</h2>
+            <div className="form-grid-2">
+              <AddressGroup title="From (Supplier)" prefix="from" data={formData} onChange={handleInputChange} />
+              <AddressGroup title="To (Recipient)" prefix="to" data={formData} onChange={handleInputChange} />
+            </div>
+            
+            {/* Extended Consignee / Shipping Fields */}
+            <div style={{ marginTop: '16px' }} className="address-card">
+              <h3 className="address-title">Ship-To Details</h3>
+              <div className="form-grid-4">
+                <FormField label="Ship-To GSTIN" name="shipToGSTIN" value={formData.shipToGSTIN} onChange={handleInputChange} uppercase />
+                <FormField label="Ship-To Trade Name" name="shipToTradeName" value={formData.shipToTradeName} onChange={handleInputChange} />
+              </div>
+            </div>
+          </section>
+
+          {/* Taxable Values Breakdown */}
+          <section>
+            <h2 className="section-title">3. Total Invoice Summary</h2>
+            <div className="form-grid-4">
+              <FormField label="Total Value" name="totalValue" value={formData.totalValue} onChange={handleInputChange} type="number" />
+              <FormField label="CGST Value" name="cgstValue" value={formData.cgstValue} onChange={handleInputChange} type="number" />
+              <FormField label="SGST Value" name="sgstValue" value={formData.sgstValue} onChange={handleInputChange} type="number" />
+              <FormField label="IGST Value" name="igstValue" value={formData.igstValue} onChange={handleInputChange} type="number" />
+              <FormField label="Cess Value" name="cessValue" value={formData.cessValue} onChange={handleInputChange} type="number" />
+              <FormField label="Cess Non-Advol Value" name="cessNonAdvolValue" value={formData.cessNonAdvolValue} onChange={handleInputChange} type="number" />
+              <FormField label="Other Charges" name="otherValue" value={formData.otherValue} onChange={handleInputChange} type="number" />
+              <FormField label="Total Invoice Value" name="totInvValue" value={formData.totInvValue} onChange={handleInputChange} type="number" />
+            </div>
+          </section>
+
+          {/* Itemized Products */}
+          <section>
+            <h2 className="section-title">4. Item Details</h2>
             {formData.itemList.map((item, idx) => (
-              <div key={idx} className="grid grid-cols-2 md:grid-cols-6 gap-3 bg-slate-50 p-4 rounded-xl border mb-2">
-                <div className="col-span-2">
-                  <FormField label="Product" name="productName" value={item.productName} onChange={(e) => handleItemChange(idx, 'productName', e.target.value)} />
+              <div key={idx} className="item-card">
+                <div className="item-header">Item #{idx + 1}</div>
+                <div className="form-grid-4">
+                  <FormField label="Product Name" name="productName" value={item.productName} onChange={(e) => handleItemChange(idx, 'productName', e.target.value, 'text')} />
+                  <FormField label="Product Desc" name="productDesc" value={item.productDesc} onChange={(e) => handleItemChange(idx, 'productDesc', e.target.value, 'text')} />
+                  <FormField label="HSN Code" name="hsnCode" value={item.hsnCode} onChange={(e) => handleItemChange(idx, 'hsnCode', e.target.value, 'number')} type="number" />
+                  <FormField label="Quantity" name="quantity" value={item.quantity} onChange={(e) => handleItemChange(idx, 'quantity', e.target.value, 'number')} type="number" />
+                  <FormField label="Unit" name="qtyUnit" value={item.qtyUnit} onChange={(e) => handleItemChange(idx, 'qtyUnit', e.target.value, 'text')} />
+                  <FormField label="Taxable Amount" name="taxableAmount" value={item.taxableAmount} onChange={(e) => handleItemChange(idx, 'taxableAmount', e.target.value, 'number')} type="number" />
+                  <FormField label="CGST Rate (%)" name="cgstRate" value={item.cgstRate} onChange={(e) => handleItemChange(idx, 'cgstRate', e.target.value, 'number')} type="number" />
+                  <FormField label="SGST Rate (%)" name="sgstRate" value={item.sgstRate} onChange={(e) => handleItemChange(idx, 'sgstRate', e.target.value, 'number')} type="number" />
+                  <FormField label="IGST Rate (%)" name="igstRate" value={item.igstRate} onChange={(e) => handleItemChange(idx, 'igstRate', e.target.value, 'number')} type="number" />
+                  <FormField label="Cess Rate (%)" name="cessRate" value={item.cessRate} onChange={(e) => handleItemChange(idx, 'cessRate', e.target.value, 'number')} type="number" />
                 </div>
-                <FormField label="HSN Code" name="hsnCode" value={item.hsnCode} onChange={(e) => handleItemChange(idx, 'hsnCode', e.target.value)} type="number" />
-                <FormField label="Qty" name="quantity" value={item.quantity} onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)} type="number" />
-                <FormField label="CGST Rate" name="cgstRate" value={item.cgstRate} onChange={(e) => handleItemChange(idx, 'cgstRate', e.target.value)} type="number" />
-                <FormField label="Taxable Amt" name="taxableAmount" value={item.taxableAmount} onChange={(e) => handleItemChange(idx, 'taxableAmount', e.target.value)} type="number" />
               </div>
             ))}
           </section>
 
-          {/* Logistics Section */}
+          {/* Logistics & Transportation */}
           <section>
-            <h2 className="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">Transportation Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <h2 className="section-title">5. Logistics & Transportation Details</h2>
+            <div className="form-grid-4">
+              <FormField label="Transporter ID" name="transporterId" value={formData.transporterId} onChange={handleInputChange} uppercase />
               <FormField label="Transporter Name" name="transporterName" value={formData.transporterName} onChange={handleInputChange} />
-              <FormField label="Vehicle No" name="vehicleNo" value={formData.vehicleNo} onChange={handleInputChange} uppercase />
+              <FormField 
+                label="Transport Mode" 
+                name="transMode" 
+                value={formData.transMode} 
+                onChange={handleInputChange} 
+                selectOptions={[
+                  { label: 'Road', value: '1' },
+                  { label: 'Rail', value: '2' },
+                  { label: 'Air', value: '3' },
+                  { label: 'Ship', value: '4' }
+                ]}
+              />
               <FormField label="Distance (KM)" name="transDistance" value={formData.transDistance} onChange={handleInputChange} />
               <FormField label="Trans Doc No" name="transDocNo" value={formData.transDocNo} onChange={handleInputChange} />
+              <FormField label="Trans Doc Date" name="transDocDate" value={formData.transDocDate} onChange={handleInputChange} placeholder="DD/MM/YYYY" />
+              <FormField label="Vehicle No" name="vehicleNo" value={formData.vehicleNo} onChange={handleInputChange} uppercase />
+              <FormField 
+                label="Vehicle Type" 
+                name="vehicleType" 
+                value={formData.vehicleType} 
+                onChange={handleInputChange} 
+                selectOptions={[{ label: 'Regular', value: 'R' }, { label: 'Over Dimensional Cargo', value: 'O' }]} 
+              />
             </div>
           </section>
 
-          {/* Error Banner */}
+          {/* Feedback Section */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm font-medium">
+            <div className="error-banner">
               ⚠️ {error}
             </div>
           )}
 
-          {/* Submit Button */}
-          <div className="pt-4 border-t flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
-            >
+          {/* Actions */}
+          <div className="form-actions">
+            <button type="submit" disabled={loading} className="btn-submit">
               {loading ? 'Submitting Request...' : 'Generate E-Way Bill'}
             </button>
           </div>

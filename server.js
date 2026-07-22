@@ -62,29 +62,63 @@ app.post("/api/generate-ewaybill", async (req, res) => {
     const payload = req.body;
 
     // Email extracted dynamically from query, body, or fallback default
-    const email = req.query.email || payload.email || process.env.EMAIL || "sherfuddin.phd@gmail.com";
+    const email =
+      req.query.email ||
+      payload.email ||
+      process.env.EMAIL ||
+      "sherfuddin.phd@gmail.com";
 
     const headers = {
       "Content-Type": "application/json",
       accept: "*/*",
-      ip_address: req.headers["ip_address"] || process.env.EWAY_IP || "103.88.236.42",
-      client_id: req.headers["client_id"] || process.env.EWAY_CLIENT_ID || "PEWAYS3ad9cc820da802c1265893161c36b3cd",
-      client_secret: req.headers["client_secret"] || process.env.EWAY_CLIENT_SECRET || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
-      gstin: payload.fromGstin || req.headers["gstin"] || process.env.GSTIN || "36AARFB4347G037",
+      ip_address:
+        req.headers["ip_address"] ||
+        process.env.EWAY_IP ||
+        "103.88.236.42",
+      client_id:
+        req.headers["client_id"] ||
+        process.env.EWAY_CLIENT_ID ||
+        "PEWAYS3ad9cc820da802c1265893161c36b3cd",
+      client_secret:
+        req.headers["client_secret"] ||
+        process.env.EWAY_CLIENT_SECRET ||
+        "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
+      gstin:
+        payload.fromGstin ||
+        req.headers["gstin"] ||
+        process.env.GSTIN ||
+        "36AARFB4347G037",
       env: req.headers["env"] || process.env.ENVIRONMENT || "sandbox",
     };
 
-    const targetUrl = `${EWAY_API_BASE_URL}?email=${encodeURIComponent(email)}`;
+    const targetUrl = `${EWAY_API_BASE_URL}?email=${encodeURIComponent(
+      email
+    )}`;
+
+    // Log the outgoing request
+    console.log("Sending payload:", JSON.stringify(payload, null, 2));
 
     const response = await axios.post(targetUrl, payload, { headers });
 
+    console.log("E-Way API response:", response.data);
+
     return res.status(200).json(response.data);
   } catch (error) {
-    console.error("E-Way Bill Generation Error:", error.response?.data || error.message);
+    console.error("E-Way Bill Generation Error:");
+
+    if (error.response) {
+      console.error("Status:", error.response.status);
+      console.error("Data:", JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.error(error.message);
+    }
 
     return res.status(error.response?.status || 500).json({
       success: false,
-      message: error.response?.data?.status_desc || "Failed to generate E-Way Bill",
+      message:
+        error.response?.data?.status_desc ||
+        error.response?.data?.message ||
+        "Failed to generate E-Way Bill",
       error: error.response?.data || error.message,
     });
   }
