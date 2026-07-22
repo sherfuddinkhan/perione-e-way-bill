@@ -149,30 +149,85 @@ useEffect(() => {
 
   setFormData((prev) => {
     // Prepare item list using actual invoice data
-    const itemList =
-      invoiceData.invoiceProductDetails?.map((item) => {
-        const quantity = Number(item.quantity || 0);
+   const itemList =
+  invoiceData.invoiceProductDetails?.map((item) => {
 
-        // Correct HSN code field is 'hsncode'
-        const hsnCode = Number(item.hsncode || 100610);
+    const quantity = Number(item.quantity || 0);
+    const hsnCode = Number(item.hsncode || 100610);
+    const taxableAmount = Number(item.totalAmount || 0);
 
-        // Correct taxable amount field is 'totalAmount'
-        const taxableAmount = Number(item.totalAmount || 0);
+    const gstRate = Number(item.gstPer || 0);
 
-        return {
-          productName: item.description || "",
-          productDesc: item.description || "",
-          hsnCode,
-          quantity,
-          qtyUnit: item.uom || "NOS",
-          cgstRate: Number(item.cgstPer || 0),
-          sgstRate: Number(item.sgstPer || 0),
-          igstRate: Number(item.gstPer || 0),
-          cessRate: 0,
-          cessNonadvol: 0,
-          taxableAmount,
-        };
-      }) || prev.itemList;
+    // Supplier State
+    const fromState = Number(
+      invoiceData.stateCode ||
+      invoiceData.companyBranches?.stateCode ||
+      invoiceData.fromStateCode ||
+      0
+    );
+
+    // Buyer State
+    const toState = Number(
+      invoiceData.buyerClients?.masterStateNames?.stateCode ||
+      invoiceData.toStateCode ||
+      0
+    );
+
+
+    // Check transaction type
+    const isIntraState = fromState === toState;
+    const isInterState = fromState !== toState;
+
+
+    let cgstRate = 0;
+    let sgstRate = 0;
+    let igstRate = 0;
+
+
+    // INTRA STATE
+    // Example: Telangana -> Telangana
+    if (isIntraState) {
+
+      cgstRate = gstRate / 2;
+      sgstRate = gstRate / 2;
+      igstRate = 0;
+
+    }
+
+
+    // INTER STATE
+    // Example: Telangana -> Karnataka
+    else if (isInterState) {
+
+      cgstRate = 0;
+      sgstRate = 0;
+      igstRate = gstRate;
+
+    }
+
+
+    return {
+
+      productName: item.description || "",
+      productDesc: item.description || "",
+
+      hsnCode,
+
+      quantity,
+      qtyUnit: item.uom || "NOS",
+
+      // GST Rates
+      cgstRate,
+      sgstRate,
+      igstRate,
+
+      cessRate: 0,
+      cessNonadvol: 0,
+
+      taxableAmount
+    };
+
+  }) || prev.itemList;
 
     // Calculate invoice totals
     const totalValue = itemList.reduce(
@@ -281,7 +336,7 @@ useEffect(() => {
       itemList,
 
       // Calculated totals
-      mainHsnCode: itemList[0]?.hsnCode || prev.mainHsnCode,
+      hsnCode: itemList[0]?.hsnCode || prev.mainHsnCode,
       totalValue,
       cgstValue,
       sgstValue,
