@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
 import axios from 'axios';
-
+import React, { useState, useEffect } from "react";
 // --- ResponseViewer Component ---
 const ResponseViewer = ({ response }) => {
   if (!response) return null;
@@ -43,6 +42,32 @@ const CancelEWayBill = () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 
+  useEffect(() => {
+  try {
+    const savedRaw = localStorage.getItem("ewayBillData");
+    if (!savedRaw) return;
+
+    const savedEwb = JSON.parse(savedRaw);
+
+    // Auto-fill EWB number
+    if (savedEwb.eWayBillNumber || savedEwb.ewayBillNo) {
+      setEwbNo(
+        String(savedEwb.eWayBillNumber || savedEwb.ewayBillNo)
+      );
+    }
+
+    // Optional: auto-fill reason and remark if available
+    if (savedEwb.cancelRsnCode) {
+      setCancelRsnCode(String(savedEwb.cancelRsnCode));
+    }
+
+    if (savedEwb.cancelRmrk) {
+      setCancelRmrk(savedEwb.cancelRmrk);
+    }
+  } catch (err) {
+    console.error("Error reading localStorage:", err);
+  }
+}, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

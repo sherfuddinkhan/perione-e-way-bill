@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import dayjs from "dayjs";
+import { Form, Input, Select, DatePicker, Button, Alert, Card, Typography } from "antd";
 
 const GenerateConsolidatedEwayBill = () => {
+  const [form] = Form.useForm();
   const [formData, setFormData] = useState({
     fromPlace: "FRAZER TOWN",
     fromState: "36",
@@ -16,15 +19,47 @@ const GenerateConsolidatedEwayBill = () => {
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
 
+   // Auto-populate fields from localStorage safely
+  useEffect(() => {
+  try {
+    const savedRaw = localStorage.getItem("ewayBillData");
+    if (!savedRaw) return;
+
+    const savedEwb = JSON.parse(savedRaw);
+
+    const updatedData = {
+      fromPlace: savedEwb.fromPlace || "FRAZER TOWN",
+      fromState: String(savedEwb.fromState || "36"),
+      vehicleNo: savedEwb.vehicleNo || "TS09AB1231",
+      transMode: String(savedEwb.transMode || "1"),
+      transDocNo: savedEwb.transDocNo || "12",
+      transDocDate: savedEwb.transDocDate
+        ? dayjs(savedEwb.transDocDate, "DD/MM/YYYY").format("YYYY-MM-DD")
+        : "",
+    };
+
+    setFormData(updatedData);
+
+    // Optional: also update ewbList if eWayBillNumber exists
+    if (savedEwb.eWayBillNumber || savedEwb.ewayBillNo) {
+      setEwbList([
+        { ewbNo: savedEwb.eWayBillNumber || savedEwb.ewayBillNo }
+      ]);
+    }
+  } catch (err) {
+    console.error("Error reading from localStorage:", err);
+  }
+}, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleEwbChange = (index, value) => {
-    const updatedList = [...ewbList];
-    updatedList[index].ewbNo = value;
-    setEwbList(updatedList);
-  };
+const handleEwbChange = (index, value) => {
+  const updatedList = [...ewbList];
+  updatedList[index].ewbNo = String(value);
+  setEwbList(updatedList);
+};
 
   const addEwbField = () => {
     setEwbList([...ewbList, { ewbNo: "" }]);
@@ -56,11 +91,13 @@ const GenerateConsolidatedEwayBill = () => {
       transMode: formData.transMode,
       transDocNo: formData.transDocNo,
       transDocDate: formattedDate,
-      tripSheetEwbBills: ewbList.filter((item) => item.ewbNo.trim() !== ""),
+      tripSheetEwbBills: ewbList.filter(
+  (item) => String(item.ewbNo || "").trim() !== ""
+),
     };
 
     try {
-      const res = await fetch("/api/ewaybill/generate-consolidated", {
+      const res = await fetch("http://localhost:5000/api/ewaybill/generate-consolidated", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
