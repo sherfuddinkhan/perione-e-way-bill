@@ -18,7 +18,6 @@ import GetEwayBillReportByAssignedDate from "./Ewaybill/FETCHING & REPORTS/GetEw
 import GetEwayBillsByDate from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsByDate";
 import GetGstinDetails from "./Ewaybill/FETCHING & REPORTS/GetGstinDetails";
 import RejectedByOthersEwayBills from "./Ewaybill/FETCHING & REPORTS/RejectedByOthersEwayBills";
-
 import GetEwayBillsByParties from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsByParties";
 import GetEwayBillByConsigner from "./Ewaybill/FETCHING & REPORTS/GetEwayBillByConsigner";
 import GetErrorList from "./Ewaybill/FETCHING & REPORTS/GetErrorList";
