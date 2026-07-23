@@ -12,12 +12,13 @@ import GetConsolidatedEwayBill from "./Ewaybill/CONSOLIDATED EWB & TRIP SHEETS/G
 import RegenerateConsolidatedEwaybill from "./Ewaybill/CONSOLIDATED EWB & TRIP SHEETS/RegenerateConsolidatedEwaybill";
 
 // FETCHING & REPORTS
-import GetEwayBillDetails from "./Ewaybill/FETCHING & REPORTS/GetEwayBillDetails";
 import GetEwayBillTransporterByDate from "./Ewaybill/FETCHING & REPORTS/GetEwayBillTransporterByDate";
 import GetEwayBillsTransporterByGstin from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsTransporterByGstin";
 import GetEwayBillReportByAssignedDate from "./Ewaybill/FETCHING & REPORTS/GetEwayBillReportByAssignedDate";
 import GetEwayBillsByDate from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsByDate";
-import GetRejectedEwayBills from "./Ewaybill/FETCHING & REPORTS/GetRejectedEwayBills";
+import GetGstinDetails from "./Ewaybill/FETCHING & REPORTS/GetGstinDetails";
+import RejectedByOthersEwayBills from "./Ewaybill/FETCHING & REPORTS/RejectedByOthersEwayBills";
+
 import GetEwayBillsByParties from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsByParties";
 import GetEwayBillByConsigner from "./Ewaybill/FETCHING & REPORTS/GetEwayBillByConsigner";
 import GetErrorList from "./Ewaybill/FETCHING & REPORTS/GetErrorList";
