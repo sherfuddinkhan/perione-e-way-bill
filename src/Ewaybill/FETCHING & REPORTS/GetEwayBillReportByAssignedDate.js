@@ -56,143 +56,269 @@ const GetEwayBillReportByAssignedDate = () => {
     }
   };
 
-  return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Get E-Way Bills by Date</h2>
-
-      <div style={styles.form}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          style={styles.input}
-        />
-
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          style={styles.input}
-        />
-
-        <input
-          type="text"
-          name="stateCode"
-          placeholder="State Code"
-          value={formData.stateCode}
-          onChange={handleChange}
-          style={styles.input}
-        />
-
-        <input
-          type="text"
-          name="gstin"
-          placeholder="GSTIN"
-          value={formData.gstin}
-          onChange={handleChange}
-          style={styles.input}
-        />
-
-        <input
-          type="text"
-          name="client_id"
-          placeholder="Client ID"
-          value={formData.client_id}
-          onChange={handleChange}
-          style={styles.input}
-        />
-
-        <input
-          type="text"
-          name="client_secret"
-          placeholder="Client Secret"
-          value={formData.client_secret}
-          onChange={handleChange}
-          style={styles.input}
-        />
-
-        <button onClick={fetchEwayBills} style={styles.button}>
-          {loading ? "Loading..." : "Fetch Bills"}
-        </button>
+ return (
+    <div style={styles.cardWrapper}>
+      {/* Header Section */}
+      <div style={styles.header}>
+        <h2 style={styles.title}>Get E-Way Bills by Date</h2>
+        <p style={styles.subtitle}>
+          Enter details below to retrieve e-way bill records.
+        </p>
       </div>
 
-      {error && <p style={styles.error}>{error}</p>}
+      {/* Form Fields */}
+      <div style={styles.formGrid}>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Email Address</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="e.g. user@example.com"
+            value={formData.email}
+            onChange={handleChange}
+            style={styles.input}
+          />
+        </div>
 
-      {ewayBills.length > 0 && (
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th>EWB No</th>
-              <th>EWB Date</th>
-              <th>Status</th>
-              <th>Doc No</th>
-              <th>Doc Date</th>
-              <th>Place</th>
-              <th>Pin Code</th>
-              <th>Valid Upto</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ewayBills.map((bill, index) => (
-              <tr key={index}>
-                <td>{bill.ewbNo}</td>
-                <td>{bill.ewbDate}</td>
-                <td>{bill.status}</td>
-                <td>{bill.docNo}</td>
-                <td>{bill.docDate}</td>
-                <td>{bill.delPlace}</td>
-                <td>{bill.delPinCode}</td>
-                <td>{bill.validUpto}</td>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Select Date</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            style={styles.input}
+          />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>State Code</label>
+          <input
+            type="text"
+            name="stateCode"
+            placeholder="e.g. 27"
+            value={formData.stateCode}
+            onChange={handleChange}
+            style={styles.input}
+          />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>GSTIN</label>
+          <input
+            type="text"
+            name="gstin"
+            placeholder="15-digit GSTIN"
+            value={formData.gstin}
+            onChange={handleChange}
+            style={styles.input}
+          />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Client ID</label>
+          <input
+            type="text"
+            name="client_id"
+            placeholder="Client ID"
+            value={formData.client_id}
+            onChange={handleChange}
+            style={styles.input}
+          />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Client Secret</label>
+          <input
+            type="password"
+            name="client_secret"
+            placeholder="Client Secret"
+            value={formData.client_secret}
+            onChange={handleChange}
+            style={styles.input}
+          />
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <button
+        onClick={fetchEwayBills}
+        disabled={loading}
+        style={{
+          ...styles.button,
+          ...(loading ? styles.buttonDisabled : {}),
+        }}
+      >
+        {loading ? "Fetching Bills..." : "Fetch Bills"}
+      </button>
+
+      {/* Error Message */}
+      {error && <div style={styles.errorBox}>{error}</div>}
+
+      {/* Results Table */}
+      {ewayBills && ewayBills.length > 0 && (
+        <div style={styles.tableWrapper}>
+          <table style={styles.table}>
+            <thead>
+              <tr style={styles.tableHeaderRow}>
+                <th style={styles.th}>EWB No</th>
+                <th style={styles.th}>EWB Date</th>
+                <th style={styles.th}>Status</th>
+                <th style={styles.th}>Doc No</th>
+                <th style={styles.th}>Doc Date</th>
+                <th style={styles.th}>Place</th>
+                <th style={styles.th}>Pin Code</th>
+                <th style={styles.th}>Valid Upto</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {ewayBills.map((bill, index) => (
+                <tr
+                  key={index}
+                  style={index % 2 === 0 ? styles.trEven : styles.trOdd}
+                >
+                  <td style={{ ...styles.td, fontWeight: "600" }}>
+                    {bill.ewbNo}
+                  </td>
+                  <td style={styles.td}>{bill.ewbDate}</td>
+                  <td style={styles.td}>
+                    <span style={styles.statusBadge}>{bill.status}</span>
+                  </td>
+                  <td style={styles.td}>{bill.docNo}</td>
+                  <td style={styles.td}>{bill.docDate}</td>
+                  <td style={styles.td}>{bill.delPlace}</td>
+                  <td style={styles.td}>{bill.delPinCode}</td>
+                  <td style={styles.td}>{bill.validUpto}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
-};
 
+};
 const styles = {
-  container: {
-    maxWidth: "1200px",
-    margin: "20px auto",
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
+  cardWrapper: {
+    maxWidth: "850px",
+    margin: "40px auto",
+    padding: "32px",
+    backgroundColor: "#ffffff",
+    borderRadius: "12px",
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)",
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    border: "1px solid #e2e8f0",
   },
-  heading: {
-    textAlign: "center",
-    color: "#1A73E8",
+  header: {
+    marginBottom: "24px",
   },
-  form: {
+  title: {
+    margin: 0,
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "#0f172a",
+  },
+  subtitle: {
+    margin: "4px 0 0 0",
+    fontSize: "14px",
+    color: "#64748b",
+  },
+  formGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "16px",
+    marginBottom: "24px",
+  },
+  inputGroup: {
     display: "flex",
-    flexWrap: "wrap",
-    gap: "10px",
-    marginBottom: "20px",
-    justifyContent: "center",
+    flexDirection: "column",
+    gap: "6px",
+  },
+  label: {
+    fontSize: "13px",
+    fontWeight: "600",
+    color: "#334155",
   },
   input: {
-    padding: "8px",
+    width: "100%",
+    padding: "10px 14px",
     fontSize: "14px",
-    minWidth: "200px",
+    borderRadius: "8px",
+    border: "1px solid #cbd5e1",
+    outline: "none",
+    boxSizing: "border-box",
+    backgroundColor: "#f8fafc",
+    color: "#0f172a",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
   },
   button: {
-    padding: "8px 16px",
-    backgroundColor: "#1A73E8",
-    color: "white",
+    width: "100%",
+    padding: "12px 20px",
+    fontSize: "15px",
+    fontWeight: "600",
+    color: "#ffffff",
+    backgroundColor: "#2563eb",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
     cursor: "pointer",
+    transition: "background-color 0.2s ease",
+  },
+  buttonDisabled: {
+    backgroundColor: "#94a3b8",
+    cursor: "not-allowed",
+  },
+  errorBox: {
+    marginTop: "16px",
+    padding: "12px 16px",
+    borderRadius: "8px",
+    backgroundColor: "#fef2f2",
+    color: "#dc2626",
+    border: "1px solid #fecaca",
+    fontSize: "14px",
+  },
+  tableWrapper: {
+    marginTop: "32px",
+    overflowX: "auto",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
   },
   table: {
     width: "100%",
     borderCollapse: "collapse",
+    textAlign: "left",
+    fontSize: "13px",
   },
-  error: {
-    color: "red",
-    textAlign: "center",
+  tableHeaderRow: {
+    backgroundColor: "#f1f5f9",
+    borderBottom: "1px solid #e2e8f0",
+  },
+  th: {
+    padding: "12px 16px",
+    fontWeight: "600",
+    color: "#475569",
+    whiteSpace: "nowrap",
+  },
+  td: {
+    padding: "12px 16px",
+    color: "#1e293b",
+    borderBottom: "1px solid #f1f5f9",
+    whiteSpace: "nowrap",
+  },
+  trEven: {
+    backgroundColor: "#ffffff",
+  },
+  trOdd: {
+    backgroundColor: "#f8fafc",
+  },
+  statusBadge: {
+    padding: "2px 8px",
+    borderRadius: "12px",
+    fontSize: "12px",
+    fontWeight: "600",
+    backgroundColor: "#dcfce7",
+    color: "#15803d",
   },
 };
 
