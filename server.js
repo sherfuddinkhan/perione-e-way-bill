@@ -193,15 +193,6 @@ app.post("/api/ewaybill/cancel", async (req, res) => {
   }
 });
 
-
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
 // Close E-Way Bill (Dynamic Credentials)
 app.post("/api/ewaybill/close", async (req, res) => {
   try {
