@@ -125,35 +125,63 @@ app.post("/api/extend-validity", async (req, res) => {
     });
   }
 });
-
-// Reject E-Way Bill
-app.post("/api/reject-ewaybill", async (req, res) => {
+// Reject E-Way Bill (Dynamic Credentials)
+app.post("/api/ewaybill/reject", async (req, res) => {
   try {
-    const email = req.query.email || DEFAULT_EMAIL;
+    const {
+      email,
+      ip_address,
+      client_id,
+      client_secret,
+      gstin,
+      env,
+      ewbNo,
+    } = req.body;
 
-    // Individual Headers
-    const headers = {
-      accept: "*/*",
-      "Content-Type": "application/json",
-      ip_address: req.headers["ip_address"] || "103.88.236.42",
-      client_id: req.headers["client_id"] || "PEWAYS3ad9cc820da802c1265893161c36b3cd",
-      client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
-      gstin: req.headers["gstin"] || "36AARFB4347G037",
-      env: req.headers["env"] || "sandbox",
-    };
+    // Validate required fields
+    if (
+      !email ||
+      !gstin ||
+      !client_id ||
+      !client_secret ||
+      !ewbNo
+    ) {
+      return res.status(400).json({
+        error:
+          "email, gstin, client_id, client_secret, and ewbNo are required",
+      });
+    }
 
     const response = await axios.post(
-      `${BASE_URL}/rejewb?email=${encodeURIComponent(email)}`,
-      req.body,
-      { headers }
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/rejewb",
+      {
+        ewbNo: Number(ewbNo),
+      },
+      {
+        params: { email },
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
+          ip_address: ip_address || "0.0.0.0",
+          client_id,
+          client_secret,
+          gstin,
+          env: env || "sandbox",
+        },
+      }
     );
 
-    return res.status(200).json(response.data);
+    res.json(response.data);
   } catch (error) {
-    console.error("Reject EWB Error:", error.response?.data || error.message);
-    return res.status(error.response?.status || 500).json(error.response?.data || error.message);
+    console.error("Reject E-Way Bill Error:", error.response?.data || error.message);
+
+    res.status(500).json({
+      error: "Failed to reject E-Way Bill",
+      details: error.response?.data || error.message,
+    });
   }
 });
+
 
 // Cancel E-Way Bill
 app.post("/api/ewaybill/cancel", async (req, res) => {
