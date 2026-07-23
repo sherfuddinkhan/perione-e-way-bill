@@ -95,19 +95,22 @@ const Sidebar = () => {
   },
 
   // Fetching & Reports
-  {
-    title: "Fetching & Reports",
-    items: [
-      { path: "/ewaybill/get-ewaybill-details", label: "Get E-Way Bill Details" },
-      { path: "/ewaybill/get-transporter-by-date", label: "Get E-Way Bills for Transporter by Date" },
-      { path: "/ewaybill/get-transporter-by-gstin", label: "Get E-Way Bills for Transporter by GSTIN" },
-      { path: "/ewaybill/get-report-assigned-date", label: "Get E-Way Bill Report by Assigned Date" },
-      { path: "/ewaybill/get-by-date", label: "Get E-Way Bills by Date" },
-      { path: "/ewaybill/get-rejected", label: "Get Rejected E-Way Bills" },
-      { path: "/ewaybill/get-by-parties", label: "Get E-Way Bills by Parties" },
-      { path: "/ewaybill/get-by-consigner", label: "Get E-Way Bill by Consigner" },
-    ],
-  },
+ {
+  title: "Fetching & Reports",
+  items: [
+    { path: "/ewaybill/get-ewaybill-details", label: "Get E-Way Bill Details" },
+    { path: "/ewaybill/get-gstin-details", label: "Get GSTIN Details" },
+    { path: "/ewaybill/get-transporter-by-date", label: "Get E-Way Bills for Transporter by Date" },
+    { path: "/ewaybill/get-transporter-by-gstin", label: "Get E-Way Bills for Transporter by GSTIN" },
+    { path: "/ewaybill/get-report-assigned-date", label: "Get E-Way Bill Report by Assigned Date" },
+    { path: "/ewaybill/get-by-date", label: "Get E-Way Bills by Date" },
+    { path: "/ewaybill/get-by-parties", label: "Get E-Way Bills by Parties" },
+    { path: "/ewaybill/get-by-consigner", label: "Get E-Way Bill by Consigner" },
+    { path: "/ewaybill/get-error-list", label: "Get Error List" },
+    { path: "/ewaybill/get-rejected", label: "Get Rejected E-Way Bills" },
+    { path: "/ewaybill/get-transporter-details-by-gstin", label: "Get E-Way Bills Details Transporter By GSTIN" },
+  ],
+},
 
   // Masters
   {

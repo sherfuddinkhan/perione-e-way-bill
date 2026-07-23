@@ -24,6 +24,7 @@ import GetEwayBillsByParties from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsByP
 import GetEwayBillByConsigner from "./Ewaybill/FETCHING & REPORTS/GetEwayBillByConsigner";
 import GetErrorList from "./Ewaybill/FETCHING & REPORTS/GetErrorList";
 import GetHsnDetails from "./Ewaybill/FETCHING & REPORTS/GetHsnDetails";
+import GetEwayBillsDetailsTransporterByGstin from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsDetailsTransporterByGstin";
 
 // GENERATE & MANAGE E-WAY BILLS
 import GenerateEwayBill from "./Ewaybill/GENERATE & MANAGE E-WAY BILLS/GenerateEwayBill";
@@ -124,7 +125,8 @@ function App() {
           <Route path="get-by-consigner" element={<GetEwayBillByConsigner />} />
           <Route path="get-error-list" element={<GetErrorList />} />
           <Route path="get-hsn-details" element={<GetHsnDetails />} />
-          <Route path="rejected-eway-bills" element={<RejectedByOthersEwayBills />} />
+          <Route path="get-rejected" element={<RejectedByOthersEwayBills />} />
+          <Route path="get-transporter-details-by-gstin" element={<GetEwayBillsDetailsTransporterByGstin />}/>
 
           {/* Multi-Vehicle Operations */}
           <Route path="initiate-multi-vehicle" element={<InitiateMultiVehicleMovement />} />
