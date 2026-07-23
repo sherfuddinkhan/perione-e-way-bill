@@ -193,6 +193,81 @@ app.post("/api/ewaybill/cancel", async (req, res) => {
   }
 });
 
+
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Close E-Way Bill (Dynamic Credentials)
+app.post("/api/ewaybill/close", async (req, res) => {
+  try {
+    const {
+      email,
+      gstin,
+      client_id,
+      client_secret,
+      ip_address,
+      env,
+      ewbNo,
+      closureDate,
+      remarks,
+    } = req.body;
+
+    // Validate required fields
+    if (
+      !email ||
+      !gstin ||
+      !client_id ||
+      !client_secret ||
+      !ewbNo ||
+      !closureDate ||
+      !remarks
+    ) {
+      return res.status(400).json({
+        error:
+          "email, gstin, client_id, client_secret, ewbNo, closureDate and remarks are required",
+      });
+    }
+
+    const response = await axios.post(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/clsewb",
+      {
+        ewbNo: Number(ewbNo),
+        closureDate,
+        remarks,
+      },
+      {
+        params: { email },
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
+          ip_address: ip_address || "0.0.0.0",
+          client_id,
+          client_secret,
+          gstin,
+          env: env || "sandbox",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error.message);
+
+    res.status(500).json({
+      error: "Failed to close E-Way Bill",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+
+
+
 // =========================================================================
 // 3. TRANSPORTER & VEHICLE OPERATIONS
 // =========================================================================
@@ -931,14 +1006,6 @@ app.get("/api/ewaybill/by-date", async (req, res) => {
     });
   }
 });
-
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
-
-const app = express();
-app.use(cors());
-app.use(express.json());
 
 // GET E-Way Bills for Transporter by GSTIN (Dynamic Credentials)
 app.get("/api/ewaybill/transporter-by-gstin", async (req, res) => {
