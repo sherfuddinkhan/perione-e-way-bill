@@ -18,7 +18,7 @@ const AUTH_URL = process.env.AUTH_URL || "https://staging.perione.in/ewaybillapi
 const DEFAULT_EMAIL = process.env.EMAIL || "sherfuddin.phd@gmail.com";
 
 // =========================================================================
-// 1. AUTHENTICATION
+// 1. AUTHENTICATION (1)
 // =========================================================================
 app.get("/api/authenticate", async (req, res) => {
   try {
@@ -55,7 +55,7 @@ app.get("/api/authenticate", async (req, res) => {
 });
 
 // =========================================================================
-// 2. GENERATE & MANAGE E-WAY BILLS
+// 2. GENERATE & MANAGE E-WAY BILLS(5)
 // =========================================================================
 
 // Generate E-Way Bill
@@ -260,7 +260,7 @@ app.post("/api/ewaybill/close", async (req, res) => {
 
 
 // =========================================================================
-// 3. TRANSPORTER & VEHICLE OPERATIONS
+// 3. TRANSPORTER & VEHICLE OPERATIONS(3)
 // =========================================================================
 
 // Update Vehicle Details
@@ -374,7 +374,7 @@ app.get("/api/gettransporterdetails", async (req, res) => {
 });
 
 // =========================================================================
-// 4. CONSOLIDATED EWB & TRIP SHEETS
+// 4. CONSOLIDATED EWB & TRIP SHEETS(3)
 // =========================================================================
 
 // Generate Consolidated EWB
@@ -493,7 +493,7 @@ app.post("/api/regentripsheet", async (req, res) => {
 });
 
 // =========================================================================
-// 5. MULTI-VEHICLE OPERATIONS
+// 5. MULTI-VEHICLE OPERATIONS(3)
 // =========================================================================
 
 // Initiate Multi Vehicle
@@ -581,7 +581,7 @@ app.post("/api/update-multi", async (req, res) => {
 });
 
 // =========================================================================
-// 6. LOOKUPS, FETCHING & REPORTS
+// 6. LOOKUPS, FETCHING & REPORTS(11)
 // =========================================================================
 
 // Get HSN Details
@@ -760,32 +760,6 @@ app.get("/api/get-ewaybills-transporter", async (req, res) => {
   }
 });
 
-// Get EWBs for Transporter by GSTIN
-app.get("/api/get-ewaybills-transporter-gstin", async (req, res) => {
-  try {
-    const { Gen_gstin, date, email = DEFAULT_EMAIL } = req.query;
-
-    // Individual Headers
-    const headers = {
-      accept: "*/*",
-      ip_address: req.headers["ip_address"] || "103.88.236.42",
-      client_id: req.headers["client_id"] || "PEWAYS3ad9cc820da802c1265893161c36b3cd",
-      client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
-      gstin: req.headers["gstin"] || "36AARFB4347G037",
-      env: req.headers["env"] || "sandbox",
-    };
-
-    const response = await axios.get(`${BASE_URL}/getewaybillsfortransporterbygstin`, {
-      params: { email, Gen_gstin, date },
-      headers,
-    });
-
-    return res.status(200).json(response.data);
-  } catch (error) {
-    return res.status(error.response?.status || 500).json(error.response?.data || error.message);
-  }
-});
-
 // Get EWB Report by Transporter Assigned Date
 app.get("/api/get-ewaybill-report-transporter", async (req, res) => {
   try {
@@ -802,32 +776,6 @@ app.get("/api/get-ewaybill-report-transporter", async (req, res) => {
     };
 
     const response = await axios.get(`${BASE_URL}/getewaybillreportbytransporterassigneddate`, {
-      params: { email, date, stateCode },
-      headers,
-    });
-
-    return res.status(200).json(response.data);
-  } catch (error) {
-    return res.status(error.response?.status || 500).json(error.response?.data || error.message);
-  }
-});
-
-// Get EWBs by Date
-app.get("/api/get-ewaybills-by-date", async (req, res) => {
-  try {
-    const { date, stateCode, email = DEFAULT_EMAIL } = req.query;
-
-    // Individual Headers
-    const headers = {
-      accept: "*/*",
-      ip_address: req.headers["ip_address"] || "103.88.236.42",
-      client_id: req.headers["client_id"] || "PEWAYS3ad9cc820da802c1265893161c36b3cd",
-      client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
-      gstin: req.headers["gstin"] || "36AARFB4347G037",
-      env: req.headers["env"] || "sandbox",
-    };
-
-    const response = await axios.get(`${BASE_URL}/getewaybillsbydate`, {
       params: { email, date, stateCode },
       headers,
     });
