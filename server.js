@@ -772,7 +772,108 @@ app.get("/api/get-ewaybills-by-date", async (req, res) => {
   }
 });
 
-// =========================================================================
+// GET E-Way Bills Rejected by Others (Dynamic Credentials)
+app.get("/api/ewaybill/rejected-by-others", async (req, res) => {
+  try {
+    const {
+      email,
+      date,
+      gstin,
+      client_id,
+      client_secret,
+      ip_address,
+      env,
+    } = req.query;
+
+    // Validate required fields
+    if (!email || !date || !gstin || !client_id || !client_secret) {
+      return res.status(400).json({
+        error:
+          "email, date, gstin, client_id and client_secret are required",
+      });
+    }
+
+    const response = await axios.get(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/getewaybillsrejectedbyothers",
+      {
+        params: {
+          email,
+          date,
+        },
+        headers: {
+          accept: "*/*",
+          ip_address: ip_address || "0.0.0.0",
+          client_id,
+          client_secret,
+          gstin,
+          env: env || "sandbox",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error.message);
+
+    res.status(500).json({
+      error: "Failed to fetch rejected E-Way Bills",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+// GET E-Way Bills of Other Party 
+app.get("/api/ewaybill/other-party", async (req, res) => {
+  try {
+    const {
+      email,
+      date,
+      gstin,
+      client_id,
+      client_secret,
+      ip_address,
+      env,
+    } = req.query;
+
+    // Validate required fields
+    if (!email || !date || !gstin || !client_id || !client_secret) {
+      return res.status(400).json({
+        error:
+          "email, date, gstin, client_id and client_secret are required",
+      });
+    }
+
+    const response = await axios.get(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/getewaybillsofotherparty",
+      {
+        params: {
+          email,
+          date,
+        },
+        headers: {
+          accept: "*/*",
+          ip_address: ip_address || "0.0.0.0",
+          client_id,
+          client_secret,
+          gstin,
+          env: env || "sandbox",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error.message);
+
+    res.status(500).json({
+      error: "Failed to fetch E-Way Bills of Other Party",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+
+
 // SERVER START
 // =========================================================================
 app.listen(PORT, () => {
