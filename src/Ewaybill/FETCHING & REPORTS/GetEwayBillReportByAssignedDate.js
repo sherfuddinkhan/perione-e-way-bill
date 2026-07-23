@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const EwayBillsByDate = () => {
+const GetEwayBillReportByAssignedDate = () => {
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
     date: "2026-07-22",
@@ -26,7 +26,7 @@ const EwayBillsByDate = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const GetEwayBillReportByAssignedDate = async () => {
+  const fetchEwayBills= async () => {
     try {
       setLoading(true);
       setError("");

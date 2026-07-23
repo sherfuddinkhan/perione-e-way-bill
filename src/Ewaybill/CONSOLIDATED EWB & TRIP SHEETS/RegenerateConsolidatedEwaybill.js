@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const RegenerateTripSheet = () => {
+const RegenerateConsolidatedEwaybill = () => {
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
     tripSheetNo: "161012149685",
@@ -30,7 +30,7 @@ const RegenerateTripSheet = () => {
     });
   };
 
-  const RegenerateConsolidatedEwaybill = async () => {
+  const regenerateTripSheet = async () => {
     setLoading(true);
     setError("");
 
