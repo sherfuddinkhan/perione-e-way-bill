@@ -21,7 +21,6 @@ import RejectedByOthersEwayBills from "./Ewaybill/FETCHING & REPORTS/RejectedByO
 import GetEwayBillsByParties from "./Ewaybill/FETCHING & REPORTS/GetEwayBillsByParties";
 import GetEwayBillByConsigner from "./Ewaybill/FETCHING & REPORTS/GetEwayBillByConsigner";
 import GetErrorList from "./Ewaybill/FETCHING & REPORTS/GetErrorList";
-import GetGstinDetails from "./Ewaybill/FETCHING & REPORTS/GetGstinDetails";
 import GetHsnDetails from "./Ewaybill/FETCHING & REPORTS/GetHsnDetails";
 
 // GENERATE & MANAGE E-WAY BILLS
@@ -112,7 +111,7 @@ function App() {
         <Route path="regenerate-consolidated" element={<RegenerateConsolidatedEwaybill />} />
 
         {/* Fetching & Reports */}
-        <Route path="get-ewaybill-details" element={<GetEwayBillDetails />} />
+         <Route path="/get-gstin-details" element={<GetGstinDetails />} />
         <Route path="get-transporter-by-date" element={<GetEwayBillTransporterByDate />} />
         <Route path="get-transporter-by-gstin" element={<GetEwayBillsTransporterByGstin />} />
         <Route path="get-report-assigned-date" element={<GetEwayBillReportByAssignedDate />} />

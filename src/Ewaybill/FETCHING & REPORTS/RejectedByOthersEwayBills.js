@@ -11,6 +11,15 @@ const RejectedByOthersEwayBills = () => {
     const [year, month, day] = inputDate.split("-");
     return `${day}/${month}/${year}`;
   };
+  const [formData, setFormData] = useState({
+  email: "sherfuddin.phd@gmail.com",
+  fromDate: "",
+  toDate: "",
+  gstin: "",
+  status: "",
+  page: "1",
+  limit: "10"
+});
 
  const fetchRejectedBills = async () => {
   try {
