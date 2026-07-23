@@ -873,6 +873,133 @@ app.get("/api/ewaybill/other-party", async (req, res) => {
 });
 
 
+// GET E-Way Bills by Date (Dynamic Credentials)
+app.get("/api/ewaybill/by-date", async (req, res) => {
+  try {
+    const {
+      email,
+      date,
+      stateCode,
+      gstin,
+      client_id,
+      client_secret,
+      ip_address,
+      env,
+    } = req.query;
+
+    // Validate required fields
+    if (
+      !email ||
+      !date ||
+      !stateCode ||
+      !gstin ||
+      !client_id ||
+      !client_secret
+    ) {
+      return res.status(400).json({
+        error:
+          "email, date, stateCode, gstin, client_id and client_secret are required",
+      });
+    }
+
+    const response = await axios.get(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/getewaybillsbydate",
+      {
+        params: {
+          email,
+          date,
+          stateCode,
+        },
+        headers: {
+          accept: "*/*",
+          ip_address: ip_address || "0.0.0.0",
+          client_id,
+          client_secret,
+          gstin,
+          env: env || "sandbox",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error.message);
+
+    res.status(500).json({
+      error: "Failed to fetch E-Way Bills by Date",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// GET E-Way Bills for Transporter by GSTIN (Dynamic Credentials)
+app.get("/api/ewaybill/transporter-by-gstin", async (req, res) => {
+  try {
+    const {
+      email,
+      Gen_gstin,
+      date,
+      gstin,
+      client_id,
+      client_secret,
+      ip_address,
+      env,
+    } = req.query;
+
+    // Validate required fields
+    if (
+      !email ||
+      !Gen_gstin ||
+      !date ||
+      !gstin ||
+      !client_id ||
+      !client_secret
+    ) {
+      return res.status(400).json({
+        error:
+          "email, Gen_gstin, date, gstin, client_id and client_secret are required",
+      });
+    }
+
+    const response = await axios.get(
+      "https://staging.perione.in/ewaybillapi/v1.03/ewayapi/getewaybillsfortransporterbygstin",
+      {
+        params: {
+          email,
+          Gen_gstin,
+          date,
+        },
+        headers: {
+          accept: "*/*",
+          ip_address: ip_address || "0.0.0.0",
+          client_id,
+          client_secret,
+          gstin,
+          env: env || "sandbox",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error.message);
+
+    res.status(500).json({
+      error: "Failed to fetch E-Way Bills for Transporter by GSTIN",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+
 
 // SERVER START
 // =========================================================================
