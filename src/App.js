@@ -1,7 +1,9 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import Sidebar from "./Sidebar";
+import {BrowserRouter,Routes,Route,Navigate,Outlet} from "react-router-dom";
+
+
 
 // AUTHENTICATION
 import AuthenticationApi from "./Ewaybill/AUTHENTICATION/AuthenticationApi";
@@ -63,72 +65,75 @@ return isLoggedIn ? children : <Navigate to="/" replace />;
 
 function App() {
   return (
-    <Routes>
-      {/* Authentication Route */}
-      <Route path="/" element={<AuthenticationApi />} />
+    <BrowserRouter>
+      <Routes>
 
-      {/* Dashboard Redirect */}
-      <Route path="/dashboard" element={<Navigate to="/Ewaybillclients" replace />} />
+        {/* Authentication Route */}
+        <Route path="/" element={<AuthenticationApi />} />
 
-      {/* Main E-Way Bill Client Route */}
-      <Route
-        path="/Ewaybillclients"
-        element={
-          <RequireAuth>
-            <Layout />
-          </RequireAuth>
-        }
-      >
-        <Route index element={<Ewaybillclients />} />
-      </Route>
+        {/* Dashboard Redirect */}
+        <Route path="/dashboard" element={<Navigate to="/Ewaybillclients" replace />} />
 
-      {/* E-Way Bill Routes */}
-      <Route
-        path="/ewaybill"
-        element={
-          <RequireAuth>
-            <Layout />
-          </RequireAuth>
-        }
-      >
-        <Route index element={<Navigate to="/Ewaybillclients" replace />} />
+        {/* Main E-Way Bill Client Route */}
+        <Route
+          path="/Ewaybillclients"
+          element={
+            <RequireAuth>
+              <Layout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Ewaybillclients />} />
+        </Route>
 
-        {/* Generate & Manage E-Way Bills */}
-        <Route path="generate-eway-bill" element={<GenerateEwayBill />} />
-        <Route path="cancel-eway-bill" element={<CancelEwayBill />} />
-        <Route path="close-eway-bill" element={<CloseEwayBill />} />
-        <Route path="reject-ewaybill" element={<RejectEwayBill />} />
-        <Route path="extend-validity" element={<ExtendValidityEwayBill />} />
+        {/* E-Way Bill Routes */}
+        <Route
+          path="/ewaybill"
+          element={
+            <RequireAuth>
+              <Layout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Navigate to="/Ewaybillclients" replace />} />
 
-        {/* Transporter & Vehicle Operations */}
-        <Route path="update-partb" element={<UpdatePartBVehicleNumber />} />
-        <Route path="update-transporter" element={<UpdateTransporter />} />
-        <Route path="get-transporter-details" element={<GetTransporterDetails />} />
+          {/* Generate & Manage E-Way Bills */}
+          <Route path="generate-eway-bill" element={<GenerateEwayBill />} />
+          <Route path="cancel-eway-bill" element={<CancelEwayBill />} />
+          <Route path="close-eway-bill" element={<CloseEwayBill />} />
+          <Route path="reject-ewaybill" element={<RejectEwayBill />} />
+          <Route path="extend-validity" element={<ExtendValidityEwayBill />} />
 
-        {/* Consolidated EWB & Trip Sheets */}
-        <Route path="generate-consolidated" element={<GenerateConsolidatedEwayBill />} />
-        <Route path="get-consolidated" element={<GetConsolidatedEwayBill />} />
-        <Route path="regenerate-consolidated" element={<RegenerateConsolidatedEwaybill />} />
+          {/* Transporter & Vehicle Operations */}
+          <Route path="update-partb" element={<UpdatePartBVehicleNumber />} />
+          <Route path="update-transporter" element={<UpdateTransporter />} />
+          <Route path="get-transporter-details" element={<GetTransporterDetails />} />
 
-        {/* Fetching & Reports */}
-         <Route path="/get-gstin-details" element={<GetGstinDetails />} />
-        <Route path="get-transporter-by-date" element={<GetEwayBillTransporterByDate />} />
-        <Route path="get-transporter-by-gstin" element={<GetEwayBillsTransporterByGstin />} />
-        <Route path="get-report-assigned-date" element={<GetEwayBillReportByAssignedDate />} />
-        <Route path="get-by-date" element={<GetEwayBillsByDate />} />
-        <Route path="get-by-parties" element={<GetEwayBillsByParties />} />
-        <Route path="get-by-consigner" element={<GetEwayBillByConsigner />} />
-        <Route path="get-error-list" element={<GetErrorList />} />
-        <Route path="get-hsn-details" element={<GetHsnDetails />} />
-        <Route path="/get-gstin-details" element={<GetGstinDetails />} />
-        <Route path="/rejected-eway-bills" element={<RejectedByOthersEwayBills />} />
+          {/* Consolidated EWB & Trip Sheets */}
+          <Route path="generate-consolidated" element={<GenerateConsolidatedEwayBill />} />
+          <Route path="get-consolidated" element={<GetConsolidatedEwayBill />} />
+          <Route path="regenerate-consolidated" element={<RegenerateConsolidatedEwaybill />} />
 
-        {/* Multi-Vehicle Operations */}
-        <Route path="initiate-multi-vehicle" element={<InitiateMultiVehicleMovement />} />
-        <Route path="add-multi-vehicles" element={<AddMultiVehicles />} />
-        <Route path="change-multi-vehicles" element={<ChangeMultiVehicles />} />
-      </Route>
-    </Routes>
+          {/* Fetching & Reports */}
+          <Route path="get-gstin-details" element={<GetGstinDetails />} />
+          <Route path="get-transporter-by-date" element={<GetEwayBillTransporterByDate />} />
+          <Route path="get-transporter-by-gstin" element={<GetEwayBillsTransporterByGstin />} />
+          <Route path="get-report-assigned-date" element={<GetEwayBillReportByAssignedDate />} />
+          <Route path="get-by-date" element={<GetEwayBillsByDate />} />
+          <Route path="get-by-parties" element={<GetEwayBillsByParties />} />
+          <Route path="get-by-consigner" element={<GetEwayBillByConsigner />} />
+          <Route path="get-error-list" element={<GetErrorList />} />
+          <Route path="get-hsn-details" element={<GetHsnDetails />} />
+          <Route path="rejected-eway-bills" element={<RejectedByOthersEwayBills />} />
+
+          {/* Multi-Vehicle Operations */}
+          <Route path="initiate-multi-vehicle" element={<InitiateMultiVehicleMovement />} />
+          <Route path="add-multi-vehicles" element={<AddMultiVehicles />} />
+          <Route path="change-multi-vehicles" element={<ChangeMultiVehicles />} />
+        </Route>
+
+      </Routes>
+    </BrowserRouter>
   );
 }
 

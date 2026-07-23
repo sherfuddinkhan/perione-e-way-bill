@@ -4,27 +4,40 @@ import { useLocation } from 'react-router-dom';
 
 // --- Helper Form Components ---
 
-const FormField = ({ label, name, value, onChange, type = "text", placeholder = "", uppercase = false, selectOptions = null }) => (
-  <div className="form-group">
-    <label className="form-label">{label}</label>
-    {selectOptions ? (
-      <select name={name} value={value} onChange={onChange} className="form-select">
-        {selectOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
-      </select>
-    ) : (
-      <input
-        type={type}
-        name={name}
-        value={value ?? ''}
-        placeholder={placeholder}
-        onChange={onChange}
-        className={`form-input ${uppercase ? 'uppercase-input' : ''}`}
-      />
-    )}
-  </div>
-);
+const FormField = ({ label, name, value, onChange, type = "text", placeholder, uppercase, selectOptions }) => {
+  return (
+    <div style={styles.formGroup}>
+      {label && <label style={styles.formLabel}>{label}</label>}
+      {selectOptions ? (
+        <select
+          name={name}
+          value={value}
+          onChange={onChange}
+          style={styles.formInput}
+        >
+          <option value="">Select Option</option>
+          {selectOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder || "Enter details..."}
+          style={{
+            ...styles.formInput,
+            ...(uppercase ? styles.uppercaseInput : {}),
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 const AddressGroup = ({ title, prefix, data, onChange }) => (
   <div className="address-card">
@@ -480,21 +493,24 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
   setLoading(false);
 }
   }
- return (
+return (
   <div style={styles.ewayContainer}>
     <div style={styles.ewayCard}>
-
       {/* Header */}
       <header style={styles.ewayHeader}>
         <div>
           <h1 style={styles.ewayTitle}>Generate E-Way Bill</h1>
+          <p style={styles.ewaySubtitle}>
+            Fill out the form below to generate a new electronic waybill
+          </p>
         </div>
+        <span style={styles.ewayBadge}>GST System</span>
       </header>
 
+      {/* Form Body */}
       <form onSubmit={handleSubmit} style={styles.ewayForm}>
-
-        {/* Document Section */}
-        <section>
+        {/* 1. Document Section */}
+        <section style={styles.section}>
           <h2 style={styles.sectionTitle}>1. Document Details</h2>
           <div style={styles.formGrid4}>
             <FormField
@@ -504,93 +520,316 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
               onChange={handleInputChange}
               selectOptions={[
                 { label: "Outward", value: "O" },
-                { label: "Inward", value: "I" }
+                { label: "Inward", value: "I" },
               ]}
             />
-            <FormField label="Sub Supply Type" name="subSupplyType" value={formData.subSupplyType} onChange={handleInputChange} />
-            <FormField label="Sub Supply Desc" name="subSupplyDesc" value={formData.subSupplyDesc} onChange={handleInputChange} />
-            <FormField label="Doc Type" name="docType" value={formData.docType} onChange={handleInputChange} />
-            <FormField label="Doc No" name="docNo" value={formData.docNo} onChange={handleInputChange} />
-            <FormField label="Doc Date" name="docDate" value={formData.docDate} onChange={handleInputChange} placeholder="DD/MM/YYYY" />
-            <FormField label="Transaction Type" name="transactionType" value={formData.transactionType} onChange={handleInputChange} type="number" />
-            <FormField label="from GSTIN" name="fromGstin" value={formData.fromGstin} onChange={handleInputChange} type="text" />
+            <FormField
+              label="Sub Supply Type"
+              name="subSupplyType"
+              value={formData.subSupplyType}
+              onChange={handleInputChange}
+            />
+            <FormField
+              label="Sub Supply Desc"
+              name="subSupplyDesc"
+              value={formData.subSupplyDesc}
+              onChange={handleInputChange}
+            />
+            <FormField
+              label="Doc Type"
+              name="docType"
+              value={formData.docType}
+              onChange={handleInputChange}
+            />
+            <FormField
+              label="Doc No"
+              name="docNo"
+              value={formData.docNo}
+              onChange={handleInputChange}
+            />
+            <FormField
+              label="Doc Date"
+              name="docDate"
+              value={formData.docDate}
+              onChange={handleInputChange}
+              placeholder="DD/MM/YYYY"
+            />
+            <FormField
+              label="Transaction Type"
+              name="transactionType"
+              value={formData.transactionType}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="From GSTIN"
+              name="fromGstin"
+              value={formData.fromGstin}
+              onChange={handleInputChange}
+              type="text"
+            />
           </div>
         </section>
 
-        {/* Parties Section */}
-        <section>
+        {/* 2. Parties Section */}
+        <section style={styles.section}>
           <h2 style={styles.sectionTitle}>2. Parties & Address Details</h2>
           <div style={styles.formGrid2}>
-            <AddressGroup title="From (Supplier)" prefix="from" data={formData} onChange={handleInputChange} />
-            <AddressGroup title="To (Recipient)" prefix="to" data={formData} onChange={handleInputChange} />
+            <AddressGroup
+              title="From (Supplier)"
+              prefix="from"
+              data={formData}
+              onChange={handleInputChange}
+            />
+            <AddressGroup
+              title="To (Recipient)"
+              prefix="to"
+              data={formData}
+              onChange={handleInputChange}
+            />
           </div>
 
           {/* Extended Consignee / Shipping Fields */}
-          <div style={{ ...styles.addressCard, marginTop: "16px" }}>
+          <div style={{ ...styles.addressCard, marginTop: "20px" }}>
             <h3 style={styles.addressTitle}>Ship-To Details</h3>
             <div style={styles.formGrid4}>
-              <FormField label="Ship-To GSTIN" name="shipToGSTIN" value={formData.shipToGSTIN} onChange={handleInputChange} uppercase />
-              <FormField label="Ship-To Trade Name" name="shipToTradeName" value={formData.shipToTradeName} onChange={handleInputChange} />
+              <FormField
+                label="Ship-To GSTIN"
+                name="shipToGSTIN"
+                value={formData.shipToGSTIN}
+                onChange={handleInputChange}
+                uppercase
+              />
+              <FormField
+                label="Ship-To Trade Name"
+                name="shipToTradeName"
+                value={formData.shipToTradeName}
+                onChange={handleInputChange}
+              />
             </div>
           </div>
         </section>
 
-        {/* Taxable Values Breakdown */}
-        <section>
+        {/* 3. Invoice Summary */}
+        <section style={styles.section}>
           <h2 style={styles.sectionTitle}>3. Total Invoice Summary</h2>
           <div style={styles.formGrid4}>
-            <FormField label="Total Value" name="totalValue" value={formData.totalValue} onChange={handleInputChange} type="number" />
-            <FormField label="CGST Value" name="cgstValue" value={formData.cgstValue} onChange={handleInputChange} type="number" />
-            <FormField label="SGST Value" name="sgstValue" value={formData.sgstValue} onChange={handleInputChange} type="number" />
-            <FormField label="IGST Value" name="igstValue" value={formData.igstValue} onChange={handleInputChange} type="number" />
-            <FormField label="Cess Value" name="cessValue" value={formData.cessValue} onChange={handleInputChange} type="number" />
-            <FormField label="Cess Non-Advol Value" name="cessNonAdvolValue" value={formData.cessNonAdvolValue} onChange={handleInputChange} type="number" />
-            <FormField label="Other Charges" name="otherValue" value={formData.otherValue} onChange={handleInputChange} type="number" />
-            <FormField label="Total Invoice Value" name="totInvValue" value={formData.totInvValue} onChange={handleInputChange} type="number" />
+            <FormField
+              label="Total Value"
+              name="totalValue"
+              value={formData.totalValue}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="CGST Value"
+              name="cgstValue"
+              value={formData.cgstValue}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="SGST Value"
+              name="sgstValue"
+              value={formData.sgstValue}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="IGST Value"
+              name="igstValue"
+              value={formData.igstValue}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="Cess Value"
+              name="cessValue"
+              value={formData.cessValue}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="Cess Non-Advol Value"
+              name="cessNonAdvolValue"
+              value={formData.cessNonAdvolValue}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="Other Charges"
+              name="otherValue"
+              value={formData.otherValue}
+              onChange={handleInputChange}
+              type="number"
+            />
+            <FormField
+              label="Total Invoice Value"
+              name="totInvValue"
+              value={formData.totInvValue}
+              onChange={handleInputChange}
+              type="number"
+            />
           </div>
         </section>
 
-        {/* Itemized Products */}
-        <section>
+        {/* 4. Item Details */}
+        <section style={styles.section}>
           <h2 style={styles.sectionTitle}>4. Item Details</h2>
           {formData.itemList.map((item, idx) => (
             <div key={idx} style={styles.itemCard}>
               <div style={styles.itemHeader}>Item #{idx + 1}</div>
               <div style={styles.formGrid4}>
-                <FormField label="Product Name" name="productName" value={item.productName} onChange={(e) => handleItemChange(idx, "productName", e.target.value, "text")} />
-                <FormField label="Product Desc" name="productDesc" value={item.productDesc} onChange={(e) => handleItemChange(idx, "productDesc", e.target.value, "text")} />
-                <FormField label="HSN Code" name="hsnCode" value={item.hsnCode} onChange={(e) => handleItemChange(idx, "hsnCode", e.target.value, "number")} type="number" />
-                <FormField label="Quantity" name="quantity" value={item.quantity} onChange={(e) => handleItemChange(idx, "quantity", e.target.value, "number")} type="number" />
-                <FormField label="Unit" name="qtyUnit" value={item.qtyUnit} onChange={(e) => handleItemChange(idx, "qtyUnit", e.target.value, "text")} />
-                <FormField label="Taxable Amount" name="taxableAmount" value={item.taxableAmount} onChange={(e) => handleItemChange(idx, "taxableAmount", e.target.value, "number")} type="number" />
-                <FormField label="CGST Rate (%)" name="cgstRate" value={item.cgstRate} onChange={(e) => handleItemChange(idx, "cgstRate", e.target.value, "number")} type="number" />
-                <FormField label="SGST Rate (%)" name="sgstRate" value={item.sgstRate} onChange={(e) => handleItemChange(idx, "sgstRate", e.target.value, "number")} type="number" />
-                <FormField label="IGST Rate (%)" name="igstRate" value={item.igstRate} onChange={(e) => handleItemChange(idx, "igstRate", e.target.value, "number")} type="number" />
-                <FormField label="Cess Rate (%)" name="cessRate" value={item.cessRate} onChange={(e) => handleItemChange(idx, "cessRate", e.target.value, "number")} type="number" />
+                <FormField
+                  label="Product Name"
+                  name="productName"
+                  value={item.productName}
+                  onChange={(e) => handleItemChange(idx, "productName", e.target.value, "text")}
+                />
+                <FormField
+                  label="Product Desc"
+                  name="productDesc"
+                  value={item.productDesc}
+                  onChange={(e) => handleItemChange(idx, "productDesc", e.target.value, "text")}
+                />
+                <FormField
+                  label="HSN Code"
+                  name="hsnCode"
+                  value={item.hsnCode}
+                  onChange={(e) => handleItemChange(idx, "hsnCode", e.target.value, "number")}
+                  type="number"
+                />
+                <FormField
+                  label="Quantity"
+                  name="quantity"
+                  value={item.quantity}
+                  onChange={(e) => handleItemChange(idx, "quantity", e.target.value, "number")}
+                  type="number"
+                />
+                <FormField
+                  label="Unit"
+                  name="qtyUnit"
+                  value={item.qtyUnit}
+                  onChange={(e) => handleItemChange(idx, "qtyUnit", e.target.value, "text")}
+                />
+                <FormField
+                  label="Taxable Amount"
+                  name="taxableAmount"
+                  value={item.taxableAmount}
+                  onChange={(e) => handleItemChange(idx, "taxableAmount", e.target.value, "number")}
+                  type="number"
+                />
+                <FormField
+                  label="CGST Rate (%)"
+                  name="cgstRate"
+                  value={item.cgstRate}
+                  onChange={(e) => handleItemChange(idx, "cgstRate", e.target.value, "number")}
+                  type="number"
+                />
+                <FormField
+                  label="SGST Rate (%)"
+                  name="sgstRate"
+                  value={item.sgstRate}
+                  onChange={(e) => handleItemChange(idx, "sgstRate", e.target.value, "number")}
+                  type="number"
+                />
+                <FormField
+                  label="IGST Rate (%)"
+                  name="igstRate"
+                  value={item.igstRate}
+                  onChange={(e) => handleItemChange(idx, "igstRate", e.target.value, "number")}
+                  type="number"
+                />
+                <FormField
+                  label="Cess Rate (%)"
+                  name="cessRate"
+                  value={item.cessRate}
+                  onChange={(e) => handleItemChange(idx, "cessRate", e.target.value, "number")}
+                  type="number"
+                />
               </div>
             </div>
           ))}
         </section>
 
-        {/* Logistics & Transportation */}
-        <section>
-          <h2 style={styles.sectionTitle}>5. Logistics & Transportation Details</h2>
-          <div style={styles.formGrid4}>
-            <FormField label="Transporter ID" name="transporterId" value={formData.transporterId} onChange={handleInputChange} uppercase />
-            <FormField label="Transporter Name" name="transporterName" value={formData.transporterName} onChange={handleInputChange} />
-            <FormField label="Distance (KM)" name="transDistance" value={formData.transDistance} onChange={handleInputChange} />
-            <FormField label="Vehicle No" name="vehicleNo" value={formData.vehicleNo} onChange={handleInputChange} uppercase />
-          </div>
-        </section>
+        {/* 5. Logistics Section */}
+     {/* 5. Logistics & Transportation Details */}
+<section style={styles.section}>
+  <h2 style={styles.sectionTitle}>5. Logistics & Transportation Details</h2>
+  <div style={styles.formGrid4}>
+    <FormField
+      label="Transporter ID"
+      name="transporterId"
+      value={formData.transporterId}
+      onChange={handleInputChange}
+      uppercase
+    />
+    <FormField
+      label="Transporter Name"
+      name="transporterName"
+      value={formData.transporterName}
+      onChange={handleInputChange}
+    />
+    <FormField
+      label="Transport Mode"
+      name="transMode"
+      value={formData.transMode}
+      onChange={handleInputChange}
+      selectOptions={[
+        { label: "1 - Road", value: "1" },
+        { label: "2 - Rail", value: "2" },
+        { label: "3 - Air", value: "3" },
+        { label: "4 - Ship", value: "4" },
+      ]}
+    />
+    <FormField
+      label="Trans Doc No / LR No"
+      name="transDocNo"
+      value={formData.transDocNo}
+      onChange={handleInputChange}
+    />
+    <FormField
+      label="Trans Doc Date"
+      name="transDocDate"
+      value={formData.transDocDate}
+      onChange={handleInputChange}
+      placeholder="DD/MM/YYYY"
+    />
+    <FormField
+      label="Distance (KM)"
+      name="transDistance"
+      value={formData.transDistance}
+      onChange={handleInputChange}
+      type="number"
+    />
+    <FormField
+      label="Vehicle No"
+      name="vehicleNo"
+      value={formData.vehicleNo}
+      onChange={handleInputChange}
+      uppercase
+    />
+    <FormField
+      label="Vehicle Type"
+      name="vehicleType"
+      value={formData.vehicleType}
+      onChange={handleInputChange}
+      selectOptions={[
+        { label: "Regular (R)", value: "R" },
+        { label: "Over Dimensional Cargo (O)", value: "O" },
+      ]}
+    />
+  </div>
+</section>
 
         {/* Feedback Section */}
         {error && (
           <div style={styles.errorBanner}>
-            ⚠️ {error}
+            <span>⚠️</span> {error}
           </div>
         )}
 
-        {/* Actions */}
+        {/* Form Footer / Action */}
         <div style={styles.formActions}>
           <button type="submit" disabled={loading} style={styles.btnSubmit}>
             {loading ? "Submitting Request..." : "Generate E-Way Bill"}
@@ -598,41 +837,40 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
         </div>
       </form>
 
-      {/* Display Success Response */}
+      {/* Success Modal */}
       {response && <SuccessModal result={response} />}
-
     </div>
   </div>
 );
 };
 
 const styles = {
-  // Main Container & Layout
+  // Main Canvas
   ewayContainer: {
     minHeight: "100vh",
-    backgroundColor: "#f8fafc",
-    padding: "24px",
-    fontFamily:
-      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    backgroundColor: "#f1f5f9",
+    padding: "32px 16px",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif",
     color: "#334155",
+    boxSizing: "border-box",
   },
 
+  // Main Card Wrapper
   ewayCard: {
     maxWidth: "1100px",
     margin: "0 auto",
     backgroundColor: "#ffffff",
-    borderRadius: "12px",
-    boxShadow:
-      "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)",
+    borderRadius: "16px",
+    boxShadow: "0 20px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.02)",
     border: "1px solid #e2e8f0",
     overflow: "hidden",
   },
 
-  // Header
+  // Header Component
   ewayHeader: {
     backgroundColor: "#0f172a",
     color: "#ffffff",
-    padding: "24px 32px",
+    padding: "28px 36px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -642,10 +880,11 @@ const styles = {
     margin: 0,
     fontSize: "1.5rem",
     fontWeight: "700",
+    letterSpacing: "-0.025em",
   },
 
   ewaySubtitle: {
-    margin: "4px 0 0 0",
+    margin: "6px 0 0 0",
     color: "#94a3b8",
     fontSize: "0.875rem",
   },
@@ -654,52 +893,59 @@ const styles = {
     backgroundColor: "rgba(16, 185, 129, 0.15)",
     color: "#34d399",
     border: "1px solid rgba(16, 185, 129, 0.3)",
-    padding: "4px 12px",
+    padding: "6px 14px",
     borderRadius: "9999px",
     fontSize: "0.75rem",
     fontWeight: "600",
+    letterSpacing: "0.05em",
     textTransform: "uppercase",
   },
 
-  // Form Structure
+  // Form Container
   ewayForm: {
-    padding: "32px",
+    padding: "36px",
     display: "flex",
     flexDirection: "column",
-    gap: "32px",
+    gap: "36px",
+  },
+
+  section: {
+    display: "flex",
+    flexDirection: "column",
   },
 
   sectionTitle: {
     fontSize: "1.1rem",
     fontWeight: "600",
-    color: "#1e293b",
-    margin: "0 0 16px 0",
-    paddingBottom: "8px",
+    color: "#0f172a",
+    margin: "0 0 20px 0",
+    paddingBottom: "10px",
     borderBottom: "2px solid #f1f5f9",
   },
 
-  // Form Controls & Grids
+  // Grids
   formGrid4: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: "16px",
+    gap: "20px 16px",
   },
 
   formGrid2: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-    gap: "24px",
+    gap: "20px",
   },
 
+  // Address Cards
   addressCard: {
     backgroundColor: "#f8fafc",
     padding: "20px",
-    borderRadius: "8px",
+    borderRadius: "10px",
     border: "1px solid #e2e8f0",
   },
 
   addressTitle: {
-    fontSize: "0.85rem",
+    fontSize: "0.80rem",
     fontWeight: "700",
     color: "#475569",
     textTransform: "uppercase",
@@ -707,11 +953,11 @@ const styles = {
     margin: "0 0 16px 0",
   },
 
+  // Form Controls
   formGroup: {
     display: "flex",
     flexDirection: "column",
     gap: "6px",
-    marginBottom: "12px",
   },
 
   formLabel: {
@@ -724,26 +970,26 @@ const styles = {
 
   formInput: {
     width: "100%",
-    padding: "10px 12px",
+    padding: "10px 14px",
     border: "1px solid #cbd5e1",
-    borderRadius: "6px",
+    borderRadius: "8px",
     fontSize: "0.875rem",
-    color: "#1e293b",
+    color: "#0f172a",
     boxSizing: "border-box",
-    transition: "border-color 0.15s ease, box-shadow 0.15s ease",
     backgroundColor: "#ffffff",
+    outline: "none",
   },
 
   formSelect: {
     width: "100%",
-    padding: "10px 12px",
+    padding: "10px 14px",
     border: "1px solid #cbd5e1",
-    borderRadius: "6px",
+    borderRadius: "8px",
     fontSize: "0.875rem",
-    color: "#1e293b",
+    color: "#0f172a",
     boxSizing: "border-box",
-    transition: "border-color 0.15s ease, box-shadow 0.15s ease",
     backgroundColor: "#ffffff",
+    outline: "none",
   },
 
   uppercaseInput: {
@@ -751,58 +997,61 @@ const styles = {
     fontFamily: "monospace",
   },
 
-  // Item List Styles
+  // Items
   itemCard: {
     backgroundColor: "#ffffff",
     border: "1px solid #e2e8f0",
-    borderRadius: "8px",
-    padding: "16px",
+    borderRadius: "10px",
+    padding: "20px",
     marginBottom: "16px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
   },
 
   itemHeader: {
     fontSize: "0.85rem",
     fontWeight: "700",
     color: "#2563eb",
-    marginBottom: "12px",
+    marginBottom: "16px",
   },
 
-  // Buttons and Alerts
+  // Actions & Alerts
   formActions: {
     display: "flex",
     justifyContent: "flex-end",
-    paddingTop: "16px",
+    paddingTop: "20px",
     borderTop: "1px solid #e2e8f0",
   },
 
   btnSubmit: {
     backgroundColor: "#2563eb",
-    color: "white",
+    color: "#ffffff",
     fontWeight: "600",
-    padding: "12px 28px",
+    padding: "12px 32px",
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
     fontSize: "0.95rem",
-    transition: "background-color 0.2s ease, transform 0.1s ease",
+    transition: "background-color 0.15s ease",
   },
 
   errorBanner: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
     backgroundColor: "#fef2f2",
     border: "1px solid #fecaca",
     color: "#dc2626",
-    padding: "14px 16px",
+    padding: "14px 18px",
     borderRadius: "8px",
     fontSize: "0.875rem",
     fontWeight: "500",
   },
 
-  // Success Modal View
+  // Success Modal
   successBanner: {
     backgroundColor: "#f0fdf4",
     borderTop: "1px solid #bbf7d0",
-    padding: "24px 32px",
+    padding: "24px 36px",
   },
 
   successCard: {
@@ -826,7 +1075,7 @@ const styles = {
     gap: "16px",
     backgroundColor: "#f8fafc",
     padding: "16px",
-    borderRadius: "6px",
+    borderRadius: "8px",
     border: "1px solid #e2e8f0",
   },
 
@@ -843,152 +1092,6 @@ const styles = {
     fontSize: "1rem",
     fontWeight: "600",
     color: "#0f172a",
-  },
-
-  // Additional Card Layout
-  outerContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    backgroundColor: "#f8fafc",
-    padding: "20px",
-    fontFamily:
-      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-  },
-
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: "16px",
-    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
-    border: "1px solid #e2e8f0",
-    width: "100%",
-    maxWidth: "480px",
-    padding: "32px",
-    boxSizing: "border-box",
-  },
-
-  header: {
-    textAlign: "center",
-    marginBottom: "24px",
-  },
-
-  badge: {
-    display: "inline-block",
-    padding: "4px 12px",
-    borderRadius: "20px",
-    backgroundColor: "#fee2e2",
-    color: "#dc2626",
-    fontSize: "11px",
-    fontWeight: "700",
-    letterSpacing: "0.5px",
-    textTransform: "uppercase",
-    marginBottom: "10px",
-  },
-
-  title: {
-    margin: 0,
-    color: "#0f172a",
-    fontSize: "22px",
-    fontWeight: "700",
-  },
-
-  subtitle: {
-    margin: "6px 0 0 0",
-    color: "#64748b",
-    fontSize: "13px",
-  },
-
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  },
-
-  fieldGroup: {
-    display: "flex",
-    flexDirection: "column",
-  },
-
-  label: {
-    fontSize: "12px",
-    fontWeight: "600",
-    color: "#334155",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-    marginBottom: "6px",
-  },
-
-  input: {
-    width: "100%",
-    padding: "10px 14px",
-    border: "1px solid #cbd5e1",
-    borderRadius: "8px",
-    fontSize: "14px",
-    color: "#0f172a",
-    outline: "none",
-    boxSizing: "border-box",
-    backgroundColor: "#f8fafc",
-  },
-
-  button: {
-    width: "100%",
-    padding: "12px",
-    backgroundColor: "#dc2626",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "15px",
-    fontWeight: "600",
-    cursor: "pointer",
-    marginTop: "8px",
-  },
-
-  responseCard: {
-    marginTop: "20px",
-    padding: "16px",
-    borderRadius: "10px",
-    border: "1px solid #e2e8f0",
-    backgroundColor: "#f8fafc",
-  },
-
-  responseHeader: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    marginBottom: "10px",
-  },
-
-  statusBadge: {
-    color: "#ffffff",
-    backgroundColor: "#dc2626",
-    padding: "3px 8px",
-    borderRadius: "4px",
-    fontSize: "10px",
-    fontWeight: "700",
-  },
-
-  responseDesc: {
-    fontSize: "12px",
-    color: "#334155",
-    fontWeight: "600",
-  },
-
-  jsonViewer: {
-    margin: 0,
-    padding: "12px",
-    backgroundColor: "#0f172a",
-    color: "#38bdf8",
-    borderRadius: "6px",
-    fontSize: "11px",
-    fontFamily: "monospace",
-    overflowX: "auto",
-    maxHeight: "180px",
-  },
-
-  // Responsive
-  cardMobile: {
-    padding: "20px",
   },
 };
 export default GenerateEwayBill;
