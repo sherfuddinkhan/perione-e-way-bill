@@ -117,12 +117,12 @@ function App() {
         <Route path="get-transporter-by-gstin" element={<GetEwayBillsTransporterByGstin />} />
         <Route path="get-report-assigned-date" element={<GetEwayBillReportByAssignedDate />} />
         <Route path="get-by-date" element={<GetEwayBillsByDate />} />
-        <Route path="get-rejected" element={<GetRejectedEwayBills />} />
         <Route path="get-by-parties" element={<GetEwayBillsByParties />} />
         <Route path="get-by-consigner" element={<GetEwayBillByConsigner />} />
         <Route path="get-error-list" element={<GetErrorList />} />
-        <Route path="get-gstin-details" element={<GetGstinDetails />} />
         <Route path="get-hsn-details" element={<GetHsnDetails />} />
+        <Route path="/get-gstin-details" element={<GetGstinDetails />} />
+        <Route path="/rejected-eway-bills" element={<RejectedByOthersEwayBills />} />
 
         {/* Multi-Vehicle Operations */}
         <Route path="initiate-multi-vehicle" element={<InitiateMultiVehicleMovement />} />
