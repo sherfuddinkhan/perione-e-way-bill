@@ -98,7 +98,7 @@ const Sidebar = () => {
  {
   title: "Fetching & Reports",
   items: [
-    { path: "/ewaybill/get-ewaybill-details", label: "Get E-Way Bill Details" },
+    { path: "/ewaybill/get-hsn-details", label: "Get HSN Details" },
     { path: "/ewaybill/get-gstin-details", label: "Get GSTIN Details" },
     { path: "/ewaybill/get-transporter-by-date", label: "Get E-Way Bills for Transporter by Date" },
     { path: "/ewaybill/get-transporter-by-gstin", label: "Get E-Way Bills for Transporter by GSTIN" },
@@ -111,17 +111,6 @@ const Sidebar = () => {
     { path: "/ewaybill/get-transporter-details-by-gstin", label: "Get E-Way Bills Details Transporter By GSTIN" },
   ],
 },
-
-  // Masters
-  {
-    title: "Masters",
-    items: [
-      { path: "/ewaybill/get-error-list", label: "Get Error List" },
-      { path: "/ewaybill/get-gstin-details", label: "Get GSTIN Details" },
-      { path: "/ewaybill/get-transporter-details", label: "Get Transporter Details" },
-      { path: "/ewaybill/get-hsn-details", label: "Get HSN Details" },
-    ],
-  },
 
   // Multi-Vehicle Operations
   {
