@@ -50,98 +50,109 @@ const GetTransporterDetails = () => {
     }
   };
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.heading}>Get Transporter Details</h2>
+ return (
+  <div style={styles.container}>
+    <h2 style={styles.heading}>Get Transporter Details</h2>
 
-        <div style={styles.form}>
-          <input
-            type="text"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            placeholder="Transporter GSTIN / ID (trn_no)"
-            value={trnNo}
-            onChange={(e) => setTrnNo(e.target.value)}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            placeholder="Client ID"
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            placeholder="Client Secret"
-            value={clientSecret}
-            onChange={(e) => setClientSecret(e.target.value)}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            placeholder="GSTIN"
-            value={gstin}
-            onChange={(e) => setGstin(e.target.value)}
-            style={styles.input}
-          />
-
-          <select
-            value={env}
-            onChange={(e) => setEnv(e.target.value)}
-            style={styles.input}
-          >
-            <option value="sandbox">Sandbox</option>
-            <option value="live">Live</option>
-          </select>
-        </div>
-
-        <button
-          onClick={fetchTransporterDetails}
-          style={styles.button}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Get Transporter Details"}
-        </button>
-
-        {error && <p style={styles.error}>{error}</p>}
-
-        {transporter && (
-          <div style={styles.result}>
-            <h3>Transporter Information</h3>
-
-            <p>
-              <strong>Transporter GSTIN / ID:</strong> {trnNo}
-            </p>
-
-            <pre style={styles.response}>
-              {JSON.stringify(transporter, null, 2)}
-            </pre>
-          </div>
-        )}
+    <div style={styles.form}>
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Email</label>
+        <input
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={styles.input}
+        />
       </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Transporter GSTIN / ID (trn_no)</label>
+        <input
+          type="text"
+          value={trnNo}
+          onChange={(e) => setTrnNo(e.target.value)}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client ID</label>
+        <input
+          type="text"
+          value={clientId}
+          onChange={(e) => setClientId(e.target.value)}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client Secret</label>
+        <input
+          type="text"
+          value={clientSecret}
+          onChange={(e) => setClientSecret(e.target.value)}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>GSTIN</label>
+        <input
+          type="text"
+          value={gstin}
+          onChange={(e) => setGstin(e.target.value)}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Environment</label>
+        <select
+          value={env}
+          onChange={(e) => setEnv(e.target.value)}
+          style={styles.input}
+        >
+          <option value="sandbox">Sandbox</option>
+          <option value="live">Live</option>
+        </select>
+      </div>
+
+      <button
+        onClick={fetchTransporterDetails}
+        style={styles.button}
+        disabled={loading}
+      >
+        {loading ? "Loading..." : "Get Transporter Details"}
+      </button>
     </div>
-  );
+
+    {error && <p style={styles.error}>{error}</p>}
+
+    {transporter && (
+      <div style={styles.result}>
+        <h3>Transporter Information</h3>
+
+        <p>
+          <strong>Transporter GSTIN / ID:</strong> {trnNo}
+        </p>
+
+        <pre style={styles.response}>
+          {JSON.stringify(transporter, null, 2)}
+        </pre>
+      </div>
+    )}
+  </div>
+);
 };
 
 const styles = {
   container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    backgroundColor: "#f5f5f5",
-    padding: "20px",
+    maxWidth: "600px",
+  margin: "0 auto",
+  padding: "20px",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "stretch",
   },
   card: {
     backgroundColor: "#fff",
@@ -153,9 +164,10 @@ const styles = {
   },
   heading: {
     color: "#1A73E8",
-    marginBottom: "25px",
-    fontSize: "32px",
-    fontWeight: "bold",
+  marginBottom: "25px",
+  fontSize: "32px",
+  fontWeight: "bold",
+  textAlign: "left",
   },
   form: {
     display: "grid",
@@ -164,11 +176,11 @@ const styles = {
   },
   input: {
     width: "100%",
-    padding: "14px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    fontSize: "16px",
-    boxSizing: "border-box",
+  padding: "14px 16px",
+  fontSize: "16px",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  boxSizing: "border-box",
   },
   button: {
     width: "100%",

@@ -48,51 +48,63 @@ const GetConsolidatedEwayBill = () => {
     }
   };
 
-  return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Get Trip Sheet E-Way Bill</h2>
+ return (
+  <div style={styles.container}>
+    <h2 style={styles.heading}>Get Trip Sheet E-Way Bill</h2>
 
-      <div style={styles.form}>
+    <div style={styles.form}>
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Email</label>
         <input
           type="text"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Trip Sheet No</label>
         <input
           type="text"
-          placeholder="Trip Sheet No"
           value={tripSheetNo}
           onChange={(e) => setTripSheetNo(e.target.value)}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client ID</label>
         <input
           type="text"
-          placeholder="Client ID"
           value={clientId}
           onChange={(e) => setClientId(e.target.value)}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client Secret</label>
         <input
           type="text"
-          placeholder="Client Secret"
           value={clientSecret}
           onChange={(e) => setClientSecret(e.target.value)}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>GSTIN</label>
         <input
           type="text"
-          placeholder="GSTIN"
           value={gstin}
           onChange={(e) => setGstin(e.target.value)}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Environment</label>
         <select
           value={env}
           onChange={(e) => setEnv(e.target.value)}
@@ -101,63 +113,64 @@ const GetConsolidatedEwayBill = () => {
           <option value="sandbox">Sandbox</option>
           <option value="live">Live</option>
         </select>
-
-        <button
-          onClick={fetchTripSheet}
-          style={styles.button}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Get Trip Sheet"}
-        </button>
       </div>
 
-      {error && <p style={styles.error}>{error}</p>}
-
-      {tripSheet && (
-        <div style={styles.card}>
-          <h3>Trip Sheet Information</h3>
-
-          <p><strong>Trip Sheet No:</strong> {tripSheet.tripSheetNo}</p>
-          <p><strong>From Place:</strong> {tripSheet.fromPlace}</p>
-          <p><strong>From State:</strong> {tripSheet.fromState}</p>
-          <p><strong>Vehicle No:</strong> {tripSheet.vehicleNo}</p>
-          <p><strong>Transport Mode:</strong> {tripSheet.transMode}</p>
-          <p><strong>Transport Doc No:</strong> {tripSheet.transDocNo}</p>
-          <p><strong>Transport Doc Date:</strong> {tripSheet.transDocDate}</p>
-          <p><strong>GSTIN:</strong> {tripSheet.userGstin}</p>
-          <p><strong>Entered Date:</strong> {tripSheet.enteredDate}</p>
-          <p><strong>Status:</strong> {tripSheet.status}</p>
-
-          <h3 style={{ marginTop: "25px" }}>Trip Sheet E-Way Bills</h3>
-
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>EWB No</th>
-                <th style={styles.th}>Doc No</th>
-                <th style={styles.th}>From</th>
-                <th style={styles.th}>To</th>
-                <th style={styles.th}>Value</th>
-                <th style={styles.th}>Valid Upto</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tripSheet.tripSheetEwbBills.map((bill, index) => (
-                <tr key={index}>
-                  <td style={styles.td}>{bill.ewbNo}</td>
-                  <td style={styles.td}>{bill.docNo}</td>
-                  <td style={styles.td}>{bill.fromTradeName}</td>
-                  <td style={styles.td}>{bill.toTradeName}</td>
-                  <td style={styles.td}>₹{bill.totInvValue.toLocaleString()}</td>
-                  <td style={styles.td}>{bill.validUpto}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <button
+        onClick={fetchTripSheet}
+        style={styles.button}
+        disabled={loading}
+      >
+        {loading ? "Loading..." : "Get Trip Sheet"}
+      </button>
     </div>
-  );
+
+    {error && <p style={styles.error}>{error}</p>}
+
+    {tripSheet && (
+      <div style={styles.card}>
+        <h3>Trip Sheet Information</h3>
+
+        <p><strong>Trip Sheet No:</strong> {tripSheet.tripSheetNo}</p>
+        <p><strong>From Place:</strong> {tripSheet.fromPlace}</p>
+        <p><strong>From State:</strong> {tripSheet.fromState}</p>
+        <p><strong>Vehicle No:</strong> {tripSheet.vehicleNo}</p>
+        <p><strong>Transport Mode:</strong> {tripSheet.transMode}</p>
+        <p><strong>Transport Doc No:</strong> {tripSheet.transDocNo}</p>
+        <p><strong>Transport Doc Date:</strong> {tripSheet.transDocDate}</p>
+        <p><strong>GSTIN:</strong> {tripSheet.userGstin}</p>
+        <p><strong>Entered Date:</strong> {tripSheet.enteredDate}</p>
+        <p><strong>Status:</strong> {tripSheet.status}</p>
+
+        <h3 style={{ marginTop: "25px" }}>Trip Sheet E-Way Bills</h3>
+
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>EWB No</th>
+              <th style={styles.th}>Doc No</th>
+              <th style={styles.th}>From</th>
+              <th style={styles.th}>To</th>
+              <th style={styles.th}>Value</th>
+              <th style={styles.th}>Valid Upto</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tripSheet.tripSheetEwbBills.map((bill, index) => (
+              <tr key={index}>
+                <td style={styles.td}>{bill.ewbNo}</td>
+                <td style={styles.td}>{bill.docNo}</td>
+                <td style={styles.td}>{bill.fromTradeName}</td>
+                <td style={styles.td}>{bill.toTradeName}</td>
+                <td style={styles.td}>₹{bill.totInvValue.toLocaleString()}</td>
+                <td style={styles.td}>{bill.validUpto}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+);
 };
 
 const styles = {
@@ -178,10 +191,12 @@ const styles = {
     marginBottom: "25px",
   },
   input: {
-    padding: "12px",
-    fontSize: "16px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
+ width: "100%",
+  padding: "14px 16px",
+  fontSize: "16px",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  boxSizing: "border-box",
   },
   button: {
     gridColumn: "1 / span 2",

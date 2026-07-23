@@ -73,174 +73,202 @@ const RegenerateConsolidatedEwaybill = () => {
     }
   };
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.heading}>Regenerate Trip Sheet E-Way Bill</h2>
+ return (
+  <div style={styles.container}>
+    <h2 style={styles.heading}>Regenerate Trip Sheet E-Way Bill</h2>
 
-        <div style={styles.form}>
-          <input
-            type="text"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="tripSheetNo"
-            placeholder="Trip Sheet No"
-            value={formData.tripSheetNo}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="vehicleNo"
-            placeholder="Vehicle Number"
-            value={formData.vehicleNo}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="fromPlace"
-            placeholder="From Place"
-            value={formData.fromPlace}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="number"
-            name="fromState"
-            placeholder="From State"
-            value={formData.fromState}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="reasonCode"
-            placeholder="Reason Code"
-            value={formData.reasonCode}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="reasonRem"
-            placeholder="Reason Remark"
-            value={formData.reasonRem}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="transDocNo"
-            placeholder="Transport Doc No"
-            value={formData.transDocNo}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="transDocDate"
-            placeholder="Transport Doc Date (DD/MM/YYYY)"
-            value={formData.transDocDate}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <select
-            name="transMode"
-            value={formData.transMode}
-            onChange={handleChange}
-            style={styles.input}
-          >
-            <option value="1">Road</option>
-            <option value="2">Rail</option>
-            <option value="3">Air</option>
-            <option value="4">Ship</option>
-          </select>
-
-          <input
-            type="text"
-            name="clientId"
-            placeholder="Client ID"
-            value={formData.clientId}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="clientSecret"
-            placeholder="Client Secret"
-            value={formData.clientSecret}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <input
-            type="text"
-            name="gstin"
-            placeholder="GSTIN"
-            value={formData.gstin}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <select
-            name="env"
-            value={formData.env}
-            onChange={handleChange}
-            style={styles.input}
-          >
-            <option value="sandbox">Sandbox</option>
-            <option value="live">Live</option>
-          </select>
-        </div>
-
-        <button
-          onClick={regenerateTripSheet}
-          style={styles.button}
-          disabled={loading}
-        >
-          {loading ? "Regenerating..." : "Regenerate Trip Sheet"}
-        </button>
-
-        {error && <p style={styles.error}>{error}</p>}
-
-        {responseData && (
-          <div style={styles.successBox}>
-            <h3>Trip Sheet Regenerated Successfully!</h3>
-            <pre style={styles.response}>
-              {JSON.stringify(responseData, null, 2)}
-            </pre>
-          </div>
-        )}
+    <div style={styles.form}>
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Email</label>
+        <input
+          type="text"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          style={styles.input}
+        />
       </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Trip Sheet No</label>
+        <input
+          type="text"
+          name="tripSheetNo"
+          value={formData.tripSheetNo}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Vehicle Number</label>
+        <input
+          type="text"
+          name="vehicleNo"
+          value={formData.vehicleNo}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>From Place</label>
+        <input
+          type="text"
+          name="fromPlace"
+          value={formData.fromPlace}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>From State</label>
+        <input
+          type="number"
+          name="fromState"
+          value={formData.fromState}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Reason Code</label>
+        <input
+          type="text"
+          name="reasonCode"
+          value={formData.reasonCode}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Reason Remark</label>
+        <input
+          type="text"
+          name="reasonRem"
+          value={formData.reasonRem}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Transport Doc No</label>
+        <input
+          type="text"
+          name="transDocNo"
+          value={formData.transDocNo}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Transport Doc Date (DD/MM/YYYY)</label>
+        <input
+          type="text"
+          name="transDocDate"
+          value={formData.transDocDate}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Transport Mode</label>
+        <select
+          name="transMode"
+          value={formData.transMode}
+          onChange={handleChange}
+          style={styles.input}
+        >
+          <option value="1">Road</option>
+          <option value="2">Rail</option>
+          <option value="3">Air</option>
+          <option value="4">Ship</option>
+        </select>
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client ID</label>
+        <input
+          type="text"
+          name="clientId"
+          value={formData.clientId}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client Secret</label>
+        <input
+          type="text"
+          name="clientSecret"
+          value={formData.clientSecret}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>GSTIN</label>
+        <input
+          type="text"
+          name="gstin"
+          value={formData.gstin}
+          onChange={handleChange}
+          style={styles.input}
+        />
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Environment</label>
+        <select
+          name="env"
+          value={formData.env}
+          onChange={handleChange}
+          style={styles.input}
+        >
+          <option value="sandbox">Sandbox</option>
+          <option value="live">Live</option>
+        </select>
+      </div>
+
+      <button
+        onClick={regenerateTripSheet}
+        style={styles.button}
+        disabled={loading}
+      >
+        {loading ? "Regenerating..." : "Regenerate Trip Sheet"}
+      </button>
     </div>
-  );
+
+    {error && <p style={styles.error}>{error}</p>}
+
+    {responseData && (
+      <div style={styles.successBox}>
+        <h3>Trip Sheet Regenerated Successfully!</h3>
+        <pre style={styles.response}>
+          {JSON.stringify(responseData, null, 2)}
+        </pre>
+      </div>
+    )}
+  </div>
+);
 };
 
 const styles = {
   container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    backgroundColor: "#f5f5f5",
-    padding: "20px",
+   maxWidth: "600px",
+  margin: "0 auto",
+  padding: "20px",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "stretch",
   },
   card: {
     backgroundColor: "#fff",
@@ -251,8 +279,11 @@ const styles = {
     maxWidth: "800px",
   },
   heading: {
-    color: "#1A73E8",
-    marginBottom: "25px",
+     color: "#1A73E8",
+  marginBottom: "25px",
+  fontSize: "32px",
+  fontWeight: "bold",
+  textAlign: "left",
   },
   form: {
     display: "grid",
@@ -261,10 +292,12 @@ const styles = {
     marginBottom: "25px",
   },
   input: {
-    padding: "12px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-    fontSize: "16px",
+    width: "100%",
+  padding: "14px 25px",
+  fontSize: "16px",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  boxSizing: "border-box",
   },
   button: {
     width: "100%",

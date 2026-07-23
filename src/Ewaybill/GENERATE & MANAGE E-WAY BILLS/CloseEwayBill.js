@@ -51,74 +51,90 @@ const CloseEwayBill = () => {
     }
   };
 
-  return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Close E-Way Bill</h2>
+ return (
+  <div style={styles.container}>
+    <h2 style={styles.heading}>Close E-Way Bill</h2>
 
-      <div style={styles.form}>
+    <div style={styles.form}>
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Email</label>
         <input
           type="email"
           name="email"
-          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>GSTIN</label>
         <input
           type="text"
           name="gstin"
-          placeholder="GSTIN"
           value={formData.gstin}
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client ID</label>
         <input
           type="text"
           name="client_id"
-          placeholder="Client ID"
           value={formData.client_id}
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Client Secret</label>
         <input
           type="text"
           name="client_secret"
-          placeholder="Client Secret"
           value={formData.client_secret}
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>IP Address</label>
         <input
           type="text"
           name="ip_address"
-          placeholder="IP Address"
           value={formData.ip_address}
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Environment</label>
         <input
           type="text"
           name="env"
-          placeholder="Environment"
           value={formData.env}
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>E-Way Bill Number</label>
         <input
           type="number"
           name="ewbNo"
-          placeholder="E-Way Bill Number"
           value={formData.ewbNo}
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Closure Date</label>
         <input
           type="date"
           name="closureDate"
@@ -126,31 +142,34 @@ const CloseEwayBill = () => {
           onChange={handleChange}
           style={styles.input}
         />
+      </div>
 
+      <div style={styles.formGroup}>
+        <label style={styles.label}>Remarks</label>
         <input
           type="text"
           name="remarks"
-          placeholder="Remarks"
           value={formData.remarks}
           onChange={handleChange}
           style={styles.input}
         />
-
-        <button onClick={closeEwayBill} style={styles.button}>
-          {loading ? "Closing..." : "Close E-Way Bill"}
-        </button>
       </div>
 
-      {error && <p style={styles.error}>{error}</p>}
-
-      {response && (
-        <div style={styles.response}>
-          <h3>API Response</h3>
-          <pre>{JSON.stringify(response, null, 2)}</pre>
-        </div>
-      )}
+      <button onClick={closeEwayBill} style={styles.button}>
+        {loading ? "Closing..." : "Close E-Way Bill"}
+      </button>
     </div>
-  );
+
+    {error && <p style={styles.error}>{error}</p>}
+
+    {response && (
+      <div style={styles.response}>
+        <h3>API Response</h3>
+        <pre>{JSON.stringify(response, null, 2)}</pre>
+      </div>
+    )}
+  </div>
+);
 };
 
 const styles = {
@@ -164,14 +183,28 @@ const styles = {
     textAlign: "center",
     color: "#1A73E8",
   },
+  formGroup: {
+  marginBottom: 15,
+},
+
+label: {
+  display: "block",
+  marginBottom: 6,
+  fontWeight: "600",
+  color: "#333",
+},
   form: {
     display: "flex",
     flexDirection: "column",
     gap: "10px",
   },
   input: {
-    padding: "10px",
-    fontSize: "14px",
+    width: "100%",
+  padding: "14px 16px",
+  fontSize: "16px",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  boxSizing: "border-box",
   },
   button: {
     padding: "12px",
