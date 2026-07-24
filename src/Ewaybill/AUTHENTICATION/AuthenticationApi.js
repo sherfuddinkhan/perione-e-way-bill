@@ -22,18 +22,12 @@ const {
     env: "sandbox",
     yearName: "26-27",
   });
-  const [connectionType, setConnectionType] = useState("DEFAULT");
   const [yearName, setYearName] = useState("26-27");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
-  const [statusType, setStatusType] = useState(null); // 'success' | 'error' | null
-useEffect(() => {
-  const savedConnectionType =
-    localStorage.getItem("ConnectionType") || "DEFAULT";
+  const [statusType, setStatusType] = useState(null); 
 
-  setConnectionType(savedConnectionType);
-}, []);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
