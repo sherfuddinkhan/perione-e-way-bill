@@ -1,7 +1,13 @@
 import React, { useState,useEffect } from 'react';
 import { useAuth } from "../../AuthContext";
 const ChangeMultiVehicles = () => {
-  const { connectionType } = useAuth();
+   const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [formData, setFormData] = useState({
     ewbNo: "",
     groupNo: "",

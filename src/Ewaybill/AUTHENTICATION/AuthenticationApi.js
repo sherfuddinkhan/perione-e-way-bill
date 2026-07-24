@@ -5,11 +5,13 @@ import { useAuth } from "../../AuthContext";
 
 const AuthenticationApi = () => {
   const navigate = useNavigate();
-const {
-  login,
-  connectionType,
-  setConnectionType,
-} = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",

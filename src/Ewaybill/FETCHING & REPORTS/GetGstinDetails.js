@@ -37,7 +37,13 @@ const ResponseViewer = ({ response }) => {
 
 // --- Main GetGstinDetails Component ---
 const GetGstinDetails = () => {
-  const { connectionType } = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [gstin, setGstin] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);

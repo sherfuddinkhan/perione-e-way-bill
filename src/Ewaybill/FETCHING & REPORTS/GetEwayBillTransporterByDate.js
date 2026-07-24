@@ -2,7 +2,13 @@ import React, { useState,useEffect } from 'react';
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const GetEwayBillTransporterByDate = () => {
-  const { connectionType } = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [date, setDate] = useState("");
   const [ewayBills, setEwayBills] = useState([]);
   const [loading, setLoading] = useState(false);

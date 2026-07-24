@@ -37,7 +37,13 @@ const ResponseViewer = ({ response }) => {
 
 // --- Main CancelEWayBill Component ---
 const CancelEWayBill = () => {
-  const { connectionType } = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [ewbNo, setEwbNo] = useState('');
   const [cancelRsnCode, setCancelRsnCode] = useState('');
   const [cancelRmrk, setCancelRmrk] = useState('');

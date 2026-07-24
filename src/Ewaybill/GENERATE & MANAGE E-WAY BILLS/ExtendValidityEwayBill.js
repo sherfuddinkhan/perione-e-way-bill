@@ -3,7 +3,13 @@ import axios from 'axios';
 //import './ExtendValidityEwayBill.css';
 import { useAuth } from "../../AuthContext";
 const ExtendValidityEwayBill = () => {
-  const { connectionType } = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [formData, setFormData] = useState({
     ewbNo: '',
     vehicleNo: '',

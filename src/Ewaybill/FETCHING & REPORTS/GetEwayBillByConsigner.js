@@ -37,7 +37,13 @@ const ResponseViewer = ({ response }) => {
 
 // --- Main EWayBillConsigner Component ---
 const EWayBillConsigner = () => {
-  const { connectionType } = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [docType, setDocType] = useState('');
   const [docNo, setDocNo] = useState('');
   const [loading, setLoading] = useState(false);

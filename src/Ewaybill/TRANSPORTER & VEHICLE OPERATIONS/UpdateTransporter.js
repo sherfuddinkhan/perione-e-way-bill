@@ -1,7 +1,13 @@
 import React, { useState,useEffect } from "react";
 import { useAuth } from "../../AuthContext";
 const UpdateTransporter = () => {
-  const { connectionType } = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [formData, setFormData] = useState({
     ewbNo: "",
     transporterId: "",

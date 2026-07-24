@@ -37,7 +37,13 @@ const ResponseViewer = ({ response }) => {
 
 // --- Main ErrorList Component ---
 const ErrorList = () => {
-   const { connectionType } = useAuth();
+  const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 

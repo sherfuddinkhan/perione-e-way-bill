@@ -2,7 +2,13 @@ import React, { useState,useEffect } from 'react';
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const GetTransporterDetails = () => {
-  const { connectionType } = useAuth();
+   const {
+    isLoggedIn,
+    authData,
+    logout,
+    connectionType,
+    setConnectionType,
+  } = useAuth();
   const [email, setEmail] = useState("");
   const [trnNo, setTrnNo] = useState("");
 
