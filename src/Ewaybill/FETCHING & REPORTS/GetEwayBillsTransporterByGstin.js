@@ -38,8 +38,6 @@ const GetEwayBillsTransporterByGstin= () => {
       method: "GET",
       headers: {
         ConnectionType: connectionType,
-        // or:
-        // ConnectionType: localStorage.getItem("ConnectionType"),
       },
     }
       );

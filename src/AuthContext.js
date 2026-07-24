@@ -55,10 +55,17 @@ export const AuthProvider = ({ children }) => {
       ip_address: "",
     });
 
-    // Remove auth
-    localStorage.removeItem("eway_auth");
-    localStorage.removeItem("trip_sheet_data");
+     // Remove E-Way Bill related data
+  localStorage.removeItem("trip_sheet_data");
+  localStorage.removeItem("ewaybill_response");
+  localStorage.removeItem("eway_auth");
+  localStorage.removeItem("transporter_by_date");
+  localStorage.removeItem("ewayBillData");
 
+  // Remove login/config data
+  localStorage.removeItem("userLoginRef");
+  localStorage.removeItem("connectionType");
+  localStorage.removeItem("yearName");
     // If you DON'T want to remember ConnectionType
     localStorage.removeItem("ConnectionType");
 
