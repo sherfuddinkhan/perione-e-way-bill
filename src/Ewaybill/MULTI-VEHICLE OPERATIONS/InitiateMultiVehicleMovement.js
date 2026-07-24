@@ -16,6 +16,32 @@ const InitiateMultiVehicleMovement= () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+  useEffect(() => {
+  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response"));
+  const tripSheet = JSON.parse(localStorage.getItem("trip_sheet_data"));
+
+  setFormData((prev) => ({
+    ...prev,
+
+    // E-Way Bill
+    ewbNo: ewayBill?.eWayBillNumber || prev.ewbNo,
+
+    // Current Location
+    fromPlace: tripSheet?.fromPlace || prev.fromPlace,
+    fromState: tripSheet?.fromState || prev.fromState,
+
+    // Destination
+    toPlace: tripSheet?.toPlace || prev.toPlace,
+    toState: tripSheet?.toState || prev.toState,
+
+    // Keep default/user-entered values
+    reasonCode: prev.reasonCode,
+    reasonRem: prev.reasonRem,
+    totalQuantity: prev.totalQuantity,
+    unitCode: prev.unitCode,
+    transMode: prev.transMode,
+  }));
+}, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 

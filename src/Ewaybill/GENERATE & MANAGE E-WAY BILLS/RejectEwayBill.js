@@ -15,6 +15,25 @@ const RejectEwayBill = () => {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response"));
+
+  setFormData((prev) => ({
+    ...prev,
+
+    // Authentication Details
+    email: auth?.email || prev.email,
+    ip_address: auth?.ip_address || prev.ip_address,
+    client_id: auth?.client_id || prev.client_id,
+    client_secret: auth?.client_secret || prev.client_secret,
+    gstin: auth?.gstin || prev.gstin,
+    env: auth?.env || prev.env,
+
+    // Generated E-Way Bill
+    ewbNo: ewayBill?.eWayBillNumber || prev.ewbNo,
+  }));
+}, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

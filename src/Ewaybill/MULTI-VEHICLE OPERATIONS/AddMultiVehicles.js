@@ -12,6 +12,26 @@ const AddMultiVehicles= () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+  useEffect(() => {
+  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response"));
+  const tripSheet = JSON.parse(localStorage.getItem("trip_sheet_data"));
+
+  setFormData((prev) => ({
+    ...prev,
+
+    // Auto-populate from generated E-Way Bill
+    ewbNo: ewayBill?.eWayBillNumber || prev.ewbNo,
+    vehicleNo: ewayBill?.vehicleNo || prev.vehicleNo,
+
+    // Auto-populate from Trip Sheet
+    transDocNo: tripSheet?.transDocNo || prev.transDocNo,
+    transDocDate: tripSheet?.transDocDate || prev.transDocDate,
+
+    // Keep these as user inputs
+    groupNo: prev.groupNo,
+    quantity: prev.quantity,
+  }));
+}, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 

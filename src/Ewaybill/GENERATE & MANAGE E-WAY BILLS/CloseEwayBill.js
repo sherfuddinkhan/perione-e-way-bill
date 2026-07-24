@@ -18,6 +18,30 @@ const CloseEwayBill = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response"));
+
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+  setFormData((prev) => ({
+    ...prev,
+
+    // Authentication details
+    email: auth?.email || prev.email,
+    gstin: auth?.gstin || prev.gstin,
+    client_id: auth?.client_id || prev.client_id,
+    client_secret: auth?.client_secret || prev.client_secret,
+    ip_address: auth?.ip_address || prev.ip_address,
+    env: auth?.env || prev.env,
+
+    // Generated E-Way Bill
+    ewbNo: ewayBill?.eWayBillNumber || prev.ewbNo,
+
+    // Default today's date
+    closureDate: today,
+  }));
+}, []);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };

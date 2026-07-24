@@ -16,6 +16,32 @@ const ChangeMultiVehicles = () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+  useEffect(() => {
+  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response"));
+  const tripSheet = JSON.parse(localStorage.getItem("trip_sheet_data"));
+
+  setFormData((prev) => ({
+    ...prev,
+
+    // From Generate E-Way Bill
+    ewbNo: ewayBill?.eWayBillNumber || prev.ewbNo,
+
+    // Existing vehicle details
+    oldvehicleNo: ewayBill?.vehicleNo || tripSheet?.vehicleNo || prev.oldvehicleNo,
+    oldTranNo: tripSheet?.transDocNo || prev.oldTranNo,
+
+    // Trip Sheet details
+    fromPlace: tripSheet?.fromPlace || prev.fromPlace,
+    fromState: tripSheet?.fromState || prev.fromState,
+
+    // Leave these for user input
+    groupNo: prev.groupNo,
+    newVehicleNo: prev.newVehicleNo,
+    newTranNo: prev.newTranNo,
+    reasonCode: prev.reasonCode,
+    reasonRem: prev.reasonRem,
+  }));
+}, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
