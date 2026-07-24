@@ -4,22 +4,52 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userGstin, setUserGstin] = useState("");
 
-  const login = (gstin) => {
+  const [authData, setAuthData] = useState({
+    email: "",
+    username: "",
+    client_id: "",
+    client_secret: "",
+    gstin: "",
+    env: "sandbox",
+    ip_address: "",
+  });
+
+  const login = (data) => {
     setIsLoggedIn(true);
-    setUserGstin(gstin);
+    setAuthData(data);
+
+    // Persist across refreshes
+    localStorage.setItem("eway_auth", JSON.stringify(data));
   };
 
   const logout = () => {
     setIsLoggedIn(false);
-    setUserGstin("");
-    localStorage.clear();
+
+    setAuthData({
+      email: "",
+      username: "",
+      client_id: "",
+      client_secret: "",
+      gstin: "",
+      env: "sandbox",
+      ip_address: "",
+    });
+
+    localStorage.removeItem("eway_auth");
+    localStorage.removeItem("trip_sheet_data");
     sessionStorage.clear();
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userGstin, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        authData,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

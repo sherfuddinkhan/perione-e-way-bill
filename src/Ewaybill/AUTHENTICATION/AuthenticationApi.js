@@ -56,7 +56,9 @@ const AuthenticationApi = () => {
         setStatusType("success");
         
         // 1. Update Auth Context state
-        if (login) login(formData.gstin);
+        if (login) {
+  login({email: formData.email,username: formData.username,client_id: formData.client_id,client_secret: formData.client_secret,gstin: formData.gstin,env: formData.env,ip_address: formData.ip_address});}
+ localStorage.setItem("eway_auth",JSON.stringify({email: formData.email,username: formData.username,client_id: formData.client_id,client_secret: formData.client_secret,gstin: formData.gstin,env: formData.env,ip_address: formData.ip_address,}));
 
         // 2. Redirect to Dashboard (with a short 1-second delay so the user sees success)
         setTimeout(() => {

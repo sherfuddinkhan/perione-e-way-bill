@@ -40,6 +40,7 @@ const GetConsolidatedEwayBill = () => {
       );
 
       setTripSheet(response.data.data);
+      localStorage.setItem("trip_sheet_data",JSON.stringify(response.data.data));
     } catch (err) {
       console.error(err);
       setError("Failed to fetch Trip Sheet details");
