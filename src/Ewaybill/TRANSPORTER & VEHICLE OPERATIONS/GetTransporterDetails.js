@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useAuth } from "../../AuthContext";
 const GetTransporterDetails = () => {
   const [email, setEmail] = useState("sherfuddin.phd@gmail.com");
   const [trnNo, setTrnNo] = useState("36AARFB4347G037");

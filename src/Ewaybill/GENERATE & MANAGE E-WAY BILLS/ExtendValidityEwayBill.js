@@ -1,7 +1,7 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 //import './ExtendValidityEwayBill.css';
-
+import { useAuth } from "../../AuthContext";
 const ExtendValidityEwayBill = () => {
   const [formData, setFormData] = useState({
     ewbNo: '181012149102',

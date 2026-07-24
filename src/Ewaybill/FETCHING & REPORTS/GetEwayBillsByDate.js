@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useAuth } from "../../AuthContext";
 const GetEwayBillsByDate = () => {
   const [formData, setFormData] = useState({
     date: "21/07/2026",

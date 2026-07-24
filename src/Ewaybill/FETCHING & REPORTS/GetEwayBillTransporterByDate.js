@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useAuth } from "../../AuthContext";
 const GetEwayBillTransporterByDate = () => {
   const [date, setDate] = useState("2026-07-21");
   const [ewayBills, setEwayBills] = useState([]);

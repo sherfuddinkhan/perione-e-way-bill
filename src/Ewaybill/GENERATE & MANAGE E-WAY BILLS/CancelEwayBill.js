@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../AuthContext";
 // --- ResponseViewer Component ---
 const ResponseViewer = ({ response }) => {
   if (!response) return null;

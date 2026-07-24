@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 //import '../GenerateEwayBill.css';
-
+import { useAuth } from "../../AuthContext";
 // --- Helper Form Components ---
 
 const FormField = ({ label, name, value, onChange, type = "text", placeholder, uppercase, selectOptions }) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useAuth } from "../../AuthContext";
 const GetEwayBillsTransporterByGstin= () => {
   const [formData, setFormData] = useState({
     Gen_gstin: "36AARFB4347G037",

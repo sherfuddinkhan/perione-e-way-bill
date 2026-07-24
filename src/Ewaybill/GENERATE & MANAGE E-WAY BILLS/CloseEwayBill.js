@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useAuth } from "../../AuthContext";
 const CloseEwayBill = () => {
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
