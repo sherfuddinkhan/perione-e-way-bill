@@ -3,14 +3,14 @@ import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const GetTransporterDetails = () => {
   const { connectionType } = useAuth();
-  const [email, setEmail] = useState("sherfuddin.phd@gmail.com");
-  const [trnNo, setTrnNo] = useState("36AARFB4347G037");
+  const [email, setEmail] = useState("");
+  const [trnNo, setTrnNo] = useState("");
 
   // Dynamic header fields
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
-  const [gstin, setGstin] = useState("36AARFB4347G037");
-  const [env, setEnv] = useState("sandbox");
+  const [gstin, setGstin] = useState("");
+  const [env, setEnv] = useState("");
 
   const [transporter, setTransporter] = useState(null);
   const [loading, setLoading] = useState(false);

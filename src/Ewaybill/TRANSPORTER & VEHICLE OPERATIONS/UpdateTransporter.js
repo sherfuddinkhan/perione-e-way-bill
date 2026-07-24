@@ -3,8 +3,8 @@ import { useAuth } from "../../AuthContext";
 const UpdateTransporter = () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    ewbNo: "171012148940",
-    transporterId: "36AARFB4347G037",
+    ewbNo: "",
+    transporterId: "",
   });
 
   const [loading, setLoading] = useState(false);

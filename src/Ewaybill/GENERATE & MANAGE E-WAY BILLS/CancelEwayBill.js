@@ -39,8 +39,8 @@ const ResponseViewer = ({ response }) => {
 const CancelEWayBill = () => {
   const { connectionType } = useAuth();
   const [ewbNo, setEwbNo] = useState('');
-  const [cancelRsnCode, setCancelRsnCode] = useState('2');
-  const [cancelRmrk, setCancelRmrk] = useState('Order Cancelled');
+  const [cancelRsnCode, setCancelRsnCode] = useState('');
+  const [cancelRmrk, setCancelRmrk] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 
