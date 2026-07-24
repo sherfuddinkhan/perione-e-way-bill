@@ -38,8 +38,8 @@ const ResponseViewer = ({ response }) => {
 // --- Main EWayBillConsigner Component ---
 const EWayBillConsigner = () => {
   const { connectionType } = useAuth();
-  const [docType, setDocType] = useState('INV');
-  const [docNo, setDocNo] = useState('Perione-2');
+  const [docType, setDocType] = useState('');
+  const [docNo, setDocNo] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
     // Auto-populate from generated E-Way Bill

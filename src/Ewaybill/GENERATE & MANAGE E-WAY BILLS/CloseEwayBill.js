@@ -4,15 +4,15 @@ import { useAuth } from "../../AuthContext";
 const CloseEwayBill = () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    email: "sherfuddin.phd@gmail.com",
-    gstin: "36AARFB4347G037",
+    email: "",
+    gstin: "",
     client_id: "",
     client_secret: "",
-    ip_address: "103.88.236.42",
-    env: "sandbox",
-    ewbNo: "181012149102",
-    closureDate: "2026-05-21",
-    remarks: "Delivered the order",
+    ip_address: "",
+    env: "",
+    ewbNo: "",
+    closureDate: "",
+    remarks: "",
   });
 
   const [response, setResponse] = useState(null);

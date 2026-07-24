@@ -4,14 +4,14 @@ import { useAuth } from "../../AuthContext";
 const GetEwayBillReportByAssignedDate = () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    email: "sherfuddin.phd@gmail.com",
-    date: "2026-07-22",
-    stateCode: "36",
-    gstin: "36AARFB4347G037",
+    email: "",
+    date: "",
+    stateCode: "",
+    gstin: "",
     client_id: "",
     client_secret: "",
-    ip_address: "0.0.0.0",
-    env: "sandbox",
+    ip_address: "",
+    env: "",
   });
 
   const [ewayBills, setEwayBills] = useState([]);

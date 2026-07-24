@@ -4,13 +4,13 @@ import { useAuth } from "../../AuthContext";
 const RejectEwayBill = () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    email: "sherfuddin.phd@gmail.com",
-    ip_address: "0.0.0.0",
+    email: "",
+    ip_address: "",
     client_id: "",
     client_secret: "",
-    gstin: "36AARFB4347G037",
-    env: "sandbox",
-    ewbNo: "311009282644",
+    gstin: "",
+    env: "",
+    ewbNo: "",
   });
 
   const [response, setResponse] = useState(null);

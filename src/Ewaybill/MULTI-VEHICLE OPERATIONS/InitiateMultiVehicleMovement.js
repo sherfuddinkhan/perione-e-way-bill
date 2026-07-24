@@ -3,16 +3,16 @@ import { useAuth } from "../../AuthContext";
 const InitiateMultiVehicleMovement= () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    ewbNo: "181012149102",
-    fromPlace: "FRAZER TOWN",
-    fromState: "36",
-    toPlace: "Beml Nagar",
-    toState: "36",
-    reasonCode: "1",
-    reasonRem: "Due to Break Down",
-    totalQuantity: "1",
-    unitCode: "BOX",
-    transMode: "1",
+    ewbNo: "",
+    fromPlace: "",
+    fromState: "",
+    toPlace: "",
+    toState: "",
+    reasonCode: "",
+    reasonRem: "",
+    totalQuantity: "",
+    unitCode: "",
+    transMode: "",
   });
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);

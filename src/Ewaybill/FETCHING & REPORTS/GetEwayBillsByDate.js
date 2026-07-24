@@ -3,8 +3,8 @@ import { useAuth } from "../../AuthContext";
 const GetEwayBillsByDate = () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    date: "21/07/2026",
-    stateCode: "36",
+    date: "",
+    stateCode: "",
   });
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);

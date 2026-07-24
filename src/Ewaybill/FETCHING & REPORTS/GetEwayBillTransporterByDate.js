@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const GetEwayBillTransporterByDate = () => {
   const { connectionType } = useAuth();
-  const [date, setDate] = useState("2026-07-21");
+  const [date, setDate] = useState("");
   const [ewayBills, setEwayBills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");

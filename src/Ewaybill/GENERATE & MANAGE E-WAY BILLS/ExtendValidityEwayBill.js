@@ -5,18 +5,18 @@ import { useAuth } from "../../AuthContext";
 const ExtendValidityEwayBill = () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    ewbNo: '181012149102',
-    vehicleNo: 'TS09AB1234',
-    fromPlace: 'Hyderabad',
-    fromState: '36',
-    remainingDistance: '5',
-    transDocNo: 'LR123456',
-    transDocDate: '05/06/2026',
-    transMode: '1',
-    extnRsnCode: '1',
-    extnRemarks: 'Nature Calamity',
-    fromPincode: '500081',
-    consignmentStatus: 'M'
+    ewbNo: '',
+    vehicleNo: '',
+    fromPlace: '',
+    fromState: '',
+    remainingDistance: '',
+    transDocNo: '',
+    transDocDate: '',
+    transMode: '',
+    extnRsnCode: '',
+    extnRemarks: '',
+    fromPincode: '',
+    consignmentStatus: ''
   });
 
   const [response, setResponse] = useState(null);

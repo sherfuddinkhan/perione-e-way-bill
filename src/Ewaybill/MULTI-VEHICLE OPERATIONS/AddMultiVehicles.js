@@ -3,12 +3,12 @@ import { useAuth } from "../../AuthContext";
 const AddMultiVehicles= () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    ewbNo: "181012149102",
-    vehicleNo: "TS09AB1264",
-    groupNo: "1",
-    transDocNo: "12",
-    transDocDate: "30/06/2026",
-    quantity: "1",
+    ewbNo: "",
+    vehicleNo: "",
+    groupNo: "",
+    transDocNo: "",
+    transDocDate: "",
+    quantity: "",
   });
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);

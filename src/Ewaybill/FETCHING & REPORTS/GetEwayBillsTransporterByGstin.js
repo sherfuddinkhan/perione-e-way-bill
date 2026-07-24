@@ -3,8 +3,8 @@ import { useAuth } from "../../AuthContext";
 const GetEwayBillsTransporterByGstin= () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    Gen_gstin: "36AARFB4347G037",
-    date: "21/07/2026",
+    Gen_gstin: "",
+    date: "",
   });
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);

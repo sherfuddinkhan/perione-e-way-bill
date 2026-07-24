@@ -38,7 +38,7 @@ const ResponseViewer = ({ response }) => {
 // --- Main GetHsnDetails Component ---
 const GetHsnDetails = () => {
   const { connectionType } = useAuth();
-  const [hsncode, setHsncode] = useState('100610');
+  const [hsncode, setHsncode] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   useEffect(() => {

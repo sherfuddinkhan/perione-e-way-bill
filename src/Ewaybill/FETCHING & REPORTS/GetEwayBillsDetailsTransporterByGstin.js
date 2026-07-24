@@ -4,14 +4,14 @@ import { useAuth } from "../../AuthContext";
 const GetEwayBillsDetailsTransporterByGstin= () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    email: "sherfuddin.phd@gmail.com",
-    Gen_gstin: "36AARFB4347G037",
-    date: "2026-07-21",
-    gstin: "36AARFB4347G037",
+    email: "",
+    Gen_gstin: "",
+    date: "",
+    gstin: "",
     client_id: "",
     client_secret: "",
-    ip_address: "0.0.0.0",
-    env: "sandbox",
+    ip_address: "",
+    env: "",
   });
 
   const [ewayBills, setEwayBills] = useState([]);

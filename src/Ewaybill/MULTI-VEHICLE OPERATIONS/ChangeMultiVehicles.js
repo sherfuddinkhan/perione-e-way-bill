@@ -3,16 +3,16 @@ import { useAuth } from "../../AuthContext";
 const ChangeMultiVehicles = () => {
   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    ewbNo: "181012149102",
-    groupNo: "1",
-    oldvehicleNo: "TS09AB1264",
-    newVehicleNo: "TS09AB1261",
-    oldTranNo: "12",
-    newTranNo: "125",
-    fromPlace: "FRAZER TOWN",
-    fromState: "36",
-    reasonCode: "1",
-    reasonRem: "Due to Break Down",
+    ewbNo: "",
+    groupNo: "",
+    oldvehicleNo: "",
+    newVehicleNo: "",
+    oldTranNo: "",
+    newTranNo: "",
+    fromPlace: "",
+    fromState: "",
+    reasonCode: "",
+    reasonRem: "",
   });
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
