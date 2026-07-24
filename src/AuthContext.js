@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   localStorage.removeItem("eway_auth");
   localStorage.removeItem("transporter_by_date");
   localStorage.removeItem("ewayBillData");
-
+  
   // Remove login/config data
   localStorage.removeItem("userLoginRef");
   localStorage.removeItem("connectionType");

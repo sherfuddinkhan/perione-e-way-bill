@@ -24,15 +24,15 @@ const RejectEwayBill = () => {
     ...prev,
 
     // Authentication Details
-    email: auth?.email || prev.email,
-    ip_address: auth?.ip_address || prev.ip_address,
-    client_id: auth?.client_id || prev.client_id,
-    client_secret: auth?.client_secret || prev.client_secret,
-    gstin: auth?.gstin || prev.gstin,
-    env: auth?.env || prev.env,
+    email: auth?.email ,
+    ip_address: auth?.ip_address ,
+    client_id: auth?.client_id ,
+    client_secret: auth?.client_secret ,
+    gstin: auth?.gstin ,
+    env: auth?.env ,
 
     // Generated E-Way Bill
-    ewbNo: ewayBill?.eWayBillNumber || prev.ewbNo,
+    ewbNo: ewayBill?.eWayBillNumber ,
   }));
 }, []);
 

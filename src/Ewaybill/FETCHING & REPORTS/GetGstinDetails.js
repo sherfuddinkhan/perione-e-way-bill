@@ -97,7 +97,7 @@ const GetGstinDetails = () => {
               type="text"
               value={gstin}
               onChange={(e) => setGstin(e.target.value)}
-              placeholder="e.g. 36AARFB4347G037"
+              placeholder=""
               required
               style={styles.input}
             />

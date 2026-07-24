@@ -16,12 +16,12 @@ const RejectedByOthersEwayBills = () => {
   if (auth) {
     setFormData((prev) => ({
       ...prev,
-      email: auth.email || prev.email,
-      gstin: auth.gstin || prev.gstin,
-      client_id: auth.client_id || prev.client_id,
-      client_secret: auth.client_secret || prev.client_secret,
-      ip_address: auth.ip_address || prev.ip_address,
-      env: auth.env || prev.env,
+      email: auth.email ,
+      gstin: auth.gstin ,
+      client_id: auth.client_id ,
+      client_secret: auth.client_secret ,
+      ip_address: auth.ip_address ,
+      env: auth.env ,
       date: today,
     }));
   }
