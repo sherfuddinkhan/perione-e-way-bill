@@ -85,6 +85,7 @@ const RegenerateConsolidatedEwaybill = () => {
             client_secret: formData.clientSecret,
             gstin: formData.gstin,
             env: formData.env,
+            ConnectionType: connectionType,
           },
         }
       );

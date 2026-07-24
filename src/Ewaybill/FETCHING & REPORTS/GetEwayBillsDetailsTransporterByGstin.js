@@ -63,6 +63,9 @@ useEffect(() => {
             ip_address: formData.ip_address,
             env: formData.env,
           },
+           headers: {
+      ConnectionType: connectionType,
+    },
         }
       );
 

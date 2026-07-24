@@ -42,29 +42,32 @@ const GetEwayBillsByParties = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const fetchOtherPartyBills = async () => {
-    try {
-      setLoading(true);
-      setError("");
+ const fetchOtherPartyBills = async () => {
+  try {
+    setLoading(true);
+    setError("");
 
-      const response = await axios.get(
-        "http://localhost:5000/api/ewaybill/other-party",
-        {
-          params: {
-            ...formData,
-            date: formatDate(formData.date),
-          },
-        }
-      );
+    const response = await axios.get(
+      "http://localhost:5000/api/ewaybill/other-party",
+      {
+        params: {
+          ...formData,
+          date: formatDate(formData.date),
+        },
+        headers: {
+          ConnectionType: connectionType,
+        },
+      }
+    );
 
-      setEwayBills(response.data.data || []);
-    } catch (err) {
-      setError("Failed to fetch E-Way Bills of Other Party");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setEwayBills(response.data.data || []);
+  } catch (err) {
+    setError("Failed to fetch E-Way Bills of Other Party");
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
  return (
     <div style={styles.cardWrapper}>

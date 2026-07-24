@@ -32,20 +32,32 @@ const GetEwayBillsByDate = () => {
     setLoading(true);
     setResponse(null);
     setErrorMsg("");
-
-    try {
-      const res = await fetch(`http://localhost:5000/api/ewaybill/getewaybillsbydate?date=${encodeURIComponent(formData.date)}&stateCode=${formData.stateCode}`);
-      const data = await res.json();
-      if (res.ok && data.status_cd === "1") {
-        setResponse(data);
-      } else {
-        setErrorMsg(data.status_desc || "Failed to fetch list.");
-      }
-    } catch (err) {
-      setErrorMsg("Network error.");
-    } finally {
-      setLoading(false);
+try {
+  const res = await fetch(
+    `http://localhost:5000/api/ewaybill/getewaybillsbydate?date=${encodeURIComponent(formData.date)}&stateCode=${formData.stateCode}`,
+    {
+      method: "GET",
+      headers: {
+        ConnectionType: connectionType,
+        // or
+        // ConnectionType: localStorage.getItem("ConnectionType"),
+      },
     }
+  );
+
+  const data = await res.json();
+
+  if (res.ok && data.status_cd === "1") {
+    setResponse(data);
+  } else {
+    setErrorMsg(data.status_desc || "Failed to fetch list.");
+  }
+} catch (err) {
+  setErrorMsg("Network error.");
+} finally {
+  setLoading(false);
+}
+
   };
 
   return (

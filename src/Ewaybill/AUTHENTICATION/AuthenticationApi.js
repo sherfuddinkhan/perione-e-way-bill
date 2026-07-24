@@ -46,6 +46,7 @@ const AuthenticationApi = () => {
           client_secret: formData.client_secret,
           gstin: formData.gstin,
           env: formData.env,
+          ConnectionType: connectionType,
         },
       });
 

@@ -42,35 +42,38 @@ const GetEwayBillReportByAssignedDate = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const fetchEwayBills= async () => {
-    try {
-      setLoading(true);
-      setError("");
+ const fetchEwayBills = async () => {
+  try {
+    setLoading(true);
+    setError("");
 
-      const response = await axios.get(
-        "http://localhost:5000/api/ewaybill/by-date",
-        {
-          params: {
-            email: formData.email,
-            date: formatDate(formData.date),
-            stateCode: formData.stateCode,
-            gstin: formData.gstin,
-            client_id: formData.client_id,
-            client_secret: formData.client_secret,
-            ip_address: formData.ip_address,
-            env: formData.env,
-          },
-        }
-      );
+    const response = await axios.get(
+      "http://localhost:5000/api/ewaybill/by-date",
+      {
+        params: {
+          email: formData.email,
+          date: formatDate(formData.date),
+          stateCode: formData.stateCode,
+          gstin: formData.gstin,
+          client_id: formData.client_id,
+          client_secret: formData.client_secret,
+          ip_address: formData.ip_address,
+          env: formData.env,
+        },
+        headers: {
+          ConnectionType: connectionType,
+        },
+      }
+    );
 
-      setEwayBills(response.data.data || []);
-    } catch (err) {
-      setError("Failed to fetch E-Way Bills by Date");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setEwayBills(response.data.data || []);
+  } catch (err) {
+    setError("Failed to fetch E-Way Bills by Date");
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
  return (
     <div style={styles.cardWrapper}>

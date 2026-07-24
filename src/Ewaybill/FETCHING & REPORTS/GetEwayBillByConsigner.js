@@ -59,6 +59,9 @@ const EWayBillConsigner = () => {
     try {
       const res = await axios.get('http://localhost:5000/api/ewaybill/by-consigner', {
         params: { docType, docNo },
+        headers: {
+        ConnectionType: connectionType,
+      },
       });
       setResponse({ success: true, data: res.data });
     } catch (err) {
