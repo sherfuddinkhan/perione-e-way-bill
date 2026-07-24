@@ -40,6 +40,13 @@ const GetHsnDetails = () => {
   const [hsncode, setHsncode] = useState('100610');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
+  useEffect(() => {
+  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response"));
+
+  if (ewayBill?.hsnCode) {
+    setHsncode(ewayBill.hsnCode);
+  }
+}, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();

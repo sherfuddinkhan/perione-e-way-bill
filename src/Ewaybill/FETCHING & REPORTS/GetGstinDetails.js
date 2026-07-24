@@ -40,6 +40,13 @@ const GetGstinDetails = () => {
   const [gstin, setGstin] = useState('36AARFB4347G037');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+
+  if (auth?.gstin) {
+    setGstin(auth.gstin);
+  }
+}, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();

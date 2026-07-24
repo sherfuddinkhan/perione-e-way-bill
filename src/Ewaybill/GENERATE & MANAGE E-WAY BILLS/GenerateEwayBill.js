@@ -393,7 +393,7 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
     docNo: formData.docNo || "",
     docType: formData.docType || "INV", 
     docDate: formData.docDate || "",
-
+    hsnCode: formData.itemList?.[0]?.hsnCode || "",  
     vehicleNo: formData.vehicleNo || "",
 
     fromGstin: formData.fromGstin || "",

@@ -7,6 +7,24 @@ const RejectedByOthersEwayBills = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+  if (auth) {
+    setFormData((prev) => ({
+      ...prev,
+      email: auth.email || prev.email,
+      gstin: auth.gstin || prev.gstin,
+      client_id: auth.client_id || prev.client_id,
+      client_secret: auth.client_secret || prev.client_secret,
+      ip_address: auth.ip_address || prev.ip_address,
+      env: auth.env || prev.env,
+      date: today,
+    }));
+  }
+}, []);
   const formatDate = (inputDate) => {
     const [year, month, day] = inputDate.split("-");
     return `${day}/${month}/${year}`;

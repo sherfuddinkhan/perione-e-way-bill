@@ -11,7 +11,13 @@ const GetEwayBillTransporterByDate = () => {
     const [year, month, day] = inputDate.split("-");
     return `${day}/${month}/${year}`;
   };
+useEffect(() => {
+  const savedDate = localStorage.getItem("transporter_by_date");
 
+  if (savedDate) {
+    setDate(savedDate);
+  }
+}, []);
   const fetchEwayBills = async () => {
     try {
       setLoading(true);

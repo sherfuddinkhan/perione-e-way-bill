@@ -9,6 +9,17 @@ const GetEwayBillsTransporterByGstin= () => {
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
 
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+
+  const today = new Date().toLocaleDateString("en-GB"); // DD/MM/YYYY
+
+  setFormData((prev) => ({
+    ...prev,
+    Gen_gstin: auth?.gstin || prev.Gen_gstin,
+    date: today,
+  }));
+}, []);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };

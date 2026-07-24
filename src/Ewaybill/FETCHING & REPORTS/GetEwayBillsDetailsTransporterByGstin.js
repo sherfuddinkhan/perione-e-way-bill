@@ -16,6 +16,25 @@ const GetEwayBillsDetailsTransporterByGstin= () => {
   const [ewayBills, setEwayBills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const today = new Date().toISOString().split("T")[0];
+
+useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+
+  if (auth) {
+    setFormData((prev) => ({
+      ...prev,
+      email: auth.email || prev.email,
+      Gen_gstin: auth.gstin || prev.Gen_gstin,
+      gstin: auth.gstin || prev.gstin,
+      date: today,
+      client_id: auth.client_id || prev.client_id,
+      client_secret: auth.client_secret || prev.client_secret,
+      ip_address: auth.ip_address || prev.ip_address,
+      env: auth.env || prev.env,
+    }));
+  }
+}, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

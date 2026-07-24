@@ -8,6 +8,20 @@ const GetEwayBillsByDate = () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString("en-GB"); // DD/MM/YYYY
+
+  setFormData((prev) => ({
+    ...prev,
+    date: formattedDate,
+    stateCode: auth?.gstin
+      ? auth.gstin.substring(0, 2)
+      : prev.stateCode,
+  }));
+}, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
