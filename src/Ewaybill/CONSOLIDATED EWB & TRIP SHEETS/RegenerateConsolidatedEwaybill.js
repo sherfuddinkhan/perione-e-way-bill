@@ -22,6 +22,31 @@ const RegenerateConsolidatedEwaybill = () => {
   const [responseData, setResponseData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+  const tripSheet = JSON.parse(localStorage.getItem("trip_sheet_data"));
+  console.log("auth",auth)
+   console.log("tripsheet",tripSheet)
+  setFormData((prev) => ({
+    ...prev,
+
+    // Authentication Details
+    email: auth?.email || prev.email,
+    clientId: auth?.client_id || prev.clientId,
+    clientSecret: auth?.client_secret || prev.clientSecret,
+    gstin: auth?.gstin || prev.gstin,
+    env: auth?.env || prev.env,
+
+    // Trip Sheet Details
+    tripSheetNo: tripSheet?.tripSheetNo || prev.tripSheetNo,
+    vehicleNo: tripSheet?.vehicleNo || prev.vehicleNo,
+    fromPlace: tripSheet?.fromPlace || prev.fromPlace,
+    fromState: tripSheet?.fromState || prev.fromState,
+    transDocNo: tripSheet?.transDocNo || prev.transDocNo,
+    transDocDate: tripSheet?.transDocDate || prev.transDocDate,
+    transMode: tripSheet?.transMode || prev.transMode,
+  }));
+}, []);
 
   const handleChange = (e) => {
     setFormData({

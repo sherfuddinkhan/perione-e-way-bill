@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useAuth } from "../context/AuthContext";
 const GetConsolidatedEwayBill = () => {
   const [tripSheetNo, setTripSheetNo] = useState("1510012169");
   const [email, setEmail] = useState("sherfuddin.phd@gmail.com");
@@ -12,7 +12,36 @@ const GetConsolidatedEwayBill = () => {
   const [tripSheet, setTripSheet] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { authData } = useAuth();
+useEffect(() => {
+  if (authData?.email) {
+    setEmail(authData.email);
+    setClientId(authData.client_id);
+    setClientSecret(authData.client_secret);
+    setGstin(authData.gstin);
+    setEnv(authData.env);
+  } else {
+    // Restore after page refresh
+    const savedAuth = JSON.parse(localStorage.getItem("eway_auth"));
 
+    if (savedAuth) {
+      setEmail(savedAuth.email || "");
+      setClientId(savedAuth.client_id || "");
+      setClientSecret(savedAuth.client_secret || "");
+      setGstin(savedAuth.gstin || "");
+      setEnv(savedAuth.env || "sandbox");
+    }
+  }
+}, [authData]);
+
+useEffect(() => {
+  const savedTripSheet = JSON.parse(localStorage.getItem("trip_sheet_data"));
+
+  if (savedTripSheet) {
+    setTripSheet(savedTripSheet);
+    setTripSheetNo(savedTripSheet.tripSheetNo || "");
+  }
+}, []);
   const fetchTripSheet = async () => {
     setLoading(true);
     setError("");
