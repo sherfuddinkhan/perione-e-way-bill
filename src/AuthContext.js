@@ -38,6 +38,9 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.removeItem("eway_auth");
     localStorage.removeItem("trip_sheet_data");
+      // Clear all browser storage
+  localStorage.clear();
+  sessionStorage.clear();
     sessionStorage.clear();
   };
 
