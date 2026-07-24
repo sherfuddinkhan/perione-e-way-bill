@@ -62,6 +62,7 @@ const UpdatePartBVehicleNumber = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+           ConnectionType: connectionType,
         },
         body: JSON.stringify(payload),
       });

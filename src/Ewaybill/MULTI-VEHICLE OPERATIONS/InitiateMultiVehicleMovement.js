@@ -54,7 +54,9 @@ const InitiateMultiVehicleMovement= () => {
     try {
       const res = await fetch("http://localhost:5000/api/ewaybill/initmulti", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+           ConnectionType: connectionType,
+         },
         body: JSON.stringify(formData),
       });
       const data = await res.json();

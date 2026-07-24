@@ -49,6 +49,7 @@ const GetTransporterDetails = () => {
             client_secret: clientSecret,
             gstin: gstin,
             env: env,
+            ConnectionType: connectionType,
           },
         }
       );
