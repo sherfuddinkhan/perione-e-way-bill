@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const GetEwayBillsByParties = () => {
+  const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
     date: "2026-07-22",

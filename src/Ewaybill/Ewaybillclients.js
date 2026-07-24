@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 const Ewaybillclients = () => {
   const navigate = useNavigate();
-
+  const { connectionType } = useAuth();
   const [loading, setLoading] = useState(false);
   const [rowLoading, setRowLoading] = useState(null);
   const [invoiceData, setInvoiceData] = useState([]);

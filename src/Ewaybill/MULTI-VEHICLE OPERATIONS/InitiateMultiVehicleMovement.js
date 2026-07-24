@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { useAuth } from "../../AuthContext";
 const InitiateMultiVehicleMovement= () => {
+  const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
     ewbNo: "181012149102",
     fromPlace: "FRAZER TOWN",

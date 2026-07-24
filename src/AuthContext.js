@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 
 const AuthContext = createContext();
 
@@ -15,11 +20,25 @@ export const AuthProvider = ({ children }) => {
     ip_address: "",
   });
 
+  // Connection Type
+  const [connectionType, setConnectionType] = useState(
+    localStorage.getItem("ConnectionType") || "DEFAULT"
+  );
+
+  // Load auth on refresh
+  useEffect(() => {
+    const savedAuth = localStorage.getItem("eway_auth");
+
+    if (savedAuth) {
+      setAuthData(JSON.parse(savedAuth));
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const login = (data) => {
     setIsLoggedIn(true);
     setAuthData(data);
 
-    // Persist across refreshes
     localStorage.setItem("eway_auth", JSON.stringify(data));
   };
 
@@ -36,12 +55,22 @@ export const AuthProvider = ({ children }) => {
       ip_address: "",
     });
 
+    // Remove auth
     localStorage.removeItem("eway_auth");
     localStorage.removeItem("trip_sheet_data");
-      // Clear all browser storage
-  localStorage.clear();
-  sessionStorage.clear();
+
+    // If you DON'T want to remember ConnectionType
+    localStorage.removeItem("ConnectionType");
+
+    localStorage.clear();
     sessionStorage.clear();
+
+    setConnectionType("DEFAULT");
+  };
+
+  const changeConnectionType = (value) => {
+    setConnectionType(value);
+    localStorage.setItem("ConnectionType", value);
   };
 
   return (
@@ -51,6 +80,8 @@ export const AuthProvider = ({ children }) => {
         authData,
         login,
         logout,
+        connectionType,
+        setConnectionType: changeConnectionType,
       }}
     >
       {children}

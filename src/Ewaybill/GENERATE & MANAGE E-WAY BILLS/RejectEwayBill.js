@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const RejectEwayBill = () => {
+  const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
     ip_address: "0.0.0.0",

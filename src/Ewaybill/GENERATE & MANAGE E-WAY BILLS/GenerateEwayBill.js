@@ -148,6 +148,7 @@ const DEFAULT_PAYLOAD = {
 // --- Main Component ---
 
 const GenerateEwayBill = () => {
+  const { connectionType } = useAuth();
   const [formData, setFormData] = useState(DEFAULT_PAYLOAD);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);

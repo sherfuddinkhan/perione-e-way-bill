@@ -5,7 +5,11 @@ import { useAuth } from "../../AuthContext";
 
 const AuthenticationApi = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+const {
+  login,
+  connectionType,
+  setConnectionType,
+} = useAuth();
 
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
@@ -17,12 +21,17 @@ const AuthenticationApi = () => {
     gstin: "36AARFB4347G037",
     env: "sandbox",
   });
-
+  const [connectionType, setConnectionType] = useState("DEFAULT");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
   const [statusType, setStatusType] = useState(null); // 'success' | 'error' | null
+useEffect(() => {
+  const savedConnectionType =
+    localStorage.getItem("ConnectionType") || "DEFAULT";
 
+  setConnectionType(savedConnectionType);
+}, []);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -55,7 +64,8 @@ const AuthenticationApi = () => {
       // Check for success status from API
       if (res.data.status_cd === "1") {
         setStatusType("success");
-        
+         // Save connection type
+      localStorage.setItem("ConnectionType", connectionType);
         // 1. Update Auth Context state
         if (login) {
   login({email: formData.email,username: formData.username,client_id: formData.client_id,client_secret: formData.client_secret,gstin: formData.gstin,env: formData.env,ip_address: formData.ip_address});}
@@ -105,6 +115,19 @@ const AuthenticationApi = () => {
               style={styles.input}
             />
           </div>
+          <div style={styles.fieldGroup}>
+  <label style={styles.label}>Connection Type</label>
+
+  <select
+    value={connectionType}
+    onChange={(e) => setConnectionType(e.target.value)}
+    style={styles.input}
+  >
+    <option value="DEFAULT">DEFAULT</option>
+    <option value="UAT">UAT</option>
+    <option value="LIVE">LIVE</option>
+  </select>
+</div>
 
           <div style={styles.row}>
             <div style={{ flex: 1 }}>

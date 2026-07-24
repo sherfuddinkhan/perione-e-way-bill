@@ -37,6 +37,7 @@ const ResponseViewer = ({ response }) => {
 
 // --- Main EWayBillConsigner Component ---
 const EWayBillConsigner = () => {
+  const { connectionType } = useAuth();
   const [docType, setDocType] = useState('INV');
   const [docNo, setDocNo] = useState('Perione-2');
   const [loading, setLoading] = useState(false);

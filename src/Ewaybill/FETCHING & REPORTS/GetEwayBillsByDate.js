@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { useAuth } from "../../AuthContext";
 const GetEwayBillsByDate = () => {
+  const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
     date: "21/07/2026",
     stateCode: "36",

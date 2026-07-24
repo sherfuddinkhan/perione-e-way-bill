@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const RejectedByOthersEwayBills = () => {
+  const { connectionType } = useAuth();
   const [date, setDate] = useState("2026-07-23");
   const [ewayBills, setEwayBills] = useState([]);
   const [loading, setLoading] = useState(false);

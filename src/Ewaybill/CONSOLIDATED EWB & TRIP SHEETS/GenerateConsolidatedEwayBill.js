@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { Form, Input, Select, DatePicker, Button, Alert, Card, Typography } from "antd";
 import { useAuth } from "../../AuthContext";
 const GenerateConsolidatedEwayBill = () => {
+   const { connectionType } = useAuth();
   const [form] = Form.useForm();
   const [formData, setFormData] = useState({
     fromPlace: "FRAZER TOWN",

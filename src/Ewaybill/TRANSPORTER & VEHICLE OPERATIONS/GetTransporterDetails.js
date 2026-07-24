@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const GetTransporterDetails = () => {
+  const { connectionType } = useAuth();
   const [email, setEmail] = useState("sherfuddin.phd@gmail.com");
   const [trnNo, setTrnNo] = useState("36AARFB4347G037");
 

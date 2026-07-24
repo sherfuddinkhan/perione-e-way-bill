@@ -6,6 +6,7 @@ const { Title } = Typography;
 const { Option } = Select;
 
 const UpdatePartBVehicleNumber = () => {
+  const { connectionType } = useAuth();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);

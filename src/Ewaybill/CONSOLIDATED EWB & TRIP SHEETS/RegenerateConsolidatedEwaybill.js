@@ -2,6 +2,7 @@ import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const RegenerateConsolidatedEwaybill = () => {
+   const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
     tripSheetNo: "161012149685",
