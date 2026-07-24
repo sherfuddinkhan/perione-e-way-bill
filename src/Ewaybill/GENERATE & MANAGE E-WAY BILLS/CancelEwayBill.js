@@ -74,21 +74,33 @@ const CancelEWayBill = () => {
     setLoading(true);
     setResponse(null);
 
-    try {
-      const res = await axios.post('http://localhost:5000/api/ewaybill/cancel', {
-        ewbNo: Number(ewbNo),
-        cancelRsnCode: Number(cancelRsnCode),
-        cancelRmrk,
-      });
-      setResponse({ success: true, data: res.data });
-    } catch (err) {
-      setResponse({
-        success: false,
-        data: err.response?.data || { message: err.message },
-      });
-    } finally {
-      setLoading(false);
+  try {
+  const res = await axios.post(
+    "http://localhost:5000/api/ewaybill/cancel",
+    {
+      ewbNo: Number(ewbNo),
+      cancelRsnCode: Number(cancelRsnCode),
+      cancelRmrk,
+    },
+    {
+      headers: {
+        ConnectionType: connectionType,
+      },
     }
+  );
+
+  setResponse({
+    success: true,
+    data: res.data,
+  });
+} catch (err) {
+  setResponse({
+    success: false,
+    data: err.response?.data || { message: err.message },
+  });
+} finally {
+  setLoading(false);
+}
   };
 
   return (

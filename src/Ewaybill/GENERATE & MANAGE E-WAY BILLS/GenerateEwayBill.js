@@ -438,7 +438,8 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
 
   const res = await fetch("http://localhost:5000/api/generate-ewaybill", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+               ConnectionType: connectionType},
     body: JSON.stringify(formData),
   });
 

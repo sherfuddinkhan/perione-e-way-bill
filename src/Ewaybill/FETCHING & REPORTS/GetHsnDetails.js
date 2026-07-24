@@ -56,6 +56,9 @@ const GetHsnDetails = () => {
     try {
       const res = await axios.get('http://localhost:5000/api/ewaybill/hsn-details', {
         params: { hsncode },
+         headers: {
+        ConnectionType: connectionType,
+      },
       });
       setResponse({ success: true, data: res.data });
     } catch (err) {

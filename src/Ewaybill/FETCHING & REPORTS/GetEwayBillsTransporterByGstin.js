@@ -32,7 +32,15 @@ const GetEwayBillsTransporterByGstin= () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/ewaybill/getewaybillsfortransporterbygstin?Gen_gstin=${encodeURIComponent(formData.Gen_gstin)}&date=${encodeURIComponent(formData.date)}`
+        `http://localhost:5000/api/ewaybill/getewaybillsfortransporterbygstin?Gen_gstin=${encodeURIComponent(formData.Gen_gstin)}&date=${encodeURIComponent(formData.date)}`,
+       {
+      method: "GET",
+      headers: {
+        ConnectionType: connectionType,
+        // or:
+        // ConnectionType: localStorage.getItem("ConnectionType"),
+      },
+    }
       );
       const data = await res.json();
 

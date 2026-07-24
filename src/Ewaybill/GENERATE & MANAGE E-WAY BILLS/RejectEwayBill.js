@@ -47,7 +47,12 @@ const RejectEwayBill = () => {
 
       const res = await axios.post(
         "http://localhost:5000/api/ewaybill/reject",
-        formData
+        formData,
+        {
+        headers: {
+          ConnectionType: connectionType,
+        },
+      }
       );
 
       setResponse(res.data);

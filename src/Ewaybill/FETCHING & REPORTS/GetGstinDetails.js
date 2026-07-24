@@ -53,19 +53,31 @@ const GetGstinDetails = () => {
     setLoading(true);
     setResponse(null);
 
-    try {
-      const res = await axios.get('http://localhost:5000/api/ewaybill/gstin-details', {
-        params: { gstin },
-      });
-      setResponse({ success: true, data: res.data });
-    } catch (err) {
-      setResponse({
-        success: false,
-        data: err.response?.data || { message: err.message },
-      });
-    } finally {
-      setLoading(false);
+  try {
+  const res = await axios.get(
+    "http://localhost:5000/api/ewaybill/gstin-details",
+    {
+      params: {
+        gstin,
+      },
+      headers: {
+        ConnectionType: connectionType,
+      },
     }
+  );
+
+  setResponse({
+    success: true,
+    data: res.data,
+  });
+} catch (err) {
+  setResponse({
+    success: false,
+    data: err.response?.data || { message: err.message },
+  });
+} finally {
+  setLoading(false);
+}
   };
 
   return (

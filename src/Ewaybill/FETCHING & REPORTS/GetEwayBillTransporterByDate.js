@@ -26,11 +26,18 @@ useEffect(() => {
       const formattedDate = formatDate(date);
 
       const response = await axios.get(
-        "http://localhost:5000/api/ewaybill/transporter-by-date",
-        {
-          params: { date: formattedDate },
-        }
-      );
+  "http://localhost:5000/api/ewaybill/transporter-by-date",
+  {
+    params: {
+      date: formattedDate,
+    },
+    headers: {
+      ConnectionType: connectionType,
+      // or:
+      // ConnectionType: localStorage.getItem("ConnectionType"),
+    },
+  }
+);
 
       if (response.data.status_cd === "1") {
         setEwayBills(response.data.data || []);

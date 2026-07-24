@@ -63,7 +63,12 @@ const CloseEwayBill = () => {
         {
           ...formData,
           closureDate: formatDate(formData.closureDate),
-        }
+        },
+         {
+    headers: {
+      ConnectionType: connectionType,
+    },
+  }
       );
 
       setResponse(res.data);

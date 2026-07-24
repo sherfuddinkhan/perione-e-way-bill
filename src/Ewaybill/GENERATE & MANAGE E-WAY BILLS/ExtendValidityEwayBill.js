@@ -65,7 +65,12 @@ useEffect(() => {
     try {
       const res = await axios.post(
         'http://localhost:5000/api/extend-validity',
-        formData
+        formData,
+        {
+      headers: {
+        ConnectionType: connectionType,
+      },
+    }
       );
       setResponse(res.data);
     } catch (error) {
