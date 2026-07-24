@@ -14,6 +14,18 @@ const GetTransporterDetails = () => {
   const [transporter, setTransporter] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+
+  if (auth) {
+    setEmail(auth.email || "");
+    setTrnNo(auth.gstin || "");
+    setClientId(auth.client_id || "");
+    setClientSecret(auth.client_secret || "");
+    setGstin(auth.gstin || "");
+    setEnv(auth.env || "sandbox");
+  }
+}, []);
 
   const fetchTransporterDetails = async () => {
     setLoading(true);
