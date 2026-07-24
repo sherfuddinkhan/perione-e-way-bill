@@ -41,6 +41,15 @@ const EWayBillConsigner = () => {
   const [docNo, setDocNo] = useState('Perione-2');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
+    // Auto-populate from generated E-Way Bill
+  useEffect(() => {
+    const savedEwb = JSON.parse(localStorage.getItem("ewaybill_response"));
+
+    if (savedEwb) {
+      setDocNo(savedEwb.docNo || "");
+      setDocType(savedEwb.docType || "INV");
+    }
+  }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();

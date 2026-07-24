@@ -16,6 +16,22 @@ const GetEwayBillReportByAssignedDate = () => {
   const [ewayBills, setEwayBills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  useEffect(() => {
+  const auth = JSON.parse(localStorage.getItem("eway_auth"));
+
+  if (auth) {
+    setFormData((prev) => ({
+      ...prev,
+      email: auth.email || prev.email,
+      gstin: auth.gstin || prev.gstin,
+      stateCode: auth.gstin ? auth.gstin.substring(0, 2) : prev.stateCode,
+      client_id: auth.client_id || prev.client_id,
+      client_secret: auth.client_secret || prev.client_secret,
+      ip_address: auth.ip_address || prev.ip_address,
+      env: auth.env || prev.env,
+    }));
+  }
+}, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
