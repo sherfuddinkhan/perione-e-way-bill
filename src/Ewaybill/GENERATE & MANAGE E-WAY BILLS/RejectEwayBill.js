@@ -22,25 +22,40 @@ const RejectEwayBill = () => {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  useEffect(() => {
-  const auth = JSON.parse(localStorage.getItem("eway_auth"));
-  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response"));
+
+
+useEffect(() => {
+  if (!isLoggedIn) {
+    setFormData({
+      email: "",
+      ip_address: "",
+      client_id: "",
+      client_secret: "",
+      gstin: "",
+      env: "",
+      ewbNo: "",
+    });
+    return;
+  }
+
+  const auth = JSON.parse(localStorage.getItem("eway_auth") || "null");
+  const ewayBill = JSON.parse(localStorage.getItem("ewaybill_response") || "null");
 
   setFormData((prev) => ({
     ...prev,
 
     // Authentication Details
-    email: auth?.email ,
-    ip_address: auth?.ip_address ,
-    client_id: auth?.client_id ,
-    client_secret: auth?.client_secret ,
-    gstin: auth?.gstin ,
-    env: auth?.env ,
+    email: auth?.email || "",
+    ip_address: auth?.ip_address || "",
+    client_id: auth?.client_id || "",
+    client_secret: auth?.client_secret || "",
+    gstin: auth?.gstin || "",
+    env: auth?.env || "",
 
     // Generated E-Way Bill
-    ewbNo: ewayBill?.eWayBillNumber ,
+    ewbNo: ewayBill?.eWayBillNumber || "",
   }));
-}, []);
+}, [isLoggedIn]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

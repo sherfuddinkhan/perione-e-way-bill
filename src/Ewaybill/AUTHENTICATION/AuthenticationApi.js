@@ -5,13 +5,7 @@ import { useAuth } from "../../AuthContext";
 
 const AuthenticationApi = () => {
   const navigate = useNavigate();
-  const {
-    isLoggedIn,
-    authData,
-    logout,
-    connectionType,
-    setConnectionType,
-  } = useAuth();
+  const {isLoggedIn,authData,logout,connectionType, setConnectionType, login, } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "sherfuddin.phd@gmail.com",
@@ -65,11 +59,9 @@ const AuthenticationApi = () => {
          // Save connection type
       localStorage.setItem("ConnectionType", connectionType);
         // 1. Update Auth Context state
-        if (login) {
+        {
   login({email: formData.email,username: formData.username,client_id: formData.client_id,client_secret: formData.client_secret,gstin: formData.gstin,env: formData.env,ip_address: formData.ip_address});}
- localStorage.setItem("eway_auth",JSON.stringify({email: formData.email,username: formData.username,client_id: formData.client_id,client_secret: formData.client_secret,gstin: formData.gstin,env: formData.env,ip_address: formData.ip_address,}));
-
-        // 2. Redirect to Dashboard (with a short 1-second delay so the user sees success)
+ 
         setTimeout(() => {
           navigate("/Ewaybillclients", { replace: true });
         }, 1000);
