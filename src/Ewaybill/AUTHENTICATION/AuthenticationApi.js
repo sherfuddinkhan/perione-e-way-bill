@@ -20,8 +20,10 @@ const {
     client_secret: "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
     gstin: "36AARFB4347G037",
     env: "sandbox",
+    yearName: "26-27",
   });
   const [connectionType, setConnectionType] = useState("DEFAULT");
+  const [yearName, setYearName] = useState("26-27");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
@@ -128,6 +130,18 @@ useEffect(() => {
     <option value="LIVE">LIVE</option>
   </select>
 </div>
+    <div style={{ marginBottom: "20px" }}>
+            <label>Financial Year</label>
+            <select
+              value={yearName}
+              onChange={(e) =>
+                setYearName(e.target.value)
+              }
+              style={styles.input}
+            >
+              <option value="26-27">26-27</option>
+            </select>
+          </div>
 
           <div style={styles.row}>
             <div style={{ flex: 1 }}>
