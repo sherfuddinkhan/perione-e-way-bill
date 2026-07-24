@@ -34,6 +34,7 @@ app.get("/api/authenticate", async (req, res) => {
       client_secret: req.headers["client_secret"] || process.env.CLIENT_SECRET || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || process.env.GSTIN || "36AARFB4347G037",
       env: req.headers["env"] || process.env.ENVIRONMENT || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(AUTH_URL, {
@@ -73,6 +74,7 @@ app.post("/api/generate-ewaybill", async (req, res) => {
       client_secret: req.headers["client_secret"] || process.env.EWAY_CLIENT_SECRET || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: payload.fromGstin || req.headers["gstin"] || process.env.GSTIN || "36AARFB4347G037",
       env: req.headers["env"] || process.env.ENVIRONMENT || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -107,6 +109,7 @@ app.post("/api/extend-validity", async (req, res) => {
       client_secret: req.headers["client_secret"] || process.env.EWAY_CLIENT_SECRET || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || process.env.EWAY_GSTIN || "36AARFB4347G037",
       env: req.headers["env"] || process.env.EWAY_ENV || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -167,6 +170,7 @@ app.post("/api/ewaybill/reject", async (req, res) => {
           client_secret,
           gstin,
           env: env || "sandbox",
+          ConnectionType: req.headers["connectiontype"] || "DEFAULT",
         },
       }
     );
@@ -198,6 +202,7 @@ app.post("/api/ewaybill/cancel", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -269,6 +274,7 @@ app.post("/api/ewaybill/close", async (req, res) => {
           client_secret,
           gstin,
           env: env || "sandbox",
+          ConnectionType: req.headers["connectiontype"] || "DEFAULT",
         },
       }
     );
@@ -306,6 +312,7 @@ app.post("/api/ewaybill/update-vehicle", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -350,6 +357,7 @@ app.post("/api/ewaybill/update-transporter", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -385,6 +393,7 @@ app.get("/api/gettransporterdetails", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/gettransporterdetails`, {
@@ -420,6 +429,7 @@ app.post("/api/ewaybill/generate-consolidated", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -460,6 +470,7 @@ app.get("/api/gettripsheet", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/gettripsheet`, {
@@ -490,6 +501,7 @@ app.post("/api/regentripsheet", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -538,6 +550,7 @@ app.post("/api/init-multi", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -566,6 +579,7 @@ app.post("/api/add-multi", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -594,6 +608,7 @@ app.post("/api/update-multi", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.post(
@@ -625,6 +640,7 @@ app.get("/api/ewaybill/hsn-details", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/gethsndetailsbyhsncode`, {
@@ -656,6 +672,7 @@ app.get("/api/ewaybill/gstin-details", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/getgstindetails`, {
@@ -687,6 +704,7 @@ app.get("/api/ewaybill/error-list", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/geterrorlist`, {
@@ -718,6 +736,7 @@ app.get("/api/ewaybill/by-consigner", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/getewaybillgeneratedbyconsigner`, {
@@ -749,6 +768,7 @@ app.get("/api/get-ewaybill", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/getewaybill`, {
@@ -775,6 +795,7 @@ app.get("/api/get-ewaybills-transporter", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/getewaybillsfortransporter`, {
@@ -801,6 +822,7 @@ app.get("/api/get-ewaybill-report-transporter", async (req, res) => {
       client_secret: req.headers["client_secret"] || "PEWAYS1c2a32665f93c1277cf8ce2d9bbe100e",
       gstin: req.headers["gstin"] || "36AARFB4347G037",
       env: req.headers["env"] || "sandbox",
+      ConnectionType: req.headers["connectiontype"] || "DEFAULT",
     };
 
     const response = await axios.get(`${BASE_URL}/getewaybillreportbytransporterassigneddate`, {
@@ -849,6 +871,7 @@ app.get("/api/ewaybill/rejected-by-others", async (req, res) => {
           client_secret,
           gstin,
           env: env || "sandbox",
+          ConnectionType: req.headers["connectiontype"] || "DEFAULT",
         },
       }
     );
@@ -899,6 +922,7 @@ app.get("/api/ewaybill/other-party", async (req, res) => {
           client_secret,
           gstin,
           env: env || "sandbox",
+          ConnectionType: req.headers["connectiontype"] || "DEFAULT",
         },
       }
     );
@@ -959,6 +983,7 @@ app.get("/api/ewaybill/by-date", async (req, res) => {
           client_secret,
           gstin,
           env: env || "sandbox",
+          ConnectionType: req.headers["connectiontype"] || "DEFAULT",
         },
       }
     );
@@ -1018,6 +1043,7 @@ app.get("/api/ewaybill/transporter-by-gstin", async (req, res) => {
           client_secret,
           gstin,
           env: env || "sandbox",
+          ConnectionType: req.headers["connectiontype"] || "DEFAULT",
         },
       }
     );
