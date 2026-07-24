@@ -3,12 +3,12 @@ import axios from "axios";
 import { useAuth } from "../../AuthContext";
 const GetConsolidatedEwayBill = () => {
    const { connectionType } = useAuth();
-  const [tripSheetNo, setTripSheetNo] = useState("1510012169");
-  const [email, setEmail] = useState("sherfuddin.phd@gmail.com");
+  const [tripSheetNo, setTripSheetNo] = useState("");
+  const [email, setEmail] = useState("");
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
-  const [gstin, setGstin] = useState("36AARFB4347G037");
-  const [env, setEnv] = useState("sandbox");
+  const [gstin, setGstin] = useState("");
+  const [env, setEnv] = useState("");
 
   const [tripSheet, setTripSheet] = useState(null);
   const [loading, setLoading] = useState(false);

@@ -4,20 +4,20 @@ import { useAuth } from "../../AuthContext";
 const RegenerateConsolidatedEwaybill = () => {
    const { connectionType } = useAuth();
   const [formData, setFormData] = useState({
-    email: "sherfuddin.phd@gmail.com",
-    tripSheetNo: "161012149685",
-    vehicleNo: "TS09AB1234",
-    fromPlace: "FRAZER TOWN",
-    fromState: "36",
-    reasonCode: "1",
-    reasonRem: "Natural Calamity",
-    transDocNo: "12",
-    transDocDate: "11/07/2026",
-    transMode: "1",
+    email: "",
+    tripSheetNo: "",
+    vehicleNo: "",
+    fromPlace: "",
+    fromState: "",
+    reasonCode: "",
+    reasonRem: "",
+    transDocNo: "",
+    transDocDate: "",
+    transMode: "",
     clientId: "",
     clientSecret: "",
-    gstin: "36AARFB4347G037",
-    env: "sandbox",
+    gstin: "",
+    env: "",
   });
 
   const [responseData, setResponseData] = useState(null);

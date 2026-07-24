@@ -15,7 +15,7 @@ const GenerateConsolidatedEwayBill = () => {
   });
 
   // Dynamic array for multiple EWB Numbers
-  const [ewbList, setEwbList] = useState([{ ewbNo: "171012148940" }]);
+  const [ewbList, setEwbList] = useState([{ ewbNo: "" }]);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
