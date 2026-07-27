@@ -35,7 +35,7 @@ const AuthenticationApi = () => {
     setStatusType(null);
 
     try {
-      const res = await axios.get("http://localhost:5000/api/authenticate", {
+      const res = await axios.get("https://einvoice.fcssoftwares.com/api/perione/authenticate", {
         params: {
           email: formData.email,
           username: formData.username,
