@@ -443,7 +443,7 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
     try {
   console.log("Received Body:", JSON.stringify(formData));
 
-  const res = await fetch("http://localhost:5000/api/generate-ewaybill", {
+  const res = await fetch("https://einvoice.fcssoftwares.com/api/perione/generate-ewaybill", {
     method: "POST",
     headers: { "Content-Type": "application/json",
                ConnectionType: connectionType},

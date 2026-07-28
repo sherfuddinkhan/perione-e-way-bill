@@ -67,7 +67,7 @@ const CloseEwayBill = () => {
       setResponse(null);
 
       const res = await axios.post(
-        "http://localhost:5000/api/ewaybill/close",
+        "https://einvoice.fcssoftwares.com/api/perione/ewaybill/close",
         {
           ...formData,
           closureDate: formatDate(formData.closureDate),

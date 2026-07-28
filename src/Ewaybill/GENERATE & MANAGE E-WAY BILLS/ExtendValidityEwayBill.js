@@ -71,7 +71,7 @@ useEffect(() => {
 
     try {
       const res = await axios.post(
-        'http://localhost:5000/api/extend-validity',
+        'https://einvoice.fcssoftwares.com/api/perione/extend-validity',
         formData,
         {
       headers: {

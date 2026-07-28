@@ -83,7 +83,7 @@ const CancelEWayBill = () => {
 
   try {
   const res = await axios.post(
-    "http://localhost:5000/api/ewaybill/cancel",
+    "https://einvoice.fcssoftwares.com/api/perione/ewaybill/cancel",
     {
       ewbNo: Number(ewbNo),
       cancelRsnCode: Number(cancelRsnCode),
