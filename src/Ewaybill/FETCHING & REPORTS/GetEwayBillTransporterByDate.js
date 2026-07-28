@@ -33,7 +33,7 @@ useEffect(() => {
       const formattedDate = formatDate(date);
 
       const response = await axios.get(
-  "http://localhost:5000/api/ewaybill/transporter-by-date",
+  "https://einvoice.fcssoftwares.com/api/perione/ewaybill/by-date",
   {
     params: {
       date: formattedDate,

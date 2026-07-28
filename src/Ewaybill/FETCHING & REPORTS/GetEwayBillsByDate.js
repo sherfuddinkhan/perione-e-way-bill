@@ -41,7 +41,7 @@ const GetEwayBillsByDate = () => {
     setErrorMsg("");
 try {
   const res = await fetch(
-    `http://localhost:5000/api/ewaybill/getewaybillsbydate?date=${encodeURIComponent(formData.date)}&stateCode=${formData.stateCode}`,
+    `https://einvoice.fcssoftwares.com/api/perione/ewaybill/by-date`,
     {
       method: "GET",
       headers: {

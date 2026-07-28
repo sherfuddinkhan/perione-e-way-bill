@@ -52,7 +52,7 @@ const RejectedByOthersEwayBills = () => {
     setError("");
 
     const response = await axios.get(
-      "http://localhost:5000/api/ewaybill/rejected-by-others",
+      "https://einvoice.fcssoftwares.com/api/perione/ewaybill/rejected-by-others",
       {
         params: {
           email: formData.email,

@@ -55,7 +55,7 @@ const GetEwayBillReportByAssignedDate = () => {
     setError("");
 
     const response = await axios.get(
-      "http://localhost:5000/api/ewaybill/by-date",
+      "https://einvoice.fcssoftwares.com/api/perione/ewaybill/by-date",
       {
         params: {
           email: formData.email,

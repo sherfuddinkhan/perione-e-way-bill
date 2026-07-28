@@ -39,7 +39,7 @@ const GetEwayBillsTransporterByGstin= () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/ewaybill/getewaybillsfortransporterbygstin?Gen_gstin=${encodeURIComponent(formData.Gen_gstin)}&date=${encodeURIComponent(formData.date)}`,
+        `https://einvoice.fcssoftwares.com/api/perione/ewaybill/transporter-by-gstin}`,
        {
       method: "GET",
       headers: {

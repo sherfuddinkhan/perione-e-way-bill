@@ -55,7 +55,7 @@ const GetEwayBillsByParties = () => {
     setError("");
 
     const response = await axios.get(
-      "http://localhost:5000/api/ewaybill/other-party",
+      "https://einvoice.fcssoftwares.com/api/perione/ewaybill/other-party",
       {
         params: {
           ...formData,

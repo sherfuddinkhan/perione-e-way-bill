@@ -58,7 +58,7 @@ useEffect(() => {
       setError("");
 
       const response = await axios.get(
-        "http://localhost:5000/api/ewaybill/transporter-by-gstin",
+        "https://einvoice.fcssoftwares.com/api/perione/ewaybill/transporter-by-gstin",
         {
           params: {
             email: formData.email,
