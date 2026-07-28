@@ -53,7 +53,7 @@ useEffect(() => {
       const ipAddress = ipRes.data.ip;
 
       const response = await axios.get(
-        "http://localhost:5000/api/gettripsheet",
+        "https://einvoice.fcssoftwares.com/api/perione/gettripsheet",
         {
           params: {
             email,

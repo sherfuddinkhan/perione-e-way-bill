@@ -98,7 +98,7 @@ const handleEwbChange = (index, value) => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/ewaybill/generate-consolidated", {
+      const res = await fetch("https://einvoice.fcssoftwares.com/api/perione/ewaybill/generate-consolidated", {
         method: "POST",
         headers: {
            ConnectionType: connectionType,

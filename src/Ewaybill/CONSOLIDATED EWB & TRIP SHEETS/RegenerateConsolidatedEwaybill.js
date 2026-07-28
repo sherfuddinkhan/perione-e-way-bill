@@ -66,7 +66,7 @@ const RegenerateConsolidatedEwaybill = () => {
       const ipAddress = ipRes.data.ip;
 
       const response = await axios.post(
-        "http://localhost:5000/api/regentripsheet",
+        "https://einvoice.fcssoftwares.com/api/perione/regentripsheet",
         {
           tripSheetNo: Number(formData.tripSheetNo),
           vehicleNo: formData.vehicleNo,
