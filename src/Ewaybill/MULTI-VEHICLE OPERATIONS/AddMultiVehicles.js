@@ -49,7 +49,7 @@ const AddMultiVehicles= () => {
     setErrorMsg("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/ewaybill/addmulti", {
+      const res = await fetch("https://einvoice.fcssoftwares.com/api/perione/add-multi", {
         method: "POST",
         headers: { "Content-Type": "application/json" ,
            ConnectionType: connectionType,

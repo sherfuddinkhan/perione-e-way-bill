@@ -59,7 +59,7 @@ const ChangeMultiVehicles = () => {
     setErrorMsg("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/ewaybill/updtmulti", {
+      const res = await fetch("https://einvoice.fcssoftwares.com/api/perione/update-multi", {
         method: "POST",
         headers: { "Content-Type": "application/json",
            ConnectionType: connectionType,

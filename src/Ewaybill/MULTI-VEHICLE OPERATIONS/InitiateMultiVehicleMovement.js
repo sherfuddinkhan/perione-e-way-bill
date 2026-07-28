@@ -59,7 +59,7 @@ const InitiateMultiVehicleMovement= () => {
     setErrorMsg("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/ewaybill/initmulti", {
+      const res = await fetch("https://einvoice.fcssoftwares.com/api/perione/init-multi", {
         method: "POST",
         headers: { "Content-Type": "application/json",
            ConnectionType: connectionType,
