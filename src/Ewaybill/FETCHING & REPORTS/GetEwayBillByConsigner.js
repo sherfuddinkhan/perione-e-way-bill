@@ -64,7 +64,7 @@ const EWayBillConsigner = () => {
     setResponse(null);
 
     try {
-      const res = await axios.get('http://localhost:5000/api/ewaybill/by-consigner', {
+      const res = await axios.get('https://einvoice.fcssoftwares.com/api/perione/ewaybill/by-consigner', {
         params: { docType, docNo },
         headers: {
         ConnectionType: connectionType,

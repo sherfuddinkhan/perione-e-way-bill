@@ -52,7 +52,7 @@ const ErrorList = () => {
     setResponse(null);
 
     try {
-      const res = await axios.get('http://localhost:5000/api/ewaybill/error-list',
+      const res = await axios.get('https://einvoice.fcssoftwares.com/api/perione/ewaybill/error-list',
         {
         headers: {
           ConnectionType: connectionType,
