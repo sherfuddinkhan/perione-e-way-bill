@@ -65,7 +65,7 @@ const UpdatePartBVehicleNumber = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/ewaybill/update-vehicle", {
+      const res = await fetch("https://einvoice.fcssoftwares.com/api/perione/ewaybill/update-vehicle", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

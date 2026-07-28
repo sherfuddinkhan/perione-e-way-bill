@@ -44,7 +44,7 @@ const GetTransporterDetails = () => {
       const ipAddress = ipRes.data.ip;
 
       const response = await axios.get(
-        "http://localhost:5000/api/gettransporterdetails",
+        "https://einvoice.fcssoftwares.com/api/perione/gettransporterdetails",
         {
           params: {
             email,

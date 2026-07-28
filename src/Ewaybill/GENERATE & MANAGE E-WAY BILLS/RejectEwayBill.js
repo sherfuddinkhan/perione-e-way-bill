@@ -68,7 +68,7 @@ useEffect(() => {
       setResponse(null);
 
       const res = await axios.post(
-        "http://localhost:5000/api/ewaybill/reject",
+        "https://einvoice.fcssoftwares.com/api/perione/ewaybill/reject",
         formData,
         {
         headers: {

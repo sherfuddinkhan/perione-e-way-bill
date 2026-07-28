@@ -54,7 +54,7 @@ const UpdateTransporter = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/ewaybill/update-transporter", {
+      const res = await fetch("https://einvoice.fcssoftwares.com/api/perione/ewaybill/update-transporter", {
         method: "POST",
         headers: { "Content-Type": "application/json",
                   ConnectionType: connectionType,
