@@ -16,31 +16,52 @@ const GetConsolidatedEwayBill = () => {
   const { authData } = useAuth();
 useEffect(() => {
   if (authData?.email) {
-    setEmail(authData.email);
-    setClientId(authData.client_id);
-    setClientSecret(authData.client_secret);
-    setGstin(authData.gstin);
-    setEnv(authData.env);
+    setEmail(authData.email || "");
+    setClientId(authData.client_id || "");
+    setClientSecret(authData.client_secret || "");
+    setGstin(authData.gstin || "");
+    setEnv(authData.env || "sandbox");
   } else {
-    // Restore after page refresh
-    const savedAuth = JSON.parse(localStorage.getItem("eway_auth"));
+    const authString = localStorage.getItem("eway_auth");
 
-    if (savedAuth) {
-      setEmail(savedAuth.email || "");
-      setClientId(savedAuth.client_id || "");
-      setClientSecret(savedAuth.client_secret || "");
-      setGstin(savedAuth.gstin || "");
-      setEnv(savedAuth.env || "sandbox");
+    if (
+      authString &&
+      authString !== "undefined" &&
+      authString !== "null"
+    ) {
+      try {
+        const savedAuth = JSON.parse(authString);
+
+        setEmail(savedAuth?.email || "");
+        setClientId(savedAuth?.client_id || "");
+        setClientSecret(savedAuth?.client_secret || "");
+        setGstin(savedAuth?.gstin || "");
+        setEnv(savedAuth?.env || "sandbox");
+      } catch (err) {
+        console.error("Invalid eway_auth JSON:", err);
+        localStorage.removeItem("eway_auth");
+      }
     }
   }
 }, [authData]);
 
 useEffect(() => {
-  const savedTripSheet = JSON.parse(localStorage.getItem("trip_sheet_data"));
+  const tripSheetString = localStorage.getItem("trip_sheet_data");
 
-  if (savedTripSheet) {
-    setTripSheet(savedTripSheet);
-    setTripSheetNo(savedTripSheet.tripSheetNo || "");
+  if (
+    tripSheetString &&
+    tripSheetString !== "undefined" &&
+    tripSheetString !== "null"
+  ) {
+    try {
+      const savedTripSheet = JSON.parse(tripSheetString);
+
+      setTripSheet(savedTripSheet);
+      setTripSheetNo(savedTripSheet?.tripSheetNo || "");
+    } catch (err) {
+      console.error("Invalid trip_sheet_data JSON:", err);
+      localStorage.removeItem("trip_sheet_data");
+    }
   }
 }, []);
   const fetchTripSheet = async () => {
