@@ -10,75 +10,99 @@ const ExtendValidityEwayBill = () => {
     connectionType,
     setConnectionType,
   } = useAuth();
+
   const [formData, setFormData] = useState({
-    ewbNo: '',
-    vehicleNo: '',
-    fromPlace: '',
-    fromState: '',
-    remainingDistance: '',
-    transDocNo: '',
-    transDocDate: '',
-    transMode: '',
-    extnRsnCode: '',
-    extnRemarks: '',
-    fromPincode: '',
-    consignmentStatus: ''
+    ewbNo: "",
+    vehicleNo: "",
+    fromPlace: "",
+    fromState: "",
+    remainingDistance: "",
+    transDocNo: "",
+    transDocDate: "",
+    transMode: "",
+    extnRsnCode: "",
+    extnRemarks: "",
+    fromPincode: "",
+    consignmentStatus: "",
+     addressLine1: "",
+  addressLine2: "",
+  addressLine3: "",
   });
 
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
-useEffect(() => {
-  try {
-    const savedRaw = localStorage.getItem("ewayBillData");
-    if (!savedRaw) return;
 
-    const savedEwb = JSON.parse(savedRaw);
+  useEffect(() => {
+    try {
+      const savedRaw = localStorage.getItem("ewayBillData");
+      if (!savedRaw) return;
 
-    setFormData((prev) => ({
-      ...prev,
-      ewbNo: String(
-        savedEwb.eWayBillNumber || savedEwb.ewayBillNo || prev.ewbNo
-      ),
-      vehicleNo: savedEwb.vehicleNo || prev.vehicleNo,
-      fromPlace: savedEwb.fromPlace || prev.fromPlace,
-      fromState: String(savedEwb.fromState || prev.fromState),
-      remainingDistance: String(
-        savedEwb.remainingDistance || prev.remainingDistance
-      ),
-      transDocNo: savedEwb.transDocNo || prev.transDocNo,
-      transDocDate: savedEwb.transDocDate || prev.transDocDate,
-      transMode: String(savedEwb.transMode || prev.transMode),
-      fromPincode: savedEwb.fromPincode || prev.fromPincode,
-      consignmentStatus:
-        savedEwb.consignmentStatus || prev.consignmentStatus,
-    }));
-  } catch (err) {
-    console.error("Error reading localStorage:", err);
-  }
-}, []);
+      const savedEwb = JSON.parse(savedRaw);
+
+  setFormData((prev) => ({
+  ...prev,
+  ewbNo: String(savedEwb.eWayBillNumber || savedEwb.ewayBillNo || prev.ewbNo),
+  vehicleNo: savedEwb.vehicleNo || prev.vehicleNo,
+  fromPlace: savedEwb.fromPlace || prev.fromPlace,
+  fromState: String(savedEwb.fromState || prev.fromState),
+  remainingDistance: String(savedEwb.remainingDistance || prev.remainingDistance),
+  transDocNo: savedEwb.transDocNo || prev.transDocNo,
+  transDocDate: savedEwb.transDocDate || prev.transDocDate,
+  transMode: String(savedEwb.transMode || prev.transMode),
+  fromPincode: savedEwb.fromPincode || prev.fromPincode,
+  consignmentStatus: savedEwb.consignmentStatus || prev.consignmentStatus,
+
+  addressLine1: savedEwb.addressLine1 || prev.addressLine1,
+  addressLine2: savedEwb.addressLine2 || prev.addressLine2,
+  addressLine3: savedEwb.addressLine3 || prev.addressLine3,
+}));
+    } catch (err) {
+      console.error("Error reading localStorage:", err);
+    }
+  }, []);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     setResponse(null);
 
     try {
+      const payload = {
+        ewbNo: Number(formData.ewbNo),
+        vehicleNo: formData.vehicleNo,
+        fromPlace: formData.fromPlace,
+        fromState: Number(formData.fromState),
+        remainingDistance: Number(formData.remainingDistance),
+        transDocNo: formData.transDocNo,
+        transDocDate: formData.transDocDate,
+        transMode: Number(formData.transMode),
+        extnRsnCode: Number(formData.extnRsnCode),
+        extnRemarks: formData.extnRemarks,
+        fromPincode: Number(formData.fromPincode),
+        consignmentStatus: Number(formData.consignmentStatus),
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        addressLine3: formData.addressLine3,
+      };
+
       const res = await axios.post(
-        'https://einvoice.fcssoftwares.com/api/perione/extend-validity',
-        formData,
+        "https://einvoice.fcssoftwares.com/api/perione/extend-validity",
+        payload,
         {
-      headers: {
-        ConnectionType: connectionType,
-      },
-    }
+          headers: {
+            ConnectionType: connectionType,
+          },
+        }
       );
+
       setResponse(res.data);
     } catch (error) {
       setResponse(error.response?.data || { error: error.message });
@@ -87,65 +111,69 @@ useEffect(() => {
     }
   };
 
- return (
-  <div style={styles.outerContainer}>
-    <div style={styles.card}>
+  return (
+    <div style={styles.outerContainer}>
+      <div style={styles.card}>
 
-      {/* Header */}
-      <div style={styles.header}>
-        <span style={styles.badge}>E-Way Bill</span>
-        <h1 style={styles.title}>Extend Validity</h1>
-        <p style={styles.subtitle}>
-          Submit the form to extend the validity of an E-Way Bill
-        </p>
-      </div>
-
-      {/* Form */}
-      <form style={styles.form} onSubmit={handleSubmit}>
-        {Object.keys(formData).map((key) => (
-          <div key={key} style={styles.fieldGroup}>
-            <label style={styles.label}>{key}</label>
-            <input
-              type="text"
-              name={key}
-              value={formData[key]}
-              onChange={handleChange}
-              style={styles.input}
-              required
-            />
-          </div>
-        ))}
-
-        <button
-          type="submit"
-          style={{
-            ...styles.button,
-            ...(loading
-              ? { backgroundColor: "#94a3b8", cursor: "not-allowed" }
-              : {})
-          }}
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Extend Validity"}
-        </button>
-      </form>
-
-      {/* Response */}
-      {response && (
-        <div style={styles.responseCard}>
-          <div style={styles.responseHeader}>
-            <span style={styles.statusBadge}>RESPONSE</span>
-            <span style={styles.responseDesc}>API Response</span>
-          </div>
-
-          <pre style={styles.jsonViewer}>
-            {JSON.stringify(response, null, 2)}
-          </pre>
+        {/* Header */}
+        <div style={styles.header}>
+          <span style={styles.badge}>E-Way Bill</span>
+          <h1 style={styles.title}>Extend Validity</h1>
+          <p style={styles.subtitle}>
+            Submit the form to extend the validity of an E-Way Bill
+          </p>
         </div>
-      )}
+
+        {/* Form */}
+        <form style={styles.form} onSubmit={handleSubmit}>
+          {Object.keys(formData).map((key) => (
+            <div key={key} style={styles.fieldGroup}>
+              <label style={styles.label}>{key}</label>
+
+              <input
+                type="text"
+                name={key}
+                value={formData[key]}
+                onChange={handleChange}
+                style={styles.input}
+                required
+              />
+            </div>
+          ))}
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              ...styles.button,
+              ...(loading
+                ? {
+                    backgroundColor: "#94a3b8",
+                    cursor: "not-allowed",
+                  }
+                : {}),
+            }}
+          >
+            {loading ? "Submitting..." : "Extend Validity"}
+          </button>
+        </form>
+
+        {/* Response */}
+        {response && (
+          <div style={styles.responseCard}>
+            <div style={styles.responseHeader}>
+              <span style={styles.statusBadge}>RESPONSE</span>
+              <span style={styles.responseDesc}>API Response</span>
+            </div>
+
+            <pre style={styles.jsonViewer}>
+              {JSON.stringify(response, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 };
 const styles = {
   // Main Container & Layout
