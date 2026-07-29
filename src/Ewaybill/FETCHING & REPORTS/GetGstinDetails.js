@@ -240,57 +240,21 @@ try{
 
 
 const res = await axios.get(
-
-"https://einvoice.fcssoftwares.com/api/perione/ewaybill/gstin-details",
-
-
-{
-
-
-params:{
-
-
-email:email,
-
-
-GSTIN:gstin
-
-
-},
-
-
-
-headers:{
-
-
-ip_address:
-headers.ip_address,
-
-
-client_id:
-headers.client_id,
-
-
-client_secret:
-headers.client_secret,
-
-
-gstin:
-headers.gstin,
-
-
-ConnectionType:
-headers.ConnectionType
-
-
-}
-
-
-
-}
-
-
-
+  "https://einvoice.fcssoftwares.com/api/perione/ewaybill/gstin-details",
+  {
+    params: {
+      email: email.trim(),
+      gstin_query: gstin.trim(),
+    },
+    headers: {
+      gstin: headers.gstin,
+      client_id: headers.client_id,
+      client_secret: headers.client_secret,
+      ip_address: headers.ip_address,
+      env: headers.env,
+      ConnectionType: headers.ConnectionType,
+    },
+  }
 );
 
 
