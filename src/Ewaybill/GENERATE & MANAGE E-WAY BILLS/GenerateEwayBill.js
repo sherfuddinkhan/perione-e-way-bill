@@ -369,58 +369,75 @@ useEffect(() => {
   });
 }, [invoiceData]);
 
-const handleSaveEwayBillResponse = (generatedResponse) => {
-  if (!generatedResponse) {
-    alert("No E-Way Bill response available to save.");
+const handleSaveEwayBillResponse = async (generatedResponse) => {
+  try {
+    if (!generatedResponse) {
+      alert("No E-Way Bill response available.");
+      return false;
+    }
+
+    // API response
+    const apiData = generatedResponse.data || generatedResponse;
+
+    // Get invoice details
+    const invoiceData = JSON.parse(
+      localStorage.getItem("selectedInvoice") || "{}"
+    );
+
+    const dynamicId =
+      invoiceData?.keyID ||
+      location.state?.pid ||
+      0;
+
+    // Payload for UpdateEWBetailsToInvoice API
+    const payload = {
+      id: Number(dynamicId),
+      eWayBillNumber: String(apiData.ewayBillNo || ""),
+      barcode: "",      // Update if your API returns barcode
+      ewayQrCode: ""    // Update if your API returns QR Code
+    };
+
+    console.log("Updating Invoice with EWB:", payload);
+
+    const response = await axios.put(
+      "https://einvoice.fcssoftwares.com/api/OrderList/UpdateEWBetailsToInvoice",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "*/*",
+        },
+      }
+    );
+
+    console.log("Update Response:", response.data);
+
+    // Optional: Save locally also
+    localStorage.setItem(
+      "ewaybill_response",
+      JSON.stringify({
+        ...payload,
+        ewayBillDate: apiData.ewayBillDate,
+        validUpto: apiData.validUpto,
+      })
+    );
+
+    alert("E-Way Bill details updated successfully.");
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Error updating E-Way Bill:",
+      error.response?.data || error.message
+    );
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to update E-Way Bill details."
+    );
+
     return false;
   }
-
-  // API response object
-  const apiData = generatedResponse.data || generatedResponse;
-
-  // Get invoice details from localStorage if needed
-  const invoiceData = JSON.parse(
-    localStorage.getItem("selectedInvoice") || "{}"
-  );
-
-  const dynamicId =
-    invoiceData?.keyID ||
-    location.state?.pid;
-
-  // Create clean object to store
-  const ewayBillData = {
-    id: Number(dynamicId || 0),
-
-    eWayBillNumber: String(apiData.ewayBillNo || ""),
-
-    ewayBillDate: apiData.ewayBillDate || "",
-
-    validUpto: apiData.validUpto || "",
-
-    alert: apiData.alert || "",
-
-    docNo: formData.docNo || "",
-    docType: formData.docType || "INV", 
-    docDate: formData.docDate || "",
-    hsnCode: formData.itemList?.[0]?.hsnCode || "",  
-    vehicleNo: formData.vehicleNo || "",
-
-    fromGstin: formData.fromGstin || "",
-
-    toGstin: formData.toGstin || ""
-  };
-
-  console.log("Saving EWB Data:", ewayBillData);
-
-  // Save to localStorage
-  localStorage.setItem(
-    "ewaybill_response",
-    JSON.stringify(ewayBillData)
-  );
-
-  alert("E-Way Bill response saved successfully!");
-
-  return true;
 };
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
@@ -435,7 +452,7 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
     updatedItems[index][field] = type === 'number' ? (value === '' ? '' : Number(value)) : value;
     setFormData((prev) => ({ ...prev, itemList: updatedItems }));
   };
-const handleDownloadEWayBill = async () => {
+       const handleDownloadEWayBill = async () => {
   try {
     console.log("Download button clicked");
 
@@ -499,7 +516,7 @@ const handleDownloadEWayBill = async () => {
 
     alert(err.message);
   }
-};
+      };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -926,34 +943,9 @@ return (
     </div>
   )}
 </div>
- {response?.status_cd === "1" && (
-  <>
-    <button
-      type="button"
-      onClick={handleDownloadEWayBill}
-      style={{
-        padding: "8px 16px",
-        height: "34px",
-        background: "#198754",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        cursor: "pointer",
-        fontSize: "13px",
-        fontWeight: "500",
-      }}
-    >
-      🚚 Download E-Way Bill
-    </button>
-  </>
-)}
-
 {/* Success Modal */}
 {response && <SuccessModal result={response} />}
       </form>
-
-      {/* Success Modal */}
-      {response && <SuccessModal result={response} />}
     </div>
   </div>
 );
