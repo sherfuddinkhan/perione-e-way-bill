@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from "axios";
 //import '../GenerateEwayBill.css';
 import { useAuth } from "../../AuthContext";
 // --- Helper Form Components ---
@@ -159,6 +160,7 @@ const GenerateEwayBill = () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
+  const [invoiceDetails, setInvoiceDetails] = useState(null);
 
   const location = useLocation();
   const { invoiceData } = location.state || {};
@@ -433,7 +435,71 @@ const handleSaveEwayBillResponse = (generatedResponse) => {
     updatedItems[index][field] = type === 'number' ? (value === '' ? '' : Number(value)) : value;
     setFormData((prev) => ({ ...prev, itemList: updatedItems }));
   };
+const handleDownloadEWayBill = async () => {
+  try {
+    console.log("Download button clicked");
 
+    const selectedInvoice = JSON.parse(
+      localStorage.getItem("selectedInvoice") || "{}"
+    );
+
+    console.log("selectedInvoice:", selectedInvoice);
+
+    const keyID = selectedInvoice?.keyID;
+
+    console.log("keyID:", keyID);
+
+    if (!keyID) {
+      alert("keyID not found.");
+      return;
+    }
+
+    console.log("Getting invoice details...");
+
+    const latest = await axios.get(
+      `https://einvoice.fcssoftwares.com/api/OrderList/GetInvoiceDetails/${keyID}/invoicecumchallan`
+    );
+
+    console.log("Invoice Details:", latest.data);
+
+    console.log("Downloading PDF...");
+
+    const pdf = await axios.get(
+      `https://einvoice.fcssoftwares.com/api/OrderList/GetEWayBillReport/${keyID}`,
+      {
+        responseType: "blob",
+      }
+    );
+
+    console.log("PDF Status:", pdf.status);
+    console.log("Blob Size:", pdf.data.size);
+
+    const blob = new Blob([pdf.data], {
+      type: "application/pdf",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `EWayBill_${keyID}.pdf`;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error(err);
+
+    if (err.response) {
+      console.log("Status:", err.response.status);
+      console.log("Data:", err.response.data);
+    }
+
+    alert(err.message);
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -836,13 +902,54 @@ return (
             <span>⚠️</span> {error}
           </div>
         )}
+<div style={styles.formActions}>
+  <button
+    type="submit"
+    disabled={loading}
+    style={styles.btnSubmit}
+  >
+    {loading ? "Generating E-Way Bill..." : "Generate E-Way Bill"}
+  </button>
 
-        {/* Form Footer / Action */}
-        <div style={styles.formActions}>
-          <button type="submit" disabled={loading} style={styles.btnSubmit}>
-            {loading ? "Submitting Request..." : "Generate E-Way Bill"}
-          </button>
-        </div>
+  {response?.status_cd === "1" && (
+    <div style={styles.downloadButtonGroup}>
+      <button
+        type="button"
+        onClick={handleDownloadEWayBill}
+        style={{
+          ...styles.downloadButton,
+          backgroundColor: "#198754",
+        }}
+      >
+        🚚 Download E-Way Bill
+      </button>
+    </div>
+  )}
+</div>
+ {response?.status_cd === "1" && (
+  <>
+    <button
+      type="button"
+      onClick={handleDownloadEWayBill}
+      style={{
+        padding: "8px 16px",
+        height: "34px",
+        background: "#198754",
+        color: "#fff",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+        fontSize: "13px",
+        fontWeight: "500",
+      }}
+    >
+      🚚 Download E-Way Bill
+    </button>
+  </>
+)}
+
+{/* Success Modal */}
+{response && <SuccessModal result={response} />}
       </form>
 
       {/* Success Modal */}
@@ -896,6 +1003,24 @@ const styles = {
     color: "#94a3b8",
     fontSize: "0.875rem",
   },
+  downloadButtonGroup: {
+  display: "flex",
+  justifyContent: "center",
+  gap: "12px",
+  marginTop: "20px",
+  flexWrap: "wrap",
+},
+
+downloadButton: {
+  padding: "10px 18px",
+  border: "none",
+  borderRadius: "8px",
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "600",
+  minWidth: "190px",
+},
 
   ewayBadge: {
     backgroundColor: "rgba(16, 185, 129, 0.15)",
