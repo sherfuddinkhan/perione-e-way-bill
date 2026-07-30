@@ -1,11 +1,24 @@
-import React, { useState,useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 import { useAuth } from "../../AuthContext";
-// --- ResponseViewer Component ---
+
+// ==========================
+// Response Viewer
+// ==========================
 const ResponseViewer = ({ response }) => {
-  if (!response) return null;
+  if (!response || !response.data) return null;
 
   const isSuccess = response.success;
+  const rows = response.data.data || [];
+
+  // Split into 3 equal groups
+  const chunkSize = Math.ceil(rows.length / 3);
+
+  const columns = [
+    rows.slice(0, chunkSize),
+    rows.slice(chunkSize, chunkSize * 2),
+    rows.slice(chunkSize * 2),
+  ];
 
   return (
     <div
@@ -24,26 +37,48 @@ const ResponseViewer = ({ response }) => {
         >
           {isSuccess ? "SUCCESS" : "FAILED"}
         </span>
+
         <span style={styles.responseDesc}>
-          {response.data?.status_desc || "Response Details"}
+          {response.data.status_desc}
         </span>
       </div>
-      <pre style={styles.jsonViewer}>
-        {JSON.stringify(response.data, null, 2)}
-      </pre>
+
+      <div style={styles.columnsContainer}>
+        {columns.map((column, colIndex) => (
+          <table key={colIndex} style={styles.responseTable}>
+            <thead>
+              <tr>
+                <th style={styles.tableHeader}>Error Code</th>
+                <th style={styles.tableHeader}>Error Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {column.map((item, index) => (
+                <tr key={index}>
+                  <td style={styles.tableCellCode}>
+                    {item.errorCode}
+                  </td>
+
+                  <td style={styles.tableCellDesc}>
+                    {item.errorDesc}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ))}
+      </div>
     </div>
   );
 };
 
-// --- Main ErrorList Component ---
+// ==========================
+// Main Component
+// ==========================
 const ErrorList = () => {
-  const {
-    isLoggedIn,
-    authData,
-    logout,
-    connectionType,
-    setConnectionType,
-  } = useAuth();
+  const { connectionType } = useAuth();
+
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 
@@ -52,18 +87,26 @@ const ErrorList = () => {
     setResponse(null);
 
     try {
-      const res = await axios.get('https://einvoice.fcssoftwares.com/api/perione/ewaybill/error-list',
+      const res = await axios.get(
+        "https://einvoice.fcssoftwares.com/api/perione/ewaybill/error-list",
         {
-        headers: {
-          ConnectionType: connectionType,
-        },
-      }
+          headers: {
+            ConnectionType: connectionType,
+          },
+        }
       );
-      setResponse({ success: true, data: res.data });
+
+      setResponse({
+        success: true,
+        data: res.data,
+      });
     } catch (err) {
       setResponse({
         success: false,
-        data: err.response?.data || { message: err.message },
+        data: err.response?.data || {
+          status_desc: err.message,
+          data: [],
+        },
       });
     } finally {
       setLoading(false);
@@ -73,147 +116,175 @@ const ErrorList = () => {
   return (
     <div style={styles.outerContainer}>
       <div style={styles.card}>
+
         <div style={styles.header}>
           <span style={styles.badge}>System</span>
-          <h2 style={styles.title}>4. Get Error List</h2>
-          <p style={styles.subtitle}>Load system error codes and definitions</p>
+
+          <h2 style={styles.title}>
+            Get Error List
+          </h2>
+
+          <p style={styles.subtitle}>
+            Load all E-Way Bill error codes and descriptions
+          </p>
         </div>
 
-        <button onClick={handleFetch} disabled={loading} style={styles.button}>
-          {loading ? 'Loading Error List...' : 'Fetch Error List'}
+        <button
+          onClick={handleFetch}
+          disabled={loading}
+          style={styles.button}
+        >
+          {loading
+            ? "Loading Error List..."
+            : "Fetch Error List"}
         </button>
 
-        {/* ResponseViewer renders here */}
         <ResponseViewer response={response} />
+
       </div>
     </div>
   );
+  
 };
-
-// --- Styles ---
 const styles = {
   outerContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    width: "100%",
     minHeight: "100vh",
     backgroundColor: "#f8fafc",
-    padding: "20px",
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    padding: "30px",
+    boxSizing: "border-box",
+    fontFamily:
+      "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",
   },
+
   card: {
-    backgroundColor: "#ffffff",
-    borderRadius: "16px",
-    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
-    border: "1px solid #e2e8f0",
     width: "100%",
-    maxWidth: "480px",
-    padding: "32px",
+    maxWidth: "1800px",
+    margin: "0 auto",
+    backgroundColor: "#fff",
+    borderRadius: "16px",
+    padding: "30px",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
     boxSizing: "border-box",
   },
+
   header: {
     textAlign: "center",
-    marginBottom: "24px",
+    marginBottom: "25px",
   },
+
   badge: {
     display: "inline-block",
-    padding: "4px 12px",
+    padding: "5px 14px",
     borderRadius: "20px",
-    backgroundColor: "#fee2e2",
-    color: "#dc2626",
-    fontSize: "11px",
-    fontWeight: "700",
-    letterSpacing: "0.5px",
+    background: "#dbeafe",
+    color: "#2563eb",
+    fontWeight: 700,
+    fontSize: 12,
+    marginBottom: 10,
     textTransform: "uppercase",
-    marginBottom: "10px",
   },
+
   title: {
-    margin: "0",
-    color: "#0f172a",
-    fontSize: "22px",
-    fontWeight: "700",
+    margin: 0,
+    color: "#111827",
+    fontSize: "28px",
+    fontWeight: 700,
   },
+
   subtitle: {
-    margin: "6px 0 0 0",
-    color: "#64748b",
-    fontSize: "13px",
+    marginTop: 8,
+    color: "#6b7280",
+    fontSize: 14,
   },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  },
-  fieldGroup: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  label: {
-    fontSize: "12px",
-    fontWeight: "600",
-    color: "#334155",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-    marginBottom: "6px",
-  },
-  input: {
-    width: "100%",
-    padding: "10px 14px",
-    border: "1px solid #cbd5e1",
-    borderRadius: "8px",
-    fontSize: "14px",
-    color: "#0f172a",
-    outline: "none",
-    boxSizing: "border-box",
-    backgroundColor: "#f8fafc",
-  },
+
   button: {
     width: "100%",
-    padding: "12px",
-    backgroundColor: "#dc2626",
-    color: "#ffffff",
+    padding: "14px",
     border: "none",
     borderRadius: "8px",
-    fontSize: "15px",
-    fontWeight: "600",
+    backgroundColor: "#2563eb",
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: 600,
     cursor: "pointer",
-    marginTop: "8px",
+    marginBottom: "20px",
   },
+
   responseCard: {
     marginTop: "20px",
-    padding: "16px",
+    border: "1px solid #d1d5db",
     borderRadius: "10px",
-    borderWidth: "1px",
-    borderStyle: "solid",
+    padding: "20px",
   },
+
   responseHeader: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
-    marginBottom: "10px",
+    gap: "12px",
+    marginBottom: "20px",
   },
-  statusBadge: {
-    color: "#ffffff",
-    padding: "3px 8px",
-    borderRadius: "4px",
-    fontSize: "10px",
-    fontWeight: "700",
-  },
-  responseDesc: {
-    fontSize: "12px",
-    color: "#334155",
-    fontWeight: "600",
-  },
-  jsonViewer: {
-    margin: "0",
-    padding: "12px",
-    backgroundColor: "#0f172a",
-    color: "#38bdf8",
-    borderRadius: "6px",
-    fontSize: "11px",
-    fontFamily: "monospace",
-    overflowX: "auto",
-    maxHeight: "180px",
-  },
-};
 
+  statusBadge: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: 700,
+    padding: "4px 10px",
+    borderRadius: "4px",
+    letterSpacing: "0.5px",
+  },
+
+  responseDesc: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: "#374151",
+  },
+
+  columnsContainer: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, minmax(0,1fr))",
+    gap: "20px",
+    width: "100%",
+    alignItems: "start",
+  },
+
+  responseTable: {
+    width: "100%",
+    borderCollapse: "collapse",
+    tableLayout: "fixed",
+    backgroundColor: "#fff",
+  },
+
+  tableHeader: {
+    backgroundColor: "#2563eb",
+    color: "#fff",
+    padding: "12px",
+    border: "1px solid #d1d5db",
+    textAlign: "left",
+    fontWeight: 700,
+    fontSize: 13,
+  },
+
+  tableCellCode: {
+    width: "90px",
+    padding: "10px",
+    border: "1px solid #d1d5db",
+    fontWeight: 700,
+    textAlign: "center",
+    verticalAlign: "top",
+    backgroundColor: "#f9fafb",
+    fontSize: 13,
+  },
+
+  tableCellDesc: {
+    padding: "10px",
+    border: "1px solid #d1d5db",
+    verticalAlign: "top",
+    wordBreak: "break-word",
+    lineHeight: 1.5,
+    fontSize: 13,
+    color: "#374151",
+  }
+}
 export default ErrorList;
