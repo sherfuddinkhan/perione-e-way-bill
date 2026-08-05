@@ -87,63 +87,141 @@ const SuccessModal = ({ result }) => {
 // --- Payload Definition ---
 
 const DEFAULT_PAYLOAD = {
-  supplyType: "O",
-  subSupplyType: "1",
+
+  // =====================================================
+  // DOCUMENT DETAILS
+  // =====================================================
+
+  supplyType: "O",              // Outward Supply
+  subSupplyType: "1",            // Supply Type
   subSupplyDesc: "",
-  docType: "INV",
+
+  docType: "INV",                // Invoice
   docNo: "Perione-1",
   docDate: "05/06/2026",
+
+
+  // =====================================================
+  // SUPPLIER / CONSIGNOR DETAILS
+  // =====================================================
+
   fromGstin: "36AARFB4347G037",
   fromTrdName: "Welton",
-  fromAddr1: "2ND CROSS NO 59 19 A",
-  fromAddr2: "GROUND FLOOR OSBORNE ROAD",
+
+  fromAddress1: "2ND CROSS NO 59 19 A",
+  fromAddress2: "GROUND FLOOR OSBORNE ROAD",
+
   fromPlace: "Hyderabad",
   fromPincode: 500081,
-  actFromStateCode: 36,
+
   fromStateCode: 36,
-  toGstin: "36AAACR5055K1Z8",
-  toTrdName: "Perione",
-  toAddr1: "Madhapur",
-  toAddr2: "HITEC City",
-  toPlace: "Hyderabad",
-  toPincode: 500081,
-  actToStateCode: 36,
-  toStateCode: 36,
+  actualFromStateCode: 36,
+
+
+  // =====================================================
+  // BUYER / CONSIGNEE DETAILS
+  // =====================================================
+
+  toGstin: "",
+  toTrdName: "",
+
+  toAddress1: "",
+  toAddress2: "",
+
+  toPlace: "",
+  toPincode: "",
+
+  toStateCode: "",
+  actualToStateCode: "",
+
+
+  // =====================================================
+  // TRANSACTION DETAILS
+  // =====================================================
+
   transactionType: 4,
-  shipToGSTIN: "urp",
+
+
+  // =====================================================
+  // SHIP TO DETAILS
+  // =====================================================
+
+  shipToGSTIN: "URP",
+
   shipToTradeName: "Perione",
+
+  shipToAddress1: "Madhapur",
+  shipToAddress2: "HITEC City",
+
+  shipToPlace: "Hyderabad",
+  shipToPincode: 500081,
+
+  shipToStateCode: 36,
+
+
+  // =====================================================
+  // INVOICE VALUE SUMMARY
+  // =====================================================
+
   mainHsnCode: 100610,
-  totalValue: 100,
+
+  taxableValue: 100,
+
   cgstValue: 2.5,
   sgstValue: 2.5,
   igstValue: 0,
+
   cessValue: 0,
   cessNonAdvolValue: 0,
+
   otherValue: 0,
-  totInvValue: 105,
+
+  totalInvoiceValue: 105,
+
+
+  // =====================================================
+  // TRANSPORT DETAILS
+  // =====================================================
+
   transporterId: "36AARFB4347G037",
   transporterName: "Welton Logistics",
-  transDocNo: "LR123456",
-  transMode: "1",
-  transDistance: "25",
-  transDocDate: "05/06/2026",
-  vehicleNo: "TS09AB1234",
+
+  transportDocumentNo: "LR123456",
+  transportMode: "1",
+
+  transportDistance: "25",
+
+  transportDocumentDate: "05/06/2026",
+
+  vehicleNumber: "TS09AB1234",
   vehicleType: "R",
+
+
+  // =====================================================
+  // ITEM DETAILS
+  // =====================================================
+
   itemList: [
     {
       productName: "Rice",
-      productDesc: "Rice",
+      productDescription: "Rice",
+
       hsnCode: 100610,
+
       quantity: 1,
-      qtyUnit: "KGS",
+      unit: "KGS",
+
       cgstRate: 2.5,
       sgstRate: 2.5,
       igstRate: 0,
+
       cessRate: 0,
-      cessNonadvol: 0,
+      cessNonAdvolRate: 0,
+
       taxableAmount: 100
     }
   ]
+
 };
 
 // --- Main Component ---
@@ -280,92 +358,166 @@ useEffect(() => {
 
     const cessValue = 0;
 
-    const totInvValue = Number(
-      invoiceData.invoiceProductDetails?.reduce(
-        (sum, item) => sum + Number(item.afterGSTAmount || 0),
-        0
-      ) || totalValue + cgstValue + sgstValue + igstValue
-    );
+    const totInvValue = Number(invoiceData.invoiceProductDetails?.reduce((sum, item) => sum + Number(item.afterGSTAmount || 0),0) || totalValue + cgstValue + sgstValue + igstValue);
 
-    return {
-      ...prev,
+  return {
+  ...prev,
 
-      // Document details
-      docType: "INV",
-      docNo: invoiceData.invoiceNumber || prev.docNo,
-      docDate: invoiceData.deliveryNoteDate
-        ? invoiceData.deliveryNoteDate.replace(/-/g, "/")
-        : prev.docDate,
+  //========================================
+  // DOCUMENT DETAILS
+  //========================================
+  docType: "INV",
+  docNo: invoiceData.invoiceNumber || prev.docNo,
+  docDate: invoiceData.deliveryNoteDate
+    ? invoiceData.deliveryNoteDate.replace(/-/g, "/")
+    : prev.docDate,
 
-      // Supplier details
-      fromGstin: invoiceData.gstin || prev.fromGstin,
-      fromTrdName: invoiceData.company_Name || prev.fromTrdName,
-      fromAddr1:
-        invoiceData.company_Address ||
-        invoiceData.companyBranches?.officeAddress ||
-        prev.fromAddr1,
-      fromAddr2: prev.fromAddr2,
-      fromPlace: invoiceData.company_City || prev.fromPlace,
-      fromPincode: Number(
-        invoiceData.company_PINCode || prev.fromPincode
-      ),
-      actFromStateCode: Number(
-        invoiceData.stateCode || prev.actFromStateCode
-      ),
-      fromStateCode: Number(
-        invoiceData.stateCode || prev.fromStateCode
-      ),
+  //========================================
+  // SUPPLIER (BILL FROM)
+  //========================================
+  fromGstin: invoiceData.gstin || prev.fromGstin,
+  fromTrdName: invoiceData.company_Name || prev.fromTrdName,
 
-      // Buyer details
-      toGstin: invoiceData.buyerClients?.gstin || prev.toGstin,
-      toTrdName:
-        invoiceData.buyerClients?.companyName || prev.toTrdName,
-      toAddr1:
-        invoiceData.buyerClients?.officeAddress || prev.toAddr1,
-      toAddr2: prev.toAddr2,
-      toPlace:
-        invoiceData.buyerClients?.stateName || prev.toPlace,
-      toPincode: Number(
-        invoiceData.buyerClients?.poBox || prev.toPincode
-      ),
-      actToStateCode: Number(
-        invoiceData.buyerClients?.masterStateNames?.stateCode ||
-          prev.actToStateCode
-      ),
-      toStateCode: Number(
-        invoiceData.buyerClients?.masterStateNames?.stateCode ||
-          prev.toStateCode
-      ),
+  fromAddr1:
+    invoiceData.company_Address ||
+    invoiceData.companyBranches?.officeAddress ||
+    prev.fromAddr1,
 
-      // Transport details
-      transporterId:
-        invoiceData.transporterID || prev.transporterId,
-      transporterName:
-        invoiceData.transporterName ||
-        invoiceData.transport ||
-        prev.transporterName,
-      transDocNo:
-        invoiceData.transporterDocNo || prev.transDocNo,
-      transMode:
-        invoiceData.transportMode === "Road"
-          ? "1"
-          : prev.transMode,
-      transDistance:
-        invoiceData.distance || prev.transDistance,
-      vehicleNo: invoiceData.vehicleNo || prev.vehicleNo,
+  fromAddr2:
+    invoiceData.companyBranches?.address2 ||
+    prev.fromAddr2,
 
-      // Item details
-      itemList,
+  fromPlace:
+    invoiceData.company_City ||
+    prev.fromPlace,
 
-      // Calculated totals
-      hsnCode: itemList[0]?.hsnCode || prev.mainHsnCode,
-      totalValue,
-      cgstValue,
-      sgstValue,
-      igstValue,
-      cessValue,
-      totInvValue,
-    };
+  fromPincode: Number(
+    invoiceData.company_PINCode ||
+      prev.fromPincode
+  ),
+
+  actFromStateCode: Number(
+    invoiceData.stateCode ||
+      prev.actFromStateCode
+  ),
+
+  fromStateCode: Number(
+    invoiceData.stateCode ||
+      prev.fromStateCode
+  ),
+
+ //========================================
+// BILL TO
+//========================================
+toGstin:
+  invoiceData?.clients?.gstin||
+  prev.toGstin,
+
+toTrdName:
+  invoiceData.clients?.companyName ||
+  prev.toTrdName,
+
+toAddr1:
+  invoiceData.clients.officeAddress ||
+  prev.toAddr1,
+
+toAddr2:
+  invoiceData.clients?.poBox ||
+  prev.toAddr2,
+
+toPlace:
+  invoiceData.clients?.masterStateNames?.stateName ||
+  invoiceData.clients?.city ||
+  prev.toPlace,
+
+toPincode: Number(
+  invoiceData.clients?.pinCode ||
+  invoiceData.clients?.poBox ||
+  prev.toPincode
+),
+
+actToStateCode: Number(
+  invoiceData.clients?.masterStateNames?.stateCode ||
+  prev.actToStateCode
+),
+
+toStateCode: Number(
+  invoiceData.clients?.masterStateNames?.stateCode ||
+  prev.toStateCode
+),
+
+
+// ================= SHIP TO =================
+
+...(invoiceData?.transactionType === "Bill To - Ship To" ||
+   invoiceData?.transactionType === "COMBINED"
+? {
+
+    shipToGSTIN:invoiceData?.buyerClients?.gstin || "",
+    shipToTradeName:invoiceData?.buyerClients?.companyName?.trim() || "",
+    shipToAddr1:invoiceData?.buyerClients?.officeAddress?.trim() || "",
+    shipToAddr2:invoiceData?.buyerClients?.poBox?.trim() ||"",
+    shipToPlace:invoiceData?.buyerClients?.masterStateNames?.stateName || "",
+    shipToPincode:invoiceData?.buyerClients?.pinCode ||
+        invoiceData?.buyerClients?.poBox?.match(/\b\d{6}\b/)?.[0] ||
+        "",
+    shipToStateCode:invoiceData?.buyerClients?.masterStateNames?.stateCode ||
+        ""
+
+}
+: {}),
+
+
+
+  //========================================
+  // TRANSPORT
+  //========================================
+  transporterId:
+    invoiceData.transporterID ||
+    prev.transporterId,
+
+  transporterName:
+    invoiceData.transporterName ||
+    invoiceData.transport ||
+    prev.transporterName,
+
+  transDocNo:
+    invoiceData.transporterDocNo ||
+    prev.transDocNo,
+
+  transMode:
+    invoiceData.transportMode === "Road"
+      ? "1"
+      : prev.transMode,
+
+  transDistance:
+    invoiceData.distance ||
+    prev.transDistance,
+
+  vehicleNo:
+    invoiceData.vehicleNo ||
+    prev.vehicleNo,
+
+  //========================================
+  // ITEMS
+  //========================================
+  itemList,
+
+  //========================================
+  // TOTALS
+  //========================================
+  hsnCode: itemList[0]?.hsnCode || prev.hsnCode,
+
+  totalValue,
+  cgstValue,
+  sgstValue,
+  igstValue,
+  cessValue,
+  totInvValue,
+
+  otherValue: 0,
+  cessNonAdvolValue: 0,
+};
   });
 }, [invoiceData]);
 
@@ -662,44 +814,270 @@ return (
           </div>
         </section>
 
-        {/* 2. Parties Section */}
-        <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>2. Parties & Address Details</h2>
-          <div style={styles.formGrid2}>
-            <AddressGroup
-              title="From (Supplier)"
-              prefix="from"
-              data={formData}
-              onChange={handleInputChange}
-            />
-            <AddressGroup
-              title="To (Recipient)"
-              prefix="to"
-              data={formData}
-              onChange={handleInputChange}
-            />
-          </div>
+       {/* ===========================================================
+   2. Parties & Address Details
+=========================================================== */}
 
-          {/* Extended Consignee / Shipping Fields */}
-          <div style={{ ...styles.addressCard, marginTop: "20px" }}>
-            <h3 style={styles.addressTitle}>Ship-To Details</h3>
-            <div style={styles.formGrid4}>
-              <FormField
-                label="Ship-To GSTIN"
-                name="shipToGSTIN"
-                value={formData.shipToGSTIN}
-                onChange={handleInputChange}
-                uppercase
-              />
-              <FormField
-                label="Ship-To Trade Name"
-                name="shipToTradeName"
-                value={formData.shipToTradeName}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-        </section>
+<section style={styles.section}>
+  <h2 style={styles.sectionTitle}>
+    2. Parties & Address Details
+  </h2>
+
+  {/* ================= Bill From ================= */}
+
+  <div style={styles.addressCard}>
+    <h3 style={styles.addressTitle}>Bill From (Supplier)</h3>
+
+    <div style={styles.formGrid4}>
+      <AddressGroup
+        title=""
+        prefix="from"
+        data={formData}
+        onChange={handleInputChange}
+      />
+    </div>
+  </div>
+
+  {/* ================= Dispatch From ================= */}
+
+  <div
+    style={{
+      ...styles.addressCard,
+      marginTop: 20,
+    }}
+  >
+    <h3 style={styles.addressTitle}>
+      Dispatch From
+    </h3>
+
+    <div style={styles.formGrid4}>
+
+      <FormField
+        label="Dispatch GSTIN"
+        name="dispatchFromGstin"
+        value={formData.dispatchFromGstin}
+        onChange={handleInputChange}
+        uppercase
+      />
+
+      <FormField
+        label="Trade Name"
+        name="dispatchFromTradeName"
+        value={formData.dispatchFromTradeName}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Legal Name"
+        name="dispatchFromLegalName"
+        value={formData.dispatchFromLegalName}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Address 1"
+        name="dispatchFromAddr1"
+        value={formData.dispatchFromAddr1}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Address 2"
+        name="dispatchFromAddr2"
+        value={formData.dispatchFromAddr2}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Place"
+        name="dispatchFromPlace"
+        value={formData.dispatchFromPlace}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Pincode"
+        name="dispatchFromPincode"
+        value={formData.dispatchFromPincode}
+        onChange={handleInputChange}
+        type="number"
+      />
+
+      <FormField
+        label="State Code"
+        name="dispatchFromStateCode"
+        value={formData.dispatchFromStateCode}
+        onChange={handleInputChange}
+        type="number"
+      />
+
+    </div>
+  </div>
+
+
+{/* ================= Bill To ================= */}
+
+<div
+  style={{
+    ...styles.addressCard,
+    marginTop: 20,
+  }}
+>
+  <h3 style={styles.addressTitle}>
+    Bill To (Buyer)
+  </h3>
+
+  <div style={styles.formGrid4}>
+
+
+    <FormField
+      label="Buyer GSTIN"
+      name="toGstin"
+      value={formData.toGstin || ""}
+      onChange={handleInputChange}
+      uppercase
+    />
+
+
+    <FormField
+      label="Trade Name"
+      name="toTrdName"
+      value={formData.toTrdName || ""}
+      onChange={handleInputChange}
+    />
+
+
+    <FormField
+      label="Legal Name"
+      name="buyerLegalName"
+      value={formData.buyerLegalName || ""}
+      onChange={handleInputChange}
+    />
+
+
+    <FormField
+      label="Address 1"
+      name="toAddr1"
+      value={formData.toAddr1 || ""}
+      onChange={handleInputChange}
+    />
+
+
+    <FormField
+      label="Address 2"
+      name="toAddr2"
+      value={formData.toAddr2 || ""}
+      onChange={handleInputChange}
+    />
+
+
+    <FormField
+      label="Place"
+      name="toPlace"
+      value={formData.toPlace || ""}
+      onChange={handleInputChange}
+    />
+
+
+    <FormField
+      label="Pincode"
+      name="toPincode"
+      value={formData.toPincode || ""}
+      onChange={handleInputChange}
+      type="number"
+    />
+
+
+    <FormField
+      label="State Code"
+      name="toStateCode"
+      value={formData.toStateCode || ""}
+      onChange={handleInputChange}
+      type="number"
+    />
+
+
+  </div>
+
+</div>
+
+  {/* ================= Ship To ================= */}
+
+  <div
+    style={{
+      ...styles.addressCard,
+      marginTop: 20,
+    }}
+  >
+    <h3 style={styles.addressTitle}>
+      Ship To (Consignee)
+    </h3>
+
+    <div style={styles.formGrid4}>
+
+      <FormField
+        label="Ship GSTIN"
+        name="shipToGstin"
+        value={formData.shipToGSTIN}
+        onChange={handleInputChange}
+        uppercase
+      />
+
+      <FormField
+        label="Trade Name"
+        name="shipToTradeName"
+        value={formData.shipToTradeName}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Legal Name"
+        name="shipToLegalName"
+        value={formData.shipToLegalName}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Address 1"
+        name="shipToAddr1"
+        value={formData.shipToAddr1}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Address 2"
+        name="shipToAddr2"
+        value={formData.shipToAddr2}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Place"
+        name="shipToPlace"
+        value={formData.shipToPlace}
+        onChange={handleInputChange}
+      />
+
+      <FormField
+        label="Pincode"
+        name="shipToPincode"
+        value={formData.shipToPincode}
+        onChange={handleInputChange}
+        type="number"
+      />
+
+      <FormField
+        label="State Code"
+        name="shipToStateCode"
+        value={formData.shipToStateCode}
+        onChange={handleInputChange}
+        type="number"
+      />
+
+    </div>
+  </div>
+
+</section>
 
         {/* 3. Invoice Summary */}
         <section style={styles.section}>
